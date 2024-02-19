@@ -1,0 +1,4 @@
+/Users/stepankudlacek/ZED/task1/build-dir/CMakeFiles/tasks.dir
+/Users/stepankudlacek/ZED/task1/build-dir/CMakeFiles/tests.dir
+/Users/stepankudlacek/ZED/task1/build-dir/CMakeFiles/edit_cache.dir
+/Users/stepankudlacek/ZED/task1/build-dir/CMakeFiles/rebuild_cache.dir
