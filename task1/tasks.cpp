@@ -25,6 +25,9 @@ int math::fibonacci(int n) {
   return result;
 }
 
+/*
+rewrite
+*/
 std::string strutils::camel_to_snake(std::string s) {
   std::string result = "";
 
@@ -44,6 +47,10 @@ std::string strutils::camel_to_snake(std::string s) {
   return result;
 }
 
+
+/*
+:)
+*/
 bool strutils::parse_uint(const std::string &s, u_int32_t &result) {
   if (s.empty())
   {
@@ -73,5 +80,42 @@ bool strutils::parse_uint(const std::string &s, u_int32_t &result) {
 }
 
 bool strutils::validate_utf8(const std::vector<uint8_t> &bytes, size_t &result) {
+  size_t temp = 0;
+
+  if (bytes.size() == 0)
+  {
+    result = 0;
+    return true;
+  }
+  
+  for (size_t i = 0; i < bytes.size();)
+  {
+    if (i+3 < bytes.size() && (bytes[i] & 0b11110000) == 0b11110000 && (bytes[i+1] & 0b10000000) == 0b10000000 && (bytes[i+2] & 0b10000000) == 0b10000000 && (bytes[i+3] & 0b10000000) == 0b10000000)
+    {
+      temp += 1;
+      i += 4;
+      continue;
+    }
+    if (i+2 < bytes.size() && (bytes[i] & 0b11100000) == 0b11100000 && (bytes[i+1] & 0b10000000) == 0b10000000 && (bytes[i+2] & 0b10000000) == 0b10000000)
+    {
+      temp += 1;
+      i +=3;
+      continue;
+    }
+    if (i+1 < bytes.size() && (bytes[i] & 0b11000000) == 0b11000000 && (bytes[i+1] & 0b10000000) == 0b10000000)
+    {
+      temp += 1;
+      i += 2;
+      continue;
+    }
+    if ((bytes[i] & 0b10000000) == 0)
+    {
+      i+=1;
+      temp += 1;
+      continue;
+    }
+    return false;
+  }
+  result = temp;  
   return true;
 }

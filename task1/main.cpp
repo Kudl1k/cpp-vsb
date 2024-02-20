@@ -9,5 +9,12 @@ int main() {
     std::cout << result << std::endl;
   }
   size_t result2 = ' ';
-  strutils::validate_utf8({0b00001100}, result2);
+  std::vector<uint8_t> input{
+                0b11111111
+        };
+  if (strutils::validate_utf8(input, result2))
+  {
+    std::cout << result2 << std::endl;
+  }
+  
 }
