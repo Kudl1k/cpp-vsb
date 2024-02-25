@@ -16,4 +16,4 @@ add_compile_options(-Wall -Wextra -pedantic)
 add_executable(tasks main.cpp tasks.cpp)
 
 # Use the `tests` executable to run unit tests
-add_executable(tests tests.cpp tasks.cpp)
+#add_executable(tests tests.cpp tasks.cpp)

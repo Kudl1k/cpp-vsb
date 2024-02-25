@@ -2,7 +2,7 @@
 
 int main() {
 
-    UTF8String str { "bbb" };
-    std::cout << str << std::endl;
+    UTF8String str { "ahoj" };
+
     return 0;
 }
