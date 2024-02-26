@@ -19,14 +19,16 @@ private:
     size_t reserved = 0;
 
     void control_grow(size_t newSize);
-
+    uint8_t *buffer = nullptr;
 public:
-    CodePoint *buffer = nullptr;
+    
 
     UTF8String() = default;
     UTF8String(const char* ptr);
     UTF8String(const std::vector<CodePoint> ptr);
     UTF8String(const UTF8String &ptr);
+
+    UTF8String& operator=(const UTF8String &ptr);
 
     int get_number_of_bytes(CodePoint ptr);
 
@@ -34,9 +36,9 @@ public:
     int get_point_count() const;
     int get_reserved_count() const;
 
-    std::optional<CodePoint> operator[](const size_t idx);
+    std::optional<uint8_t> operator[](const size_t idx) const;
 
-    std::optional<CodePoint> nth_code_point(const size_t idx);
+    std::optional<uint8_t> nth_code_point(const size_t idx) const;
 
 
     void append(const char c);
@@ -45,7 +47,20 @@ public:
 
     friend UTF8String operator+(const UTF8String &lhs,const UTF8String &rhs);
 
+    UTF8String& operator+=(const UTF8String& str);
 
+    friend bool operator==(const UTF8String &lhs,const UTF8String &rhs);
+
+
+
+    operator std::string() const {
+        std::string result;
+        for (size_t i = 0; i < points; i++)
+        {
+            result.push_back(static_cast<char>(buffer[i]));
+        }
+        return result;
+    }
 
     ~UTF8String();
 };
