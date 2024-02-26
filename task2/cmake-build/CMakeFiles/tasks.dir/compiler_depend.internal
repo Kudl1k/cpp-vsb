@@ -213,6 +213,7 @@ CMakeFiles/tasks.dir/main.cpp.o
  /usr/include/c++/11/cstring
  /usr/include/string.h
  /usr/include/strings.h
+ /usr/include/c++/11/optional
 
 CMakeFiles/tasks.dir/tasks.cpp.o
  /home/kudla/Desktop/cpp-vsb/task2/tasks.cpp
@@ -426,4 +427,5 @@ CMakeFiles/tasks.dir/tasks.cpp.o
  /usr/include/c++/11/cstring
  /usr/include/string.h
  /usr/include/strings.h
+ /usr/include/c++/11/optional
 
