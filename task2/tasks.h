@@ -21,9 +21,12 @@ public:
 
     UTF8String() = default;
     UTF8String(const char* ptr);
-    UTF8String(std::vector<CodePoint>);
+    UTF8String(std::vector<CodePoint> ptr);
 
-    int get_number_of_bytes(CodePoint *ptr);
+
+
+
+    int get_number_of_bytes(CodePoint ptr);
 
     int get_byte_count();
     int get_point_count();
