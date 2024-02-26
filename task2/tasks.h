@@ -30,6 +30,8 @@ public:
 
     UTF8String& operator=(const UTF8String &ptr);
 
+
+
     int get_number_of_bytes(CodePoint ptr);
 
     int get_byte_count() const;
@@ -38,7 +40,7 @@ public:
 
     std::optional<uint8_t> operator[](const size_t idx) const;
 
-    std::optional<uint8_t> nth_code_point(const size_t idx) const;
+    std::optional<CodePoint> nth_code_point(const size_t idx) const;
 
 
     void append(const char c);

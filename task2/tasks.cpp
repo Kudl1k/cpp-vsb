@@ -51,6 +51,9 @@ UTF8String::UTF8String(const std::vector<CodePoint> ptr){
     }
 }
 
+
+
+
 UTF8String::UTF8String(const UTF8String &ptr){
     points = ptr.points;
     bytes = ptr.bytes;
@@ -115,16 +118,49 @@ std::optional<uint8_t> UTF8String::operator[](const size_t idx) const{
 }
 
 
-std::optional<uint8_t> UTF8String::nth_code_point(const size_t idx) const{
-    if (idx >= points)
-    {
-        return std::nullopt;   
+std::optional<CodePoint> UTF8String::nth_code_point(const size_t idx) const {
+    if (idx >= points) {
+        return std::nullopt; // idx is out of bounds
     }
 
-    
+    size_t currentCodePoint =  0;
+    size_t currentByte =  0;
+    while (currentCodePoint < idx) {
+        // Skip continuation bytes
+        while ((buffer[currentByte] &  0xC0) ==  0x80) {
+            currentByte++;
+        }
+        currentCodePoint++;
+    }
 
+    // At this point, currentByte points to the start of the idx-th code point
+    // Decode the code point
+    CodePoint codePoint =  0;
+    size_t bytesInSequence =  0;
+    if ((buffer[currentByte] &  0x80) ==  0) { //  1-byte sequence
+        codePoint = buffer[currentByte];
+        bytesInSequence =  1;
+    } else if ((buffer[currentByte] &  0xE0) ==  0xC0) { //  2-byte sequence
+        codePoint = buffer[currentByte] &  0x1F;
+        bytesInSequence =  2;
+    } else if ((buffer[currentByte] &  0xF0) ==  0xE0) { //  3-byte sequence
+        codePoint = buffer[currentByte] &  0x0F;
+        bytesInSequence =  3;
+    } else if ((buffer[currentByte] &  0xF8) ==  0xF0) { //  4-byte sequence
+        codePoint = buffer[currentByte] &  0x07;
+        bytesInSequence =  4;
+    }
 
+    // Decode the remaining bytes
+    for (size_t i =  1; i < bytesInSequence; ++i) {
+        codePoint <<=  6; // Shift left to make room for the next  6 bits
+        codePoint |= (buffer[currentByte + i] &  0x3F); // Add the next  6 bits
+    }
+
+    return codePoint;
 }
+
+
 
 
 void UTF8String::control_grow(size_t newSize){
@@ -141,18 +177,34 @@ void UTF8String::append(const char c){
     if (bytes + 1 > reserved) {
         control_grow(bytes + 1);
     }
-    buffer[points] = static_cast<CodePoint>(c);
+    buffer[bytes] = static_cast<CodePoint>(c);
     points +=  1;
-    bytes += get_number_of_bytes(static_cast<CodePoint>(c));
+    bytes += 1;
 }
 
 void UTF8String::append(const CodePoint cp){
-    if (bytes + 1 > reserved) {
-        control_grow(bytes + 1);
+    size_t cpBytes = get_number_of_bytes(cp);
+    if (bytes + cpBytes > reserved) {
+        control_grow(bytes + cpBytes);
     }
-    buffer[points] = cp;
+    size_t idx = bytes;
+    if (cp <= 0x7F) {
+        buffer[idx++] = static_cast<uint8_t>(cp);
+    } else if (cp <= 0x7FF) {
+        buffer[idx++] = static_cast<uint8_t>(0xC0 | (cp >> 6));
+        buffer[idx++] = static_cast<uint8_t>(0x80 | (cp & 0x3F));
+    } else if (cp <= 0xFFFF) {
+        buffer[idx++] = static_cast<uint8_t>(0xE0 | (cp >> 12));
+        buffer[idx++] = static_cast<uint8_t>(0x80 | ((cp >> 6) & 0x3F));
+        buffer[idx++] = static_cast<uint8_t>(0x80 | (cp & 0x3F));
+    } else if (cp <= 0x10FFFF) {
+        buffer[idx++] = static_cast<uint8_t>(0xF0 | (cp >> 18));
+        buffer[idx++] = static_cast<uint8_t>(0x80 | ((cp >> 12) & 0x3F));
+        buffer[idx++] = static_cast<uint8_t>(0x80 | ((cp >> 6) & 0x3F));
+        buffer[idx++] = static_cast<uint8_t>(0x80 | (cp & 0x3F));
+    }
     points +=  1;
-    bytes += get_number_of_bytes(cp);
+    bytes += cpBytes;
 }
 
 UTF8String operator+(const UTF8String &lhs,const UTF8String &rhs){
@@ -168,17 +220,18 @@ UTF8String operator+(const UTF8String &lhs,const UTF8String &rhs){
 }
 
 UTF8String& UTF8String::operator+=(const UTF8String& str){
-    size_t newSize = points + str.points;
+    size_t newSize = bytes + str.bytes;
     if (reserved < newSize + 1)
     {
         reserved = newSize + 1;
         uint8_t *newBuffer = new uint8_t[reserved];
-        std::copy(buffer, buffer + points, newBuffer);
+        std::copy(buffer, buffer + bytes, newBuffer);
         delete[] buffer;
         buffer = newBuffer;
     }
-    std::copy(str.buffer, str.buffer + str.reserved, buffer + points);
-    points = newSize;
+    std::copy(str.buffer, str.buffer + str.reserved, buffer + bytes);
+    bytes += str.bytes;
+    points += str.points;
     return *this;
 }
 

@@ -1,0 +1,4 @@
+/home/kudla/Desktop/cpp-vsb/task2/cmake-build-debug/CMakeFiles/tasks.dir
+/home/kudla/Desktop/cpp-vsb/task2/cmake-build-debug/CMakeFiles/tests.dir
+/home/kudla/Desktop/cpp-vsb/task2/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/kudla/Desktop/cpp-vsb/task2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
