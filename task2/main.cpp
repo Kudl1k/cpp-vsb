@@ -21,7 +21,7 @@ int main() {
     std::cout << string.get_point_count() << std::endl;
     std::cout << string.get_reserved_count() << std::endl;
     for (int i = 0; i < string.get_byte_count(); ++i) {
-        std::cout << string[i].value() << std::endl;
+        std::cout << (string[i].value()) << std::endl;
     }
     std::cout << std::endl;
     std::cout << std::endl;

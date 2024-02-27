@@ -119,45 +119,58 @@ std::optional<uint8_t> UTF8String::operator[](const size_t idx) const{
 
 
 std::optional<CodePoint> UTF8String::nth_code_point(const size_t idx) const {
-    if (idx >= points) {
-        return std::nullopt; // idx is out of bounds
+    if (idx >= points){
+        return std::nullopt;
     }
 
-    size_t currentCodePoint =  0;
-    size_t currentByte =  0;
-    while (currentCodePoint < idx) {
-        // Skip continuation bytes
-        while ((buffer[currentByte] &  0xC0) ==  0x80) {
-            currentByte++;
+    size_t byteIdx = 0;
+    size_t pointCount = 0;
+
+    while (byteIdx < bytes && pointCount < idx) {
+        uint8_t firstByte = buffer[byteIdx];
+        if ((firstByte & 0x80) == 0) {
+            ++pointCount;
+            ++byteIdx;
+        } else if ((firstByte & 0xE0) == 0xC0) {
+            if (byteIdx + 1 < bytes) {
+                ++pointCount;
+                byteIdx += 2;
+            } else {
+                return std::nullopt;
+            }
+        } else if ((firstByte & 0xF0) == 0xE0) {
+            // Three byte character
+            if (byteIdx + 2 < bytes) {
+                ++pointCount;
+                byteIdx += 3;
+            } else {
+                return std::nullopt;
+            }
+        } else if ((firstByte & 0xF8) == 0xF0) {
+            if (byteIdx + 3 < bytes) {
+                ++pointCount;
+                byteIdx += 4;
+            } else {
+                return std::nullopt;
+            }
+        } else {
+            return std::nullopt;
         }
-        currentCodePoint++;
     }
 
-    // At this point, currentByte points to the start of the idx-th code point
-    // Decode the code point
-    CodePoint codePoint =  0;
-    size_t bytesInSequence =  0;
-    if ((buffer[currentByte] &  0x80) ==  0) { //  1-byte sequence
-        codePoint = buffer[currentByte];
-        bytesInSequence =  1;
-    } else if ((buffer[currentByte] &  0xE0) ==  0xC0) { //  2-byte sequence
-        codePoint = buffer[currentByte] &  0x1F;
-        bytesInSequence =  2;
-    } else if ((buffer[currentByte] &  0xF0) ==  0xE0) { //  3-byte sequence
-        codePoint = buffer[currentByte] &  0x0F;
-        bytesInSequence =  3;
-    } else if ((buffer[currentByte] &  0xF8) ==  0xF0) { //  4-byte sequence
-        codePoint = buffer[currentByte] &  0x07;
-        bytesInSequence =  4;
+    if (pointCount == idx) {
+        if ((buffer[byteIdx] & 0x80) == 0) {
+            return buffer[byteIdx];
+        } else if ((buffer[byteIdx] & 0xE0) == 0xC0) {
+            return ((buffer[byteIdx] & 0x1F) << 6) | (buffer[byteIdx + 1] & 0x3F);
+        } else if ((buffer[byteIdx] & 0xF0) == 0xE0) {
+            return ((buffer[byteIdx] & 0x0F) << 12) | ((buffer[byteIdx + 1] & 0x3F) << 6) | (buffer[byteIdx + 2] & 0x3F);
+        } else if ((buffer[byteIdx] & 0xF8) == 0xF0) {
+            return ((buffer[byteIdx] & 0x07) << 18) | ((buffer[byteIdx + 1] & 0x3F) << 12) | ((buffer[byteIdx + 2] & 0x3F) << 6) | (buffer[byteIdx + 3] & 0x3F);
+        }
     }
 
-    // Decode the remaining bytes
-    for (size_t i =  1; i < bytesInSequence; ++i) {
-        codePoint <<=  6; // Shift left to make room for the next  6 bits
-        codePoint |= (buffer[currentByte + i] &  0x3F); // Add the next  6 bits
-    }
-
-    return codePoint;
+    return std::nullopt;
 }
 
 
