@@ -1,0 +1,22 @@
+[
+{
+  "directory": "/home/kudla/cpp-vsb/task3/build",
+  "command": "/usr/bin/g++    -g -fsanitize=address -g -Wall -Wextra -pedantic -o CMakeFiles/tasks.dir/main.cpp.o -c /home/kudla/cpp-vsb/task3/main.cpp",
+  "file": "/home/kudla/cpp-vsb/task3/main.cpp"
+},
+{
+  "directory": "/home/kudla/cpp-vsb/task3/build",
+  "command": "/usr/bin/g++    -g -fsanitize=address -g -Wall -Wextra -pedantic -o CMakeFiles/tasks.dir/tasks.cpp.o -c /home/kudla/cpp-vsb/task3/tasks.cpp",
+  "file": "/home/kudla/cpp-vsb/task3/tasks.cpp"
+},
+{
+  "directory": "/home/kudla/cpp-vsb/task3/build",
+  "command": "/usr/bin/g++    -g -fsanitize=address -g -Wall -Wextra -pedantic -o CMakeFiles/tests.dir/tests.cpp.o -c /home/kudla/cpp-vsb/task3/tests.cpp",
+  "file": "/home/kudla/cpp-vsb/task3/tests.cpp"
+},
+{
+  "directory": "/home/kudla/cpp-vsb/task3/build",
+  "command": "/usr/bin/g++    -g -fsanitize=address -g -Wall -Wextra -pedantic -o CMakeFiles/tests.dir/tasks.cpp.o -c /home/kudla/cpp-vsb/task3/tasks.cpp",
+  "file": "/home/kudla/cpp-vsb/task3/tasks.cpp"
+}
+]
