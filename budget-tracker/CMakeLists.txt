@@ -13,4 +13,4 @@ endif()
 add_compile_options(-Wall -Wextra -pedantic)
 
 # Use main.cpp to call and debug your functions
-add_executable(main main.cpp)
+add_executable(main main.cpp utils.cpp)

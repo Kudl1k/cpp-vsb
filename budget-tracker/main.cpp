@@ -1,9 +1,15 @@
+#include "utils.h"
+
 #include <iostream>
 
 
 int main(){
 
-    std::cout << "Hello, World!" << std::endl;
+    
+    clear_console();
+    
 
     return 0;
 }
+
+

@@ -1,5 +1,5 @@
-CMakeFiles/main.dir/main.cpp.o: \
- /home/kudla/cpp-vsb/budget-tracker/main.cpp /usr/include/stdc-predef.h \
+CMakeFiles/main.dir/utils.cpp.o: \
+ /home/kudla/cpp-vsb/budget-tracker/utils.cpp /usr/include/stdc-predef.h \
  /home/kudla/cpp-vsb/budget-tracker/utils.h /usr/include/c++/11/iostream \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \

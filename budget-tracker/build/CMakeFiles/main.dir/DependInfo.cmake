@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/kudla/cpp-vsb/budget-tracker/main.cpp" "CMakeFiles/main.dir/main.cpp.o" "gcc" "CMakeFiles/main.dir/main.cpp.o.d"
+  "/home/kudla/cpp-vsb/budget-tracker/utils.cpp" "CMakeFiles/main.dir/utils.cpp.o" "gcc" "CMakeFiles/main.dir/utils.cpp.o.d"
   )
 
 # Targets to which this target links.
