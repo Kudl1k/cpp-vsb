@@ -20,16 +20,21 @@ std::string getOsName() {
 }
 
 void clear_console(){
-    std::string system = getOsName();
-    if (system == "Windows 32-bit" || system == "Windows 64-bit")
+    std::string system_name = getOsName();
+    if (system_name == "Windows 32-bit" || system_name == "Windows 64-bit")
+    {
+        #ifdef _WIN64
+        system(cls);
+        #endif
+        #ifdef _WIN32
+        system(cls);
+        #endif
+    }
+    else if (system_name == "Mac OSX")
     {
         /* code */
     }
-    else if (system == "Mac OSX")
-    {
-        /* code */
-    }
-    else if (system == "Linux")
+    else if (system_name == "Linux")
     {
         std::cout << "\x1B[2J\x1B[H";
     }
