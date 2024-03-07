@@ -185,39 +185,39 @@ TEST_CASE("Parse complex") {
     REQUIRE(parser3(b) == b + 3);
 }
 
-// TEST_CASE("Parse regex 1") {
-//     auto parser1 = regex_match(R"(\d{2,4})");
+TEST_CASE("Parse regex 1") {
+    auto parser1 = regex_match(R"(\d{2,4})");
 
-//     REQUIRE(parser1("") == nullptr);
-//     REQUIRE(parser1("1") == nullptr);
-//     REQUIRE(parser1("abcd") == nullptr);
-//     REQUIRE(parser1("a123") == nullptr);
+    REQUIRE(parser1("") == nullptr);
+    REQUIRE(parser1("1") == nullptr);
+    REQUIRE(parser1("abcd") == nullptr);
+    REQUIRE(parser1("a123") == nullptr);
 
-//     auto a = "123";
-//     REQUIRE(parser1(a) == a + 3);
+    auto a = "123";
+    REQUIRE(parser1(a) == a + 3);
 
-//     auto b = "123ab";
-//     REQUIRE(parser1(b) == b + 3);
+    auto b = "123ab";
+    REQUIRE(parser1(b) == b + 3);
 
-//     auto c = "12345";
-//     REQUIRE(parser1(c) == c + 4);
-// }
+    auto c = "12345";
+    REQUIRE(parser1(c) == c + 4);
+}
 
-// TEST_CASE("Parse regex 2") {
-//     auto parser1 = regex_match(R"([a-zA-Z]{3}\d{2,4}$)");
+TEST_CASE("Parse regex 2") {
+    auto parser1 = regex_match(R"([a-zA-Z]{3}\d{2,4}$)");
 
-//     REQUIRE(parser1("") == nullptr);
-//     REQUIRE(parser1("abc1") == nullptr);
-//     REQUIRE(parser1("abc12345") == nullptr);
-//     REQUIRE(parser1("ab123") == nullptr);
-//     REQUIRE(parser1("1abc123") == nullptr);
+    REQUIRE(parser1("") == nullptr);
+    REQUIRE(parser1("abc1") == nullptr);
+    REQUIRE(parser1("abc12345") == nullptr);
+    REQUIRE(parser1("ab123") == nullptr);
+    REQUIRE(parser1("1abc123") == nullptr);
 
-//     auto a = "abc1234";
-//     REQUIRE(parser1(a) == a + 7);
+    auto a = "abc1234";
+    REQUIRE(parser1(a) == a + 7);
 
-//     auto b = "abc12";
-//     REQUIRE(parser1(b) == b + 5);
-// }
+    auto b = "abc12";
+    REQUIRE(parser1(b) == b + 5);
+}
 
 TEST_CASE("Skip Whitespace") {
     auto parser1 = skip_ws();

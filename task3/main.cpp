@@ -3,16 +3,9 @@
 int main() {
 
 
-    auto parser = repeat(
-        create_char_parser('a'),
-        3
-    );
+    auto parser1 = skip_ws();
 
-    std::cout << "Start" << std::endl;
-    std::cout << parser("a") << std::endl;
-    std::cout << parser("aa") << std::endl;
-    std::cout << parser("aaa") << std::endl;
-    std::cout << parser("aaaa") << std::endl;
+    std::cout << parser1("   123") << std::endl;
 
     return 0;
 }
