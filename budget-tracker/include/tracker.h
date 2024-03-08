@@ -16,13 +16,6 @@ public:
 
     void tracker();
 
-    void toggle_exit();
-    void toggle_setup();
-    void setup_tracker();
-    void print_actions();
-
-    void input_handle();
-
 private:
 
     int xMax = 0;
