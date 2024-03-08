@@ -3,14 +3,16 @@
 
 
 #include <iostream>
+#include <ncurses.h>
 
 
 int main(){
-    clear_console();
+    initscr();			/* Start curses mode 		  */
+	printw("Hello World !!!");	/* Print Hello World		  */
+	refresh();			/* Print it on to the real screen */
+	getch();			/* Wait for user input */
+	endwin();			/* End curses mode		  */
 
-    Tracker tracker;
-
-    tracker.tracker();
     
     return 0;
 }

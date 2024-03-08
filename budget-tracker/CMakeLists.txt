@@ -12,5 +12,11 @@ endif()
 
 add_compile_options(-Wall -Wextra -pedantic)
 
+# Set your source files
+set(SOURCES main.cpp utils.cpp tracker.cpp)
+
 # Use main.cpp to call and debug your functions
-add_executable(main main.cpp utils.cpp)
+add_executable(main ${SOURCES})
+
+
+target_link_libraries(main ncurses)

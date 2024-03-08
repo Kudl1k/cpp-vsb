@@ -153,6 +153,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+tracker.o: tracker.cpp.o
+.PHONY : tracker.o
+
+# target to build an object file
+tracker.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/tracker.cpp.o
+.PHONY : tracker.cpp.o
+
+tracker.i: tracker.cpp.i
+.PHONY : tracker.i
+
+# target to preprocess a source file
+tracker.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/tracker.cpp.i
+.PHONY : tracker.cpp.i
+
+tracker.s: tracker.cpp.s
+.PHONY : tracker.s
+
+# target to generate assembly for a file
+tracker.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/tracker.cpp.s
+.PHONY : tracker.cpp.s
+
 utils.o: utils.cpp.o
 .PHONY : utils.o
 
@@ -189,6 +213,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... tracker.o"
+	@echo "... tracker.i"
+	@echo "... tracker.s"
 	@echo "... utils.o"
 	@echo "... utils.i"
 	@echo "... utils.s"

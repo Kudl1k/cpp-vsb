@@ -1,6 +1,7 @@
-CMakeFiles/main.dir/main.cpp.o: \
- /home/kudla/cpp-vsb/budget-tracker/main.cpp /usr/include/stdc-predef.h \
- /home/kudla/cpp-vsb/budget-tracker/utils.h /usr/include/c++/11/iostream \
+CMakeFiles/main.dir/tracker.cpp.o: \
+ /home/kudla/cpp-vsb/budget-tracker/tracker.cpp \
+ /usr/include/stdc-predef.h /home/kudla/cpp-vsb/budget-tracker/tracker.h \
+ /usr/include/c++/11/iostream \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -145,7 +146,4 @@ CMakeFiles/main.dir/main.cpp.o: \
  /usr/include/c++/11/bits/locale_facets.tcc \
  /usr/include/c++/11/bits/basic_ios.tcc \
  /usr/include/c++/11/bits/ostream.tcc /usr/include/c++/11/istream \
- /usr/include/c++/11/bits/istream.tcc \
- /home/kudla/cpp-vsb/budget-tracker/tracker.h /usr/include/curses.h \
- /usr/include/ncurses_dll.h /usr/include/unctrl.h /usr/include/curses.h \
- /usr/include/c++/11/cstring /usr/include/string.h /usr/include/strings.h
+ /usr/include/c++/11/bits/istream.tcc
