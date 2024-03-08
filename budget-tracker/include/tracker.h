@@ -25,6 +25,8 @@ public:
 
     void welcome_screen();
 
+    void setup_screen();
+
 private:
 
     WINDOW* main_win;
