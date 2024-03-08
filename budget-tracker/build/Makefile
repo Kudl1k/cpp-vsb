@@ -129,6 +129,30 @@ main/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
 
+src/editor.o: src/editor.cpp.o
+.PHONY : src/editor.o
+
+# target to build an object file
+src/editor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/editor.cpp.o
+.PHONY : src/editor.cpp.o
+
+src/editor.i: src/editor.cpp.i
+.PHONY : src/editor.i
+
+# target to preprocess a source file
+src/editor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/editor.cpp.i
+.PHONY : src/editor.cpp.i
+
+src/editor.s: src/editor.cpp.s
+.PHONY : src/editor.s
+
+# target to generate assembly for a file
+src/editor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/editor.cpp.s
+.PHONY : src/editor.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -210,6 +234,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... main"
+	@echo "... src/editor.o"
+	@echo "... src/editor.i"
+	@echo "... src/editor.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

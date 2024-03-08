@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 option(DISABLE_ASAN "Do not use Address sanitizer" OFF)
 
 if(NOT DISABLE_ASAN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -Wno-sign-compare")
 endif()
 
 add_compile_options(-Wall -Wextra -pedantic)
@@ -15,7 +15,11 @@ add_compile_options(-Wall -Wextra -pedantic)
 include_directories(include)
 
 # Set your source files
-set(SOURCES src/main.cpp src/utils.cpp src/tracker.cpp)
+set(SOURCES 
+    src/main.cpp 
+    src/tracker.cpp 
+    src/editor.cpp 
+)
 
 # Use main.cpp to call and debug your functions
 add_executable(main ${SOURCES})

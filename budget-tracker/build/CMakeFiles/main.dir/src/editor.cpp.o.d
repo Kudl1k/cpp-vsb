@@ -1,7 +1,6 @@
-CMakeFiles/main.dir/src/tracker.cpp.o: \
- /home/kudla/cpp-vsb/budget-tracker/src/tracker.cpp \
+CMakeFiles/main.dir/src/editor.cpp.o: \
+ /home/kudla/cpp-vsb/budget-tracker/src/editor.cpp \
  /usr/include/stdc-predef.h \
- /home/kudla/cpp-vsb/budget-tracker/include/tracker.h \
  /home/kudla/cpp-vsb/budget-tracker/include/editor.h \
  /usr/include/c++/11/iostream \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
@@ -150,8 +149,4 @@ CMakeFiles/main.dir/src/tracker.cpp.o: \
  /usr/include/c++/11/bits/ostream.tcc /usr/include/c++/11/istream \
  /usr/include/c++/11/bits/istream.tcc /usr/include/curses.h \
  /usr/include/ncurses_dll.h /usr/include/unctrl.h /usr/include/curses.h \
- /usr/include/c++/11/cstring /usr/include/string.h /usr/include/strings.h \
- /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_uninitialized.h \
- /usr/include/c++/11/bits/stl_vector.h \
- /usr/include/c++/11/bits/stl_bvector.h \
- /usr/include/c++/11/bits/vector.tcc
+ /usr/include/c++/11/cstring /usr/include/string.h /usr/include/strings.h

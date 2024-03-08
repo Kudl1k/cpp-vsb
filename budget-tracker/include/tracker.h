@@ -1,6 +1,11 @@
 #pragma once
 
+#include <editor.h>
+
 #include <iostream>
+#include <ncurses.h>
+#include <string>
+#include <vector>
 
 
 class Tracker
@@ -19,6 +24,11 @@ public:
     void input_handle();
 
 private:
+
+    int xMax = 0;
+    int yMax = 0;
+
+
     bool exit = false;
     bool setup = false;
 
