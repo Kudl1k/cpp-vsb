@@ -1,29 +1,25 @@
 #include "tasks.h"
 
-// TODO: implement functions from tasks.h
-
-
 Parser create_char_parser(const char c){
     return [c] (const char* it) -> const char* {
         if (it == nullptr)
         {
             return nullptr;
         }
-        
-        if (*it == c){
+        if (*it == c){    
             return it + 1;
         } else {
             return nullptr;
         }
     };
 }
-//Use std::regex, std::cmatch and std::regex_search to implement this parser.
-//Avoid using regex_match to implement other parsers when possible for performance reasons.
+
+
 Parser regex_match(const char* e){
     return [e] (const char* ie) -> const char* {
         std::cmatch match;
         bool res = regex_search(ie,match,std::regex(e));
-        if (res) {    
+        if (res && match.position() == 0) {    
             return ie + match.length();
         } else {
             return nullptr;
@@ -45,7 +41,6 @@ Parser skip_ws(){
         return input;  
     };
 }
-
 
 
 Parser any_of(std::vector<Parser> p) {
@@ -108,16 +103,9 @@ Parser create_word_parser(const char* w){
             return nullptr;
         }
         size_t word_len = strlen(w);
-        size_t it_len = strlen(it);
-        if (it_len < word_len) {
-            return nullptr;
-        }
-        for (size_t i = 0; i < (it_len - word_len); i++)
+        if (strncmp(it,w,word_len) == 0)
         {
-            if (strncmp(it + i,w, word_len) == 0)
-            {
-                return it + i + word_len;
-            }
+            return it + word_len;
         }
         return nullptr;
     };
