@@ -11,7 +11,6 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/kudla/cpp-vsb/budget-tracker/src/editor.cpp" "CMakeFiles/main.dir/src/editor.cpp.o" "gcc" "CMakeFiles/main.dir/src/editor.cpp.o.d"
   "/home/kudla/cpp-vsb/budget-tracker/src/main.cpp" "CMakeFiles/main.dir/src/main.cpp.o" "gcc" "CMakeFiles/main.dir/src/main.cpp.o.d"
   "/home/kudla/cpp-vsb/budget-tracker/src/tracker.cpp" "CMakeFiles/main.dir/src/tracker.cpp.o" "gcc" "CMakeFiles/main.dir/src/tracker.cpp.o.d"
-  "/home/kudla/cpp-vsb/budget-tracker/src/utils.cpp" "CMakeFiles/main.dir/src/utils.cpp.o" "gcc" "CMakeFiles/main.dir/src/utils.cpp.o.d"
   )
 
 # Targets to which this target links.

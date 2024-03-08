@@ -7,6 +7,13 @@
 #include <string>
 #include <vector>
 
+enum State{
+    WELCOME,
+    SETUP,
+    MAIN
+};
+
+
 
 class Tracker
 {
@@ -16,16 +23,19 @@ public:
 
     void tracker();
 
+    void welcome_screen();
+
 private:
+
+    WINDOW* main_win;
 
     int xMax = 0;
     int yMax = 0;
 
+    int choice;
+    int highlight = 0;
 
-    bool exit = false;
-    bool setup = false;
-
-    std::string input = "";
+    State state = WELCOME;
 
 };
 
