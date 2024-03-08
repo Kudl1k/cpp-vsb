@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -I/home/kudla/cpp-vsb/budget-tracker/include
 
 CXX_FLAGS =  -g -fsanitize=address -Wall -Wextra -pedantic
 

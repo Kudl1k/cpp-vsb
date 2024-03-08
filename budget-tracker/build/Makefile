@@ -129,77 +129,77 @@ main/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
 
-main.o: main.cpp.o
-.PHONY : main.o
+src/main.o: src/main.cpp.o
+.PHONY : src/main.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.o
-.PHONY : main.cpp.o
+src/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.o
+.PHONY : src/main.cpp.o
 
-main.i: main.cpp.i
-.PHONY : main.i
+src/main.i: src/main.cpp.i
+.PHONY : src/main.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.i
-.PHONY : main.cpp.i
+src/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
 
-main.s: main.cpp.s
-.PHONY : main.s
+src/main.s: src/main.cpp.s
+.PHONY : src/main.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.s
-.PHONY : main.cpp.s
+src/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
 
-tracker.o: tracker.cpp.o
-.PHONY : tracker.o
+src/tracker.o: src/tracker.cpp.o
+.PHONY : src/tracker.o
 
 # target to build an object file
-tracker.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/tracker.cpp.o
-.PHONY : tracker.cpp.o
+src/tracker.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/tracker.cpp.o
+.PHONY : src/tracker.cpp.o
 
-tracker.i: tracker.cpp.i
-.PHONY : tracker.i
+src/tracker.i: src/tracker.cpp.i
+.PHONY : src/tracker.i
 
 # target to preprocess a source file
-tracker.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/tracker.cpp.i
-.PHONY : tracker.cpp.i
+src/tracker.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/tracker.cpp.i
+.PHONY : src/tracker.cpp.i
 
-tracker.s: tracker.cpp.s
-.PHONY : tracker.s
+src/tracker.s: src/tracker.cpp.s
+.PHONY : src/tracker.s
 
 # target to generate assembly for a file
-tracker.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/tracker.cpp.s
-.PHONY : tracker.cpp.s
+src/tracker.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/tracker.cpp.s
+.PHONY : src/tracker.cpp.s
 
-utils.o: utils.cpp.o
-.PHONY : utils.o
+src/utils.o: src/utils.cpp.o
+.PHONY : src/utils.o
 
 # target to build an object file
-utils.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/utils.cpp.o
-.PHONY : utils.cpp.o
+src/utils.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/utils.cpp.o
+.PHONY : src/utils.cpp.o
 
-utils.i: utils.cpp.i
-.PHONY : utils.i
+src/utils.i: src/utils.cpp.i
+.PHONY : src/utils.i
 
 # target to preprocess a source file
-utils.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/utils.cpp.i
-.PHONY : utils.cpp.i
+src/utils.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/utils.cpp.i
+.PHONY : src/utils.cpp.i
 
-utils.s: utils.cpp.s
-.PHONY : utils.s
+src/utils.s: src/utils.cpp.s
+.PHONY : src/utils.s
 
 # target to generate assembly for a file
-utils.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/utils.cpp.s
-.PHONY : utils.cpp.s
+src/utils.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/utils.cpp.s
+.PHONY : src/utils.cpp.s
 
 # Help Target
 help:
@@ -210,15 +210,15 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... main"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
-	@echo "... tracker.o"
-	@echo "... tracker.i"
-	@echo "... tracker.s"
-	@echo "... utils.o"
-	@echo "... utils.i"
-	@echo "... utils.s"
+	@echo "... src/main.o"
+	@echo "... src/main.i"
+	@echo "... src/main.s"
+	@echo "... src/tracker.o"
+	@echo "... src/tracker.i"
+	@echo "... src/tracker.s"
+	@echo "... src/utils.o"
+	@echo "... src/utils.i"
+	@echo "... src/utils.s"
 .PHONY : help
 
 

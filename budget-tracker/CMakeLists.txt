@@ -12,8 +12,10 @@ endif()
 
 add_compile_options(-Wall -Wextra -pedantic)
 
+include_directories(include)
+
 # Set your source files
-set(SOURCES main.cpp utils.cpp tracker.cpp)
+set(SOURCES src/main.cpp src/utils.cpp src/tracker.cpp)
 
 # Use main.cpp to call and debug your functions
 add_executable(main ${SOURCES})
