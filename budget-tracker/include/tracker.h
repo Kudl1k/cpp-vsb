@@ -1,11 +1,15 @@
 #pragma once
 
-#include <editor.h>
+#include "editor.h"
+#include "user.h"
+
 
 #include <iostream>
 #include <ncurses.h>
 #include <string>
 #include <vector>
+#include <stdexcept>
+
 
 enum State{
     WELCOME,
@@ -37,7 +41,12 @@ private:
     int choice;
     int highlight = 0;
 
+    bool name_entered = false;
+    bool balance_entered = false;
+
     State state = WELCOME;
+
+    User *user;
 
 };
 

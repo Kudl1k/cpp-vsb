@@ -151,6 +151,7 @@ CMakeFiles/main.dir/src/tracker.cpp.o: \
  /usr/include/c++/11/bits/istream.tcc /usr/include/curses.h \
  /usr/include/ncurses_dll.h /usr/include/unctrl.h /usr/include/curses.h \
  /usr/include/c++/11/cstring /usr/include/string.h /usr/include/strings.h \
+ /home/kudla/cpp-vsb/budget-tracker/include/user.h \
  /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_uninitialized.h \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \

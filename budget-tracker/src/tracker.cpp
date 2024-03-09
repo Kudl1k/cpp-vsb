@@ -94,54 +94,66 @@ void Tracker::welcome_screen(){
 void Tracker::setup_screen(){
     cbreak();
     curs_set(1);
-    box(main_win,0,0);
+    box(main_win, 0, 0);
     
-    char input[20];
-
-    std::string input_name = "";
-    float input_balance = 0;
-
-
-    bool name = false;
-    bool balance = false;
+    char input_name[20];
+    char input_balance[20];
 
     
-    if (!name)
+
+    
+    if (!name_entered)
     {
-        edit::print_text_middle(main_win,0,yMax/2-2,xMax,"Enter your name:");
+        wclear(main_win);
+        box(main_win, 0, 0);
+        edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Enter your name: ");
         wrefresh(main_win);
-        wgetstr(main_win,input);
-        if (input != "")
+        wgetstr(main_win, input_name);
+        if (strcmp(input_name,"") == 0)
         {
-            input_name = input;
-            name = true;
-        }   
+            wclear(main_win);
+            box(main_win, 0, 0);
+            edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Invalid name. Press any key to reset.");
+            wrefresh(main_win);
+            wgetch(main_win);
+        }
+        else{
+            name_entered = true;
+
+        }
+        
     }
-    else if (!balance)
+    if (!balance_entered && name_entered)
     {
-        edit::print_text_middle(main_win,0,yMax/2-2,xMax,"Enter your balance:");
+        wclear(main_win);
+        box(main_win, 0, 0);
+        edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Enter your balance: ");
         wrefresh(main_win);
-        wgetstr(main_win,input);
-        if (input != "")
-        {
-            try {
-                input_balance = std::stof(input);
-                balance = true;
-            } catch (const std::invalid_argument& e) {
-                // Handle the case where the input is not a valid floating-point number
-                std::cout << "Error: Invalid input. Please enter a number." << std::endl;
-                // Optionally, you can clear the input or prompt the user again
-            } catch (const std::out_of_range& e) {
-                // Handle the case where the input is a number but out of the range of representable values
-                std::cout << "Error: The number is out of range." << std::endl;
-            }
-        }  
+        wgetstr(main_win, input_balance);
+        balance_entered = true;
+
+        try {
+            float balance = std::stof(input_balance);
+            user = new User{input_name, balance};
+        } catch (const std::invalid_argument& e) {
+            wclear(main_win);
+            box(main_win, 0, 0);
+            edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Invalid balance input. Press any key to reset.");
+            wrefresh(main_win);
+            wgetch(main_win);
+            balance_entered = false;
+        }
     }
-    
-    
-
-
-    wrefresh(main_win);
-
-
+    if (balance_entered && name_entered)
+    {
+        float bal = std::atof(input_balance);
+        user = new User{input_name,bal};
+        curs_set(0);
+        noecho();
+        wclear(main_win);
+        box(main_win, 0, 0);
+        edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Your profile is set.");
+        wrefresh(main_win);
+        wgetch(main_win);
+    }
 }

@@ -19,6 +19,7 @@ set(SOURCES
     src/main.cpp 
     src/tracker.cpp 
     src/editor.cpp 
+    src/user.cpp
 )
 
 # Use main.cpp to call and debug your functions
