@@ -28,8 +28,8 @@ public:
     void tracker();
 
     void welcome_screen();
-
     void setup_screen();
+    void main_screen();
 
 private:
 
@@ -43,6 +43,7 @@ private:
 
     bool name_entered = false;
     bool balance_entered = false;
+
 
     State state = WELCOME;
 

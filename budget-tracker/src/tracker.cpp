@@ -24,6 +24,7 @@ Deconstructor of Tracker class
 Disabling the terminal state.
 */
 Tracker::~Tracker(){
+    delete user;
     endwin();
 }
 
@@ -34,10 +35,15 @@ void Tracker::tracker(){
         {
             welcome_screen();
         }
-        else if (state == SETUP)
+        else if (state == SETUP && highlight == 0)
         {
             setup_screen();
-        }    
+        }
+        else if (state == MAIN)
+        {
+            main_screen();
+        }
+            
     }
     wrefresh(main_win);
     getch();
@@ -86,13 +92,20 @@ void Tracker::welcome_screen(){
     {
         wclear(main_win);
         wrefresh(main_win);
-        state = SETUP;
+        if (highlight == 0)
+        {
+            state = SETUP;
+        }
+        else {
+            state = MAIN;
+            user = new User{"Simulation User",300};
+        }
+        
     }
 }
 
 
 void Tracker::setup_screen(){
-    cbreak();
     curs_set(1);
     box(main_win, 0, 0);
     
@@ -152,8 +165,27 @@ void Tracker::setup_screen(){
         noecho();
         wclear(main_win);
         box(main_win, 0, 0);
-        edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Your profile is set.");
+        edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Your profile is set. Press any key to start.");
         wrefresh(main_win);
         wgetch(main_win);
+        state = MAIN;
     }
+}
+
+
+void Tracker::main_screen(){
+    wclear(main_win);
+    box(main_win, 0, 0);
+    
+    edit::print_user_info(main_win,1,"Name:",user->getName());
+    std::string bal = std::to_string(user->getBalance());
+    edit::print_user_info(main_win,2,"Balance:",bal.substr(0,bal.length()-4) + " $");
+
+    
+
+
+
+    wrefresh(main_win);
+
+    wgetch(main_win);
 }
