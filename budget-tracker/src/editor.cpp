@@ -1,7 +1,7 @@
 #include "editor.h"
 
 
-void edit::print_text_middle(WINDOW* win, int startx, int starty, int width, const std::string& text){
+void edit::print_text_middle(WINDOW* win, int startx, int starty, int width, const std::string& text,bool bold){
 
     int y, x;
     getyx(win, y, x);
@@ -17,7 +17,12 @@ void edit::print_text_middle(WINDOW* win, int startx, int starty, int width, con
     int length = text.length();
     int temp = (width - length) / 2;
     x = startx + temp;
+    if (bold)
+    {
+        attron(A_BOLD);
+    }
     mvwprintw(win, y, x, "%s", text.c_str());
+    attroff(A_BOLD);
 }
 
 void edit::print_user_info(WINDOW* win, int starty, const std::string& info, const std::string& text) {

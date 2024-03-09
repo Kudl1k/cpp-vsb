@@ -14,7 +14,8 @@
 enum State{
     WELCOME,
     SETUP,
-    MAIN
+    MAIN,
+    END
 };
 
 
@@ -34,6 +35,7 @@ public:
 private:
 
     WINDOW* main_win;
+    WINDOW* option_win;
 
     int xMax = 0;
     int yMax = 0;
@@ -44,6 +46,7 @@ private:
     bool name_entered = false;
     bool balance_entered = false;
 
+    bool toggle_options = false;
 
     State state = WELCOME;
 

@@ -12,6 +12,7 @@ Tracker::Tracker(){
     curs_set(0);
     getmaxyx(stdscr,yMax,xMax);
     main_win = newwin(yMax,xMax,0,0);
+    option_win = newwin(yMax/2,xMax-2,yMax/2-1,1);
     box(main_win,0,0);
     refresh();
     keypad(main_win, true);
@@ -43,17 +44,18 @@ void Tracker::tracker(){
         {
             main_screen();
         }
-            
+        else if (state == END)
+        {
+            break;;
+        }
+        
     }
-    wrefresh(main_win);
-    getch();
-    
 }
 
 void Tracker::welcome_screen(){
     box(main_win,0,0);
-    edit::print_text_middle(main_win,0,yMax/2-6,xMax,"Budget Tracker - KUD0132");
-    edit::print_text_middle(main_win,0,yMax/2-2,xMax,"Choose version:");
+    edit::print_text_middle(main_win,0,yMax/2-6,xMax,"Budget Tracker - KUD0132",true);
+    edit::print_text_middle(main_win,0,yMax/2-2,xMax,"Choose version:",true);
 
     std::vector options = {"Plain","Simulation"};
     int option_row = 0;
@@ -63,7 +65,7 @@ void Tracker::welcome_screen(){
         {
             wattron(main_win,A_REVERSE);
         }
-        edit::print_text_middle(main_win,0,yMax/2+option_row,xMax,options[i]);
+        edit::print_text_middle(main_win,0,yMax/2+option_row,xMax,options[i],false);
         option_row++;
         wattroff(main_win,A_REVERSE);
     }
@@ -75,14 +77,14 @@ void Tracker::welcome_screen(){
             highlight--;
             if (highlight == -1)
             {
-                highlight = 0;
+                highlight = options.size()-1;
             } 
             break;
         case KEY_DOWN:
             highlight++;
             if (highlight > options.size()-1)
             {
-                highlight = options.size()-1;
+                highlight = 0;
             }
             break;
         default:
@@ -119,14 +121,14 @@ void Tracker::setup_screen(){
     {
         wclear(main_win);
         box(main_win, 0, 0);
-        edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Enter your name: ");
+        edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Enter your name: ",true);
         wrefresh(main_win);
         wgetstr(main_win, input_name);
         if (strcmp(input_name,"") == 0)
         {
             wclear(main_win);
             box(main_win, 0, 0);
-            edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Invalid name. Press any key to reset.");
+            edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Invalid name. Press any key to reset.",true);
             wrefresh(main_win);
             wgetch(main_win);
         }
@@ -140,7 +142,7 @@ void Tracker::setup_screen(){
     {
         wclear(main_win);
         box(main_win, 0, 0);
-        edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Enter your balance: ");
+        edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Enter your balance: ",true);
         wrefresh(main_win);
         wgetstr(main_win, input_balance);
         balance_entered = true;
@@ -151,7 +153,7 @@ void Tracker::setup_screen(){
         } catch (const std::invalid_argument& e) {
             wclear(main_win);
             box(main_win, 0, 0);
-            edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Invalid balance input. Press any key to reset.");
+            edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Invalid balance input. Press any key to reset.",true);
             wrefresh(main_win);
             wgetch(main_win);
             balance_entered = false;
@@ -165,7 +167,7 @@ void Tracker::setup_screen(){
         noecho();
         wclear(main_win);
         box(main_win, 0, 0);
-        edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Your profile is set. Press any key to start.");
+        edit::print_text_middle(main_win, 0, yMax / 2, xMax, "Your profile is set. Press any key to start.",true);
         wrefresh(main_win);
         wgetch(main_win);
         state = MAIN;
@@ -181,11 +183,46 @@ void Tracker::main_screen(){
     std::string bal = std::to_string(user->getBalance());
     edit::print_user_info(main_win,2,"Balance:",bal.substr(0,bal.length()-4) + " $");
 
+    // Display message about toggling options
+    if (!toggle_options) {
+        std::string message = "Press 'o' to show options.";
+        edit::print_text_middle(main_win,0,yMax-2,xMax,message,true);
+    } else {
+        std::string message = "Press 'o' to hide options.";
+        edit::print_text_middle(main_win,0,yMax-2,xMax,message,true);
+    }
     
+    // Clear and refresh option_win to ensure it's ready for new content
+    wclear(option_win);
+    if (toggle_options) {
+        box(option_win,0,0);
+        // Print options to option_win
+        mvwprintw(option_win, 1, 1, "Option 1");
+        mvwprintw(option_win, 2, 1, "Option 2");
+        mvwprintw(option_win, 3, 1, "Option 3");
+    }
+    wrefresh(main_win); // Refresh main_win to ensure it's up to date
+    wrefresh(option_win); // Refresh option_win after updating its content
 
 
-
-    wrefresh(main_win);
-
-    wgetch(main_win);
+    int ch = wgetch(main_win);
+    
+    switch (ch) {
+        case 'o':
+            toggle_options = !toggle_options;
+            // Refresh option_win after toggling options
+            wrefresh(option_win);
+            break;
+        case 'q':
+            state = END;
+            break;
+        case KEY_DOWN:
+            // Handle down arrow key
+            break;
+        case '\n': // Enter key
+            // Handle menu item selection
+            break;
+        default:
+            break;
+    }
 }
