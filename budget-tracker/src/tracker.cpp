@@ -12,7 +12,7 @@ Tracker::Tracker(){
     curs_set(0);
     getmaxyx(stdscr,yMax,xMax);
     main_win = newwin(yMax,xMax,0,0);
-    option_win = newwin(yMax/2,xMax-2,yMax/2-2,1);
+    option_win = newwin(3,xMax-2,yMax-5,1);
     box(main_win,0,0);
     refresh();
     keypad(main_win, true);
@@ -46,7 +46,7 @@ void Tracker::tracker(){
         }
         else if (state == END)
         {
-            break;;
+            break;
         }
         
     }
@@ -214,58 +214,53 @@ void Tracker::main_screen(){
     wrefresh(main_win); // Refresh main_win to ensure it's up to date
     wrefresh(option_win); // Refresh option_win after updating its content
 
+    int main_input = ' ';
 
-    int ch = wgetch(option_win);
-    
-    switch (ch) {
-        case 'o':
-            toggle_options = !toggle_options;
-            // Refresh option_win after toggling options
-            wrefresh(option_win);
-            break;
-        case 'q':
-            state = END;
-            break;
-        case KEY_DOWN:
-            // Handle down arrow key
-            break;
-        case '\n': // Enter key
-            // Handle menu item selection
-            break;
-        default:
-            break;
+    // Correctly capture the input
+    main_input = wgetch(main_win);
+
+    // Move the toggle logic outside of the condition that checks if toggle_options is true
+    if (main_input == 'o') {
+        toggle_options = !toggle_options;
     }
-    
-    
-    choice = wgetch(main_win);
 
-    if (ch == 'o')
-    {
-        switch (choice)
-        {
+    if (toggle_options) {
+        // Handle options navigation and selection
+        switch (main_input) {
             case KEY_UP:
                 highlight--;
-                if (highlight == -1)
-                {
+                if (highlight == -1) {
                     highlight = options.size()-1;
                 } 
                 break;
             case KEY_DOWN:
                 highlight++;
-                if (highlight > options.size()-1)
-                {
+                if (highlight > options.size()-1) {
                     highlight = 0;
                 }
+                break;
+            case 10: // Assuming 10 is the ASCII value for Enter key
+                // Handle option selection here
                 break;
             default:
                 break;
         }
-        if (choice == 10)
-        {
-            wclear(option_win);
-            wrefresh(option_win);    
+    } else {
+        // Handle main input
+        switch (main_input) {
+            case 'q':
+                state = END;
+                break;
+            case KEY_DOWN:
+                break;
+            case '\n':
+                break;
+            default:
+                break;
         }
     }
-    
-    
+
+    // Refresh windows after handling input
+    wrefresh(main_win);
+    wrefresh(option_win); 
 }
