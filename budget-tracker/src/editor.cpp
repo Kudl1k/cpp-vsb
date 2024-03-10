@@ -31,3 +31,10 @@ void edit::print_user_info(WINDOW* win, int starty, const std::string& info, con
     mvwprintw(win, starty, startx_label,"%s", info.c_str());
     mvwprintw(win, starty, startx_text,"%s",text.c_str());
 }
+
+void edit::print_text_at_coordinates(WINDOW* win, int x, int y, const char* text) {
+    // Move the cursor to the specified coordinates
+    wmove(win, y, x);
+    // Print the text at the current cursor position
+    wprintw(win, "%s", text);
+}
