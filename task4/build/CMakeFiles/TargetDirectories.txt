@@ -1,0 +1,3 @@
+/home/kudla/cpp-vsb/task4/build/CMakeFiles/tasks.dir
+/home/kudla/cpp-vsb/task4/build/CMakeFiles/edit_cache.dir
+/home/kudla/cpp-vsb/task4/build/CMakeFiles/rebuild_cache.dir
