@@ -206,7 +206,7 @@ void Tracker::main_screen(){
             {
                 wattron(option_win,A_REVERSE);
             }
-            edit::print_text_middle(option_win,0,yMax/2+option_row,xMax,options[i],false);
+            edit::print_text_at_coordinates(option_win,1+ (i* 20),1,options[i]);
             option_row++;
             wattroff(option_win,A_REVERSE);
         }
@@ -227,13 +227,13 @@ void Tracker::main_screen(){
     if (toggle_options) {
         // Handle options navigation and selection
         switch (main_input) {
-            case KEY_UP:
+            case KEY_LEFT:
                 highlight--;
                 if (highlight == -1) {
                     highlight = options.size()-1;
                 } 
                 break;
-            case KEY_DOWN:
+            case KEY_RIGHT:
                 highlight++;
                 if (highlight > options.size()-1) {
                     highlight = 0;
