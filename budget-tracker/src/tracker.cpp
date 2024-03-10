@@ -12,7 +12,7 @@ Tracker::Tracker(){
     curs_set(0);
     getmaxyx(stdscr,yMax,xMax);
     main_win = newwin(yMax,xMax,0,0);
-    option_win = newwin(yMax/2,xMax-2,yMax/2-1,1);
+    option_win = newwin(yMax/2,xMax-2,yMax/2-2,1);
     box(main_win,0,0);
     refresh();
     keypad(main_win, true);
@@ -191,21 +191,30 @@ void Tracker::main_screen(){
         std::string message = "Press 'o' to hide options.";
         edit::print_text_middle(main_win,0,yMax-2,xMax,message,true);
     }
+    std::vector options = {"Add balance","Add incomes","Add expanses","Get Report"};
     
     // Clear and refresh option_win to ensure it's ready for new content
     wclear(option_win);
     if (toggle_options) {
         box(option_win,0,0);
         // Print options to option_win
-        mvwprintw(option_win, 1, 1, "Option 1");
-        mvwprintw(option_win, 2, 1, "Option 2");
-        mvwprintw(option_win, 3, 1, "Option 3");
+        int option_row = 0;
+        for (int i = 0; i < options.size(); i++)
+        {
+            if (i == highlight)
+            {
+                wattron(option_win,A_REVERSE);
+            }
+            edit::print_text_middle(option_win,0,yMax/2+option_row,xMax,options[i],false);
+            option_row++;
+            wattroff(option_win,A_REVERSE);
+        }
     }
     wrefresh(main_win); // Refresh main_win to ensure it's up to date
     wrefresh(option_win); // Refresh option_win after updating its content
 
 
-    int ch = wgetch(main_win);
+    int ch = wgetch(option_win);
     
     switch (ch) {
         case 'o':
@@ -225,4 +234,37 @@ void Tracker::main_screen(){
         default:
             break;
     }
+    
+    
+    choice = wgetch(option_win);
+
+    if (ch == 'o')
+    {
+        switch (choice)
+        {
+            case KEY_UP:
+                highlight--;
+                if (highlight == -1)
+                {
+                    highlight = options.size()-1;
+                } 
+                break;
+            case KEY_DOWN:
+                highlight++;
+                if (highlight > options.size()-1)
+                {
+                    highlight = 0;
+                }
+                break;
+            default:
+                break;
+        }
+        if (choice == 10)
+        {
+            wclear(option_win);
+            wrefresh(option_win);    
+        }
+    }
+    
+    
 }

@@ -14,11 +14,10 @@ Parser create_char_parser(const char c){
     };
 }
 
-
 Parser regex_match(const char* e){
     return [e] (const char* ie) -> const char* {
         std::cmatch match;
-        bool res = regex_search(ie,match,std::regex(e));
+        bool res = std::regex_search(ie,match,std::regex(e));
         if (res && match.position() == 0) {    
             return ie + match.length();
         } else {
@@ -26,7 +25,6 @@ Parser regex_match(const char* e){
         }
     };
 }
-
 
 Parser skip_ws(){
     return [] (const char* input) -> const char* {
@@ -42,7 +40,6 @@ Parser skip_ws(){
     };
 }
 
-
 Parser any_of(std::vector<Parser> p) {
     return[p] (const char* input) -> const char* {
         for (size_t i = 0; i < p.size(); i++)
@@ -55,7 +52,6 @@ Parser any_of(std::vector<Parser> p) {
         return nullptr;
     };
 }
-
 
 Parser sequence(std::vector<Parser> p){
     return [p] (const char* input) -> const char* {
@@ -73,7 +69,6 @@ Parser sequence(std::vector<Parser> p){
     };
 }
 
-
 Parser repeat(Parser fun,size_t n){
     return [fun,n](const char* input) -> const char* {
         if (input == nullptr)
@@ -83,7 +78,6 @@ Parser repeat(Parser fun,size_t n){
         const char* value = input;
         for (size_t i = 0; i < n; i++)
         {
-            
             const char* next_value = fun(value);
             if (next_value == nullptr)
             {
@@ -95,22 +89,10 @@ Parser repeat(Parser fun,size_t n){
     };
 }
 
-
 Parser create_word_parser(const char* w){
-    return [w] (const char* it) -> const char*{
-        if (it == nullptr)
-        {
-            return nullptr;
-        }
-        size_t word_len = strlen(w);
-        if (strncmp(it,w,word_len) == 0)
-        {
-            return it + word_len;
-        }
-        return nullptr;
-    };
+    std::vector<Parser> parsers;
+    for (size_t i = 0; w[i] != '\0'; ++i) {
+        parsers.push_back(create_char_parser(w[i]));
+    }
+    return sequence(parsers);
 }
-
-
-
-
