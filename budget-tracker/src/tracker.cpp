@@ -13,6 +13,7 @@ Tracker::Tracker(){
     getmaxyx(stdscr,yMax,xMax);
     main_win = newwin(yMax,xMax,0,0);
     option_win = newwin(3,xMax-2,yMax-5,1);
+    action_win = newwin(yMax/2,xMax/2,(yMax - yMax/2)/2,(xMax - xMax/2)/2);
     box(main_win,0,0);
     refresh();
     keypad(main_win, true);
@@ -195,8 +196,8 @@ void Tracker::main_screen(){
     std::vector options = {"Add balance","Add incomes","Add expanses","Get Report"};
     
     // Clear and refresh option_win to ensure it's ready for new content
-    wclear(option_win);
     if (toggle_options) {
+        wclear(option_win);
         box(option_win,0,0);
         // Print options to option_win
         int option_row = 0;
@@ -211,8 +212,14 @@ void Tracker::main_screen(){
             wattroff(option_win,A_REVERSE);
         }
     }
+    if (action_toggle)
+    {
+        wclear(action_win);
+        box(action_win,0,0);
+    }
     wrefresh(main_win); // Refresh main_win to ensure it's up to date
     wrefresh(option_win); // Refresh option_win after updating its content
+    wrefresh(action_win);
 
     int main_input = ' ';
 
@@ -224,7 +231,7 @@ void Tracker::main_screen(){
         toggle_options = !toggle_options;
     }
 
-    if (toggle_options) {
+    if (toggle_options && !action_toggle) {
         // Handle options navigation and selection
         switch (main_input) {
             case KEY_LEFT:
@@ -240,12 +247,24 @@ void Tracker::main_screen(){
                 }
                 break;
             case 10: // Assuming 10 is the ASCII value for Enter key
-                // Handle option selection here
+                action_toggle = !action_toggle;
                 break;
             default:
                 break;
         }
-    } else {
+    }
+    else if (action_toggle)
+    {
+        switch (main_input)
+        {
+        case 10:
+            action_toggle = !action_toggle;
+            break;
+        default:
+            break;
+        }
+    }
+    else {
         // Handle main input
         switch (main_input) {
             case 'q':
@@ -262,5 +281,8 @@ void Tracker::main_screen(){
 
     // Refresh windows after handling input
     wrefresh(main_win);
-    wrefresh(option_win); 
+    wrefresh(option_win);
+    wrefresh(action_win);
+    
+    
 }

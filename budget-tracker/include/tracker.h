@@ -36,6 +36,7 @@ private:
 
     WINDOW* main_win;
     WINDOW* option_win;
+    WINDOW* action_win;
 
     int xMax = 0;
     int yMax = 0;
@@ -47,6 +48,7 @@ private:
     bool balance_entered = false;
 
     bool toggle_options = false;
+    bool action_toggle = false;
 
     State state = WELCOME;
 
