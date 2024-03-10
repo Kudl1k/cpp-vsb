@@ -101,7 +101,7 @@ TEST_CASE("Parse any of") {
 }
 
 TEST_CASE("Parse sequence") {
-    auto parser1 = sequence(std::vector<Parser>{
+auto parser1 = sequence(std::vector<Parser>{
             parse_digit,
             create_char_parser('x'),
             parse_digit,

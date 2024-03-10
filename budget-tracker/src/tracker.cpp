@@ -177,6 +177,7 @@ void Tracker::setup_screen(){
 
 void Tracker::main_screen(){
     wclear(main_win);
+    noecho();
     box(main_win, 0, 0);
     
     edit::print_user_info(main_win,1,"Name:",user->getName());
@@ -236,7 +237,7 @@ void Tracker::main_screen(){
     }
     
     
-    choice = wgetch(option_win);
+    choice = wgetch(main_win);
 
     if (ch == 'o')
     {
