@@ -12,6 +12,8 @@ public:
     std::string getName();
     float getBalance();
 
+    void addBalance(float amount);
+
 private:
     std::string name;
     float balance;

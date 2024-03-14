@@ -65,6 +65,26 @@ CMAKE_BINARY_DIR = /home/kudla/cpp-vsb/budget-tracker/build
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target package
+package: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool..."
+	/usr/bin/cpack --config ./CPackConfig.cmake
+.PHONY : package
+
+# Special rule for the target package
+package/fast: package
+.PHONY : package/fast
+
+# Special rule for the target package_source
+package_source:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
+	/usr/bin/cpack --config ./CPackSourceConfig.cmake /home/kudla/cpp-vsb/budget-tracker/build/CPackSourceConfig.cmake
+.PHONY : package_source
+
+# Special rule for the target package_source
+package_source/fast: package_source
+.PHONY : package_source/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -84,6 +104,51 @@ rebuild_cache:
 # Special rule for the target rebuild_cache
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -117,48 +182,63 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named main
+# Target rules for targets named budget-tracker
 
 # Build rule for target.
-main: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 main
-.PHONY : main
+budget-tracker: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 budget-tracker
+.PHONY : budget-tracker
 
 # fast build rule for target.
-main/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
-.PHONY : main/fast
+budget-tracker/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/build
+.PHONY : budget-tracker/fast
 
-src/editor.o: src/editor.cpp.o
-.PHONY : src/editor.o
+#=============================================================================
+# Target rules for targets named screen
 
-# target to build an object file
-src/editor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/editor.cpp.o
-.PHONY : src/editor.cpp.o
+# Build rule for target.
+screen: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 screen
+.PHONY : screen
 
-src/editor.i: src/editor.cpp.i
-.PHONY : src/editor.i
+# fast build rule for target.
+screen/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/ftxui-build/CMakeFiles/screen.dir/build.make _deps/ftxui-build/CMakeFiles/screen.dir/build
+.PHONY : screen/fast
 
-# target to preprocess a source file
-src/editor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/editor.cpp.i
-.PHONY : src/editor.cpp.i
+#=============================================================================
+# Target rules for targets named dom
 
-src/editor.s: src/editor.cpp.s
-.PHONY : src/editor.s
+# Build rule for target.
+dom: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dom
+.PHONY : dom
 
-# target to generate assembly for a file
-src/editor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/editor.cpp.s
-.PHONY : src/editor.cpp.s
+# fast build rule for target.
+dom/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/ftxui-build/CMakeFiles/dom.dir/build.make _deps/ftxui-build/CMakeFiles/dom.dir/build
+.PHONY : dom/fast
+
+#=============================================================================
+# Target rules for targets named component
+
+# Build rule for target.
+component: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 component
+.PHONY : component
+
+# fast build rule for target.
+component/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/ftxui-build/CMakeFiles/component.dir/build.make _deps/ftxui-build/CMakeFiles/component.dir/build
+.PHONY : component/fast
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
 # target to build an object file
 src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
 src/main.i: src/main.cpp.i
@@ -166,7 +246,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -174,56 +254,8 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
-
-src/tracker.o: src/tracker.cpp.o
-.PHONY : src/tracker.o
-
-# target to build an object file
-src/tracker.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/tracker.cpp.o
-.PHONY : src/tracker.cpp.o
-
-src/tracker.i: src/tracker.cpp.i
-.PHONY : src/tracker.i
-
-# target to preprocess a source file
-src/tracker.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/tracker.cpp.i
-.PHONY : src/tracker.cpp.i
-
-src/tracker.s: src/tracker.cpp.s
-.PHONY : src/tracker.s
-
-# target to generate assembly for a file
-src/tracker.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/tracker.cpp.s
-.PHONY : src/tracker.cpp.s
-
-src/user.o: src/user.cpp.o
-.PHONY : src/user.o
-
-# target to build an object file
-src/user.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/user.cpp.o
-.PHONY : src/user.cpp.o
-
-src/user.i: src/user.cpp.i
-.PHONY : src/user.i
-
-# target to preprocess a source file
-src/user.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/user.cpp.i
-.PHONY : src/user.cpp.i
-
-src/user.s: src/user.cpp.s
-.PHONY : src/user.s
-
-# target to generate assembly for a file
-src/user.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/user.cpp.s
-.PHONY : src/user.cpp.s
 
 # Help Target
 help:
@@ -232,20 +264,20 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
+	@echo "... package"
+	@echo "... package_source"
 	@echo "... rebuild_cache"
-	@echo "... main"
-	@echo "... src/editor.o"
-	@echo "... src/editor.i"
-	@echo "... src/editor.s"
+	@echo "... budget-tracker"
+	@echo "... component"
+	@echo "... dom"
+	@echo "... screen"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
-	@echo "... src/tracker.o"
-	@echo "... src/tracker.i"
-	@echo "... src/tracker.s"
-	@echo "... src/user.o"
-	@echo "... src/user.i"
-	@echo "... src/user.s"
 .PHONY : help
 
 

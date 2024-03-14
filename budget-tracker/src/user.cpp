@@ -20,3 +20,7 @@ std::string User::getName(){
 float User::getBalance(){
     return balance;
 }
+
+void User::addBalance(float amount){
+    balance += amount;
+}

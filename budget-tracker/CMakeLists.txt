@@ -1,29 +1,42 @@
-cmake_minimum_required(VERSION 3.8)
-project(budget-tracker-KUD0132)
+cmake_minimum_required (VERSION 3.11)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+# --- Fetch FTXUI --------------------------------------------------------------
+include(FetchContent)
 
-option(DISABLE_ASAN "Do not use Address sanitizer" OFF)
-
-if(NOT DISABLE_ASAN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -Wno-sign-compare")
-endif()
-
-add_compile_options(-Wall -Wextra -pedantic)
-
-include_directories(include)
-
-# Set your source files
-set(SOURCES 
-    src/main.cpp 
-    src/tracker.cpp 
-    src/editor.cpp 
-    src/user.cpp
+set(FETCHCONTENT_UPDATES_DISCONNECTED TRUE)
+FetchContent_Declare(ftxui
+  GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
+  GIT_TAG v4.0.0
 )
 
-# Use main.cpp to call and debug your functions
-add_executable(main ${SOURCES})
+FetchContent_GetProperties(ftxui)
+if(NOT ftxui_POPULATED)
+  FetchContent_Populate(ftxui)
+  add_subdirectory(${ftxui_SOURCE_DIR} ${ftxui_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
+# ------------------------------------------------------------------------------
 
-target_link_libraries(main ncurses)
+project(budget-tracker
+  LANGUAGES CXX
+  VERSION 1.0.0
+)
+
+add_executable(budget-tracker src/main.cpp)
+target_include_directories(budget-tracker PRIVATE src)
+
+target_link_libraries(budget-tracker
+  PRIVATE ftxui::screen
+  PRIVATE ftxui::dom
+  PRIVATE ftxui::component # Not needed for this example.
+)
+
+if (EMSCRIPTEN) 
+  string(APPEND CMAKE_CXX_FLAGS " -s USE_PTHREADS") 
+  string(APPEND CMAKE_EXE_LINKER_FLAGS " -s ASYNCIFY") 
+  string(APPEND CMAKE_EXE_LINKER_FLAGS " -s PROXY_TO_PTHREAD") 
+
+  foreach(file "index.html" "run_webassembly.py")
+    configure_file("src/${file}" ${file})
+  endforeach(file)
+endif() 

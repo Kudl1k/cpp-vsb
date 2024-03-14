@@ -1,0 +1,13 @@
+# Target labels
+ ftxui-populate
+# Source files and their labels
+/home/kudla/cpp-vsb/budget-tracker/build/_deps/ftxui-subbuild/CMakeFiles/ftxui-populate
+/home/kudla/cpp-vsb/budget-tracker/build/_deps/ftxui-subbuild/CMakeFiles/ftxui-populate.rule
+/home/kudla/cpp-vsb/budget-tracker/build/_deps/ftxui-subbuild/CMakeFiles/ftxui-populate-complete.rule
+/home/kudla/cpp-vsb/budget-tracker/build/_deps/ftxui-subbuild/ftxui-populate-prefix/src/ftxui-populate-stamp/ftxui-populate-build.rule
+/home/kudla/cpp-vsb/budget-tracker/build/_deps/ftxui-subbuild/ftxui-populate-prefix/src/ftxui-populate-stamp/ftxui-populate-configure.rule
+/home/kudla/cpp-vsb/budget-tracker/build/_deps/ftxui-subbuild/ftxui-populate-prefix/src/ftxui-populate-stamp/ftxui-populate-download.rule
+/home/kudla/cpp-vsb/budget-tracker/build/_deps/ftxui-subbuild/ftxui-populate-prefix/src/ftxui-populate-stamp/ftxui-populate-install.rule
+/home/kudla/cpp-vsb/budget-tracker/build/_deps/ftxui-subbuild/ftxui-populate-prefix/src/ftxui-populate-stamp/ftxui-populate-mkdir.rule
+/home/kudla/cpp-vsb/budget-tracker/build/_deps/ftxui-subbuild/ftxui-populate-prefix/src/ftxui-populate-stamp/ftxui-populate-patch.rule
+/home/kudla/cpp-vsb/budget-tracker/build/_deps/ftxui-subbuild/ftxui-populate-prefix/src/ftxui-populate-stamp/ftxui-populate-test.rule

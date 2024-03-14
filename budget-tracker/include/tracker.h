@@ -5,7 +5,6 @@
 
 
 #include <iostream>
-#include <ncurses.h>
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -31,6 +30,9 @@ public:
     void welcome_screen();
     void setup_screen();
     void main_screen();
+
+
+    void add_balance_action();
 
 private:
 
