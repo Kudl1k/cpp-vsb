@@ -39,15 +39,17 @@ int Integer::get_value(){
 
 
 Array::Array(){
-
+    // * Can be empty
 }
 
 Array::Array(std::initializer_list<Value*> init){
-
+    values = init;
 }
 
 Array::~Array(){
-
+    for (auto value: values){
+        delete value;
+    }
 }
 
 Value* Array::clone() const {

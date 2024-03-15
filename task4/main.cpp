@@ -3,17 +3,11 @@
 int main() {
 
     const auto* a = new Integer{5};
-    auto* b = a->clone();
-
-
-    if (a != b)
-    {
-        std::cout << "Not equal and value is " << b->get_value() << std::endl;
-    }
+    auto arr = new Array{{new Integer{1},new Integer{2}}};
     
 
     delete a;
-    delete b;
+    delete arr;
 
 
     return 0;

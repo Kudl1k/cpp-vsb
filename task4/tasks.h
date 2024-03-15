@@ -9,7 +9,7 @@ class Visitor {
 public:
     virtual ~Visitor() = default;
 
-    virtual void visit(Integer& integer) = 0;
+    //virtual void visit(Integer& integer) = 0;
 };
 
 
@@ -57,7 +57,7 @@ public:
     int get_value();
 
     size_t size() const;
-    void apped(Value* value);
+    void append(Value* value);
 
 private:
     std::vector<Value*> values;
