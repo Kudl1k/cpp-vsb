@@ -34,3 +34,49 @@ int Integer::get_value(){
 
 
 
+
+// * Array class implementation
+
+
+Array::Array(){
+
+}
+
+Array::Array(std::initializer_list<Value*> init){
+
+}
+
+Array::~Array(){
+
+}
+
+Value* Array::clone() const {
+
+}
+
+Value& Array::operator[](int idx) const {
+
+}
+
+Value& Array::operator[](const std::string& key) const {
+
+}
+
+void Array::accept(Visitor& visitor) {
+
+}
+
+int Array::get_value(){
+
+}
+
+size_t Array::size() const{
+
+}
+
+void Array::apped(Value* value){
+
+}
+
+
+

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 
 class Visitor {
@@ -40,6 +41,26 @@ public:
     int get_value();
 private:
     int val;
+};
+
+
+class Array : public Value {
+public:
+    Array();
+    Array(std::initializer_list<Value*> init);
+    ~Array();
+
+    Value* clone() const override;
+    Value& operator[](int idx) const override;
+    Value& operator[](const std::string& key) const override;
+    void accept(Visitor& visitor) override;
+    int get_value();
+
+    size_t size() const;
+    void apped(Value* value);
+
+private:
+    std::vector<Value*> values;
 };
 
 
