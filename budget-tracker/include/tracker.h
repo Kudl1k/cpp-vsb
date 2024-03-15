@@ -1,6 +1,7 @@
 #pragma once
 
 #include "user.h"
+#include "ui.h"
 
 
 #include <iostream>
@@ -8,15 +9,7 @@
 #include <vector>
 
 
-// Undefine the border macro before including elements.hpp
-#include <ftxui/dom/elements.hpp>  // for text, operator|, Element, bgcolor, color, blink, bold, dim, inverted, underlined, Fit, hbox
-#include <ftxui/screen/screen.hpp>  // for Full, Screen
-#include <memory>                   // for allocator
- 
-#include "ftxui/dom/node.hpp"      // for Render
-#include "ftxui/screen/color.hpp"  // for Color, Color::Blue, ftxui
 
-using namespace ftxui;
 
 
 enum State{

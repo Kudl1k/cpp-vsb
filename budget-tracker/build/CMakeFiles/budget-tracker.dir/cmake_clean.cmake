@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/budget-tracker.dir/src/main.cpp.o.d"
   "CMakeFiles/budget-tracker.dir/src/tracker.cpp.o"
   "CMakeFiles/budget-tracker.dir/src/tracker.cpp.o.d"
+  "CMakeFiles/budget-tracker.dir/src/ui.cpp.o"
+  "CMakeFiles/budget-tracker.dir/src/ui.cpp.o.d"
   "CMakeFiles/budget-tracker.dir/src/user.cpp.o"
   "CMakeFiles/budget-tracker.dir/src/user.cpp.o.d"
   "budget-tracker"

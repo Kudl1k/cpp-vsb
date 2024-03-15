@@ -1,8 +1,6 @@
-CMakeFiles/budget-tracker.dir/src/tracker.cpp.o: \
- /home/kudla/cpp-vsb/budget-tracker/src/tracker.cpp \
- /usr/include/stdc-predef.h \
- /home/kudla/cpp-vsb/budget-tracker/include/tracker.h \
- /home/kudla/cpp-vsb/budget-tracker/include/user.h \
+CMakeFiles/budget-tracker.dir/src/ui.cpp.o: \
+ /home/kudla/cpp-vsb/budget-tracker/src/ui.cpp /usr/include/stdc-predef.h \
+ /home/kudla/cpp-vsb/budget-tracker/include/ui.h \
  /usr/include/c++/11/iostream \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
@@ -148,9 +146,8 @@ CMakeFiles/budget-tracker.dir/src/tracker.cpp.o: \
  /usr/include/c++/11/bits/locale_facets.tcc \
  /usr/include/c++/11/bits/basic_ios.tcc \
  /usr/include/c++/11/bits/ostream.tcc /usr/include/c++/11/istream \
- /usr/include/c++/11/bits/istream.tcc \
- /home/kudla/cpp-vsb/budget-tracker/include/ui.h \
- /usr/include/c++/11/cstring /usr/include/string.h /usr/include/strings.h \
+ /usr/include/c++/11/bits/istream.tcc /usr/include/c++/11/cstring \
+ /usr/include/string.h /usr/include/strings.h \
  /home/kudla/cpp-vsb/budget-tracker/build/_deps/ftxui-src/include/ftxui/component/captured_mouse.hpp \
  /usr/include/c++/11/memory /usr/include/c++/11/bits/stl_uninitialized.h \
  /usr/include/c++/11/bits/stl_tempbuf.h \

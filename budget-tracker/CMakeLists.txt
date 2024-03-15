@@ -27,6 +27,7 @@ set(SOURCES
   src/main.cpp
   src/tracker.cpp
   src/user.cpp
+  src/ui.cpp
 )
 
 add_executable(budget-tracker ${SOURCES})

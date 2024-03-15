@@ -281,6 +281,30 @@ src/tracker.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/src/tracker.cpp.s
 .PHONY : src/tracker.cpp.s
 
+src/ui.o: src/ui.cpp.o
+.PHONY : src/ui.o
+
+# target to build an object file
+src/ui.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/src/ui.cpp.o
+.PHONY : src/ui.cpp.o
+
+src/ui.i: src/ui.cpp.i
+.PHONY : src/ui.i
+
+# target to preprocess a source file
+src/ui.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/src/ui.cpp.i
+.PHONY : src/ui.cpp.i
+
+src/ui.s: src/ui.cpp.s
+.PHONY : src/ui.s
+
+# target to generate assembly for a file
+src/ui.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/src/ui.cpp.s
+.PHONY : src/ui.cpp.s
+
 src/user.o: src/user.cpp.o
 .PHONY : src/user.o
 
@@ -329,6 +353,9 @@ help:
 	@echo "... src/tracker.o"
 	@echo "... src/tracker.i"
 	@echo "... src/tracker.s"
+	@echo "... src/ui.o"
+	@echo "... src/ui.i"
+	@echo "... src/ui.s"
 	@echo "... src/user.o"
 	@echo "... src/user.i"
 	@echo "... src/user.s"
