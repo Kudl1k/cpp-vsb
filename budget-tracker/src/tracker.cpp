@@ -69,26 +69,64 @@ void Tracker::welcome_screen(){
 
 
 void Tracker::setup_screen(){
-    auto back_button = Button("Back", [&] { this->welcome_screen(); });
+    
+    InputOption opt;
+    opt.multiline = false;
     std::string name = "";
-    auto input_name = Input(&name, "here enter your name");
+    auto input_name = Input(&name, "name",opt);
     std::string balance = "";
-    Component input_balance = Input(&balance, "phone number");
+    Component input_balance = Input(&balance, "balance",opt);
+    std::string error_message = "";
+
+    // Clear the error message when the user starts typing
+
+        bool next_clicked = false;
+
+    auto next_button = Button("Next", [&] { 
+        next_clicked = true;
+        if(name.empty() || balance.empty()) {
+            error_message = "Please fill in all fields.";
+        } else {
+            this->main_screen(); 
+        }
+    });
+
+    input_name |= CatchEvent([&](Event event){
+        if (!error_message.empty() && name.empty() && !next_clicked)
+        {
+            error_message = "";
+        }
+        next_clicked = false;
+        return false;
+    });
+
     input_balance |= CatchEvent([&](Event event) {
+        if (!error_message.empty() && balance.empty() && !next_clicked)
+        {
+            error_message = "";
+        }
+        next_clicked = false;
         return event.is_character() && !std::isdigit(event.character()[0]);
     });
+    
+    auto back_button = Button("Back", [&] { this->welcome_screen(); });
+    
+
 
     auto layout = Container::Vertical({
         input_name,
         input_balance,
-        back_button
+        Container::Horizontal({
+            next_button,
+            back_button
+        })
     });
 
-
+    
+    
 
     auto renderer = Renderer(layout, [&] {
         return vbox({
-            filler(),
             hbox({
                 filler(),
                 vbox({
@@ -97,15 +135,19 @@ void Tracker::setup_screen(){
                     hbox({text("Your name: "),input_name->Render()}),
                     hbox({text("Your balance:"),input_balance->Render()}),
                     filler(),
+                    hcenter(text(error_message) | color(Color::Red)),
+                    separator(),
                     vbox({
-                        filler(),
-                        separator(),
-                        back_button->Render(),
-                    })
-                })  | size(WIDTH,EQUAL,40) | size(HEIGHT,LESS_THAN ,10)  | border,
+                        hcenter({
+                            hbox({
+                                back_button->Render(),
+                                next_button->Render(),
+                            })
+                        })| flex,                        
+                    }),
+                })  | size(WIDTH,EQUAL,40) | border,
                 filler()
             }) | flex ,            
-            filler(),
         }) | flex;
     });
     screen.Loop(renderer);
@@ -113,7 +155,12 @@ void Tracker::setup_screen(){
 
 
 void Tracker::main_screen(){
-    
+    auto renderer = Renderer([&]{
+        return hbox({
+            text("Hello"),
+        });
+    });
+    screen.Loop(renderer);
 }
 
 void Tracker::add_balance_action(){
