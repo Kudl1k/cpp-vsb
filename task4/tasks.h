@@ -4,8 +4,11 @@
 #include <string>
 
 
-class Visitor{
-    
+class Visitor {
+public:
+    virtual ~Visitor() = default;
+
+    virtual void visit(Integer& integer) = 0;
 };
 
 
@@ -26,7 +29,7 @@ public:
 };
 
 
-class Integer: public Value{
+class Integer : public Value{
 public:
     Integer(int value);
     ~Integer() override;
@@ -37,9 +40,8 @@ public:
     int get_value();
 private:
     int val;
-
-
-
-
 };
+
+
+
 

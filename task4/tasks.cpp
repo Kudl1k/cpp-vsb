@@ -1,5 +1,9 @@
 #include "tasks.h"
 
+
+// * Integer class implementation
+
+
 Integer::Integer(int value) {
     val = value;
 }
@@ -13,17 +17,20 @@ Value* Integer::clone() const {
 }
 
 Value& Integer::operator[](int idx) const {
-    // Implementation...
+    throw std::runtime_error("Cannot use operator[] on an Integer");
 }
 
 Value& Integer::operator[](const std::string& key) const {
-    // Implementation...
+    throw std::runtime_error("Cannot use operator[] on an Integer");
 }
 
 void Integer::accept(Visitor& visitor) {
-    // Implementation...
+    visitor.visit(*this);
 }
 
 int Integer::get_value(){
     return val;
 }
+
+
+
