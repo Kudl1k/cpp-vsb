@@ -5,7 +5,7 @@ int main(void) {
   Tracker tracker;
 
 
-  tracker.tracker();
+  tracker.welcome_screen();
 
 
   return 0;

@@ -38,6 +38,7 @@ public:
 
 private:
 
+    ScreenInteractive screen = ScreenInteractive::Fullscreen();
 
     int xMax = 0;
     int yMax = 0;

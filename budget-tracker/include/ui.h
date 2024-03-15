@@ -13,6 +13,6 @@
 using namespace ftxui;
 
 namespace ui{
-    Component create_welcomescreen();
+    Component create_welcomescreen(Component menu);
 
 };
