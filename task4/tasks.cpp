@@ -25,7 +25,7 @@ Value& Integer::operator[](const std::string& key) const {
 }
 
 void Integer::accept(Visitor& visitor) {
-    visitor.visit(*this);
+    //visitor.visit(*this);
 }
 
 int Integer::get_value(){
@@ -53,7 +53,7 @@ Array::~Array(){
 }
 
 Value* Array::clone() const {
-
+    
 }
 
 Value& Array::operator[](int idx) const {
@@ -76,7 +76,7 @@ size_t Array::size() const{
 
 }
 
-void Array::apped(Value* value){
+void Array::append(Value* value){
 
 }
 
