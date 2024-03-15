@@ -32,12 +32,12 @@ if(error_code)
 endif()
 
 execute_process(
-  COMMAND "/usr/bin/git"  checkout v4.0.0 --
+  COMMAND "/usr/bin/git"  checkout v5.0.0 --
   WORKING_DIRECTORY "/home/kudla/cpp-vsb/budget-tracker/build/_deps/ftxui-src"
   RESULT_VARIABLE error_code
   )
 if(error_code)
-  message(FATAL_ERROR "Failed to checkout tag: 'v4.0.0'")
+  message(FATAL_ERROR "Failed to checkout tag: 'v5.0.0'")
 endif()
 
 set(init_submodules TRUE)

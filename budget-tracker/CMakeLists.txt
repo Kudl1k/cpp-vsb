@@ -6,7 +6,7 @@ include(FetchContent)
 set(FETCHCONTENT_UPDATES_DISCONNECTED TRUE)
 FetchContent_Declare(ftxui
   GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
-  GIT_TAG v4.0.0
+  GIT_TAG v5.0.0
 )
 
 FetchContent_GetProperties(ftxui)
@@ -21,8 +21,15 @@ project(budget-tracker
   LANGUAGES CXX
   VERSION 1.0.0
 )
+include_directories(include)
 
-add_executable(budget-tracker src/main.cpp)
+set(SOURCES
+  src/main.cpp
+  src/tracker.cpp
+  src/user.cpp
+)
+
+add_executable(budget-tracker ${SOURCES})
 target_include_directories(budget-tracker PRIVATE src)
 
 target_link_libraries(budget-tracker
@@ -40,3 +47,10 @@ if (EMSCRIPTEN)
     configure_file("src/${file}" ${file})
   endforeach(file)
 endif() 
+
+# Define a macro hygiene workaround
+add_compile_definitions(HAVE_MACRO_HYGIENE)
+
+# Apply macro hygiene workaround to the ftxui library
+add_compile_definitions(FTXUI_RENAME_BORDER_MACRO)
+

@@ -1,13 +1,22 @@
 #pragma once
 
-#include "editor.h"
 #include "user.h"
 
 
 #include <iostream>
 #include <string>
 #include <vector>
-#include <stdexcept>
+
+
+// Undefine the border macro before including elements.hpp
+#include <ftxui/dom/elements.hpp>  // for text, operator|, Element, bgcolor, color, blink, bold, dim, inverted, underlined, Fit, hbox
+#include <ftxui/screen/screen.hpp>  // for Full, Screen
+#include <memory>                   // for allocator
+ 
+#include "ftxui/dom/node.hpp"      // for Render
+#include "ftxui/screen/color.hpp"  // for Color, Color::Blue, ftxui
+
+using namespace ftxui;
 
 
 enum State{
@@ -36,9 +45,6 @@ public:
 
 private:
 
-    WINDOW* main_win;
-    WINDOW* option_win;
-    WINDOW* action_win;
 
     int xMax = 0;
     int yMax = 0;

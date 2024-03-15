@@ -257,6 +257,54 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/tracker.o: src/tracker.cpp.o
+.PHONY : src/tracker.o
+
+# target to build an object file
+src/tracker.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/src/tracker.cpp.o
+.PHONY : src/tracker.cpp.o
+
+src/tracker.i: src/tracker.cpp.i
+.PHONY : src/tracker.i
+
+# target to preprocess a source file
+src/tracker.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/src/tracker.cpp.i
+.PHONY : src/tracker.cpp.i
+
+src/tracker.s: src/tracker.cpp.s
+.PHONY : src/tracker.s
+
+# target to generate assembly for a file
+src/tracker.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/src/tracker.cpp.s
+.PHONY : src/tracker.cpp.s
+
+src/user.o: src/user.cpp.o
+.PHONY : src/user.o
+
+# target to build an object file
+src/user.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/src/user.cpp.o
+.PHONY : src/user.cpp.o
+
+src/user.i: src/user.cpp.i
+.PHONY : src/user.i
+
+# target to preprocess a source file
+src/user.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/src/user.cpp.i
+.PHONY : src/user.cpp.i
+
+src/user.s: src/user.cpp.s
+.PHONY : src/user.s
+
+# target to generate assembly for a file
+src/user.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/budget-tracker.dir/build.make CMakeFiles/budget-tracker.dir/src/user.cpp.s
+.PHONY : src/user.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -278,6 +326,12 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/tracker.o"
+	@echo "... src/tracker.i"
+	@echo "... src/tracker.s"
+	@echo "... src/user.o"
+	@echo "... src/user.i"
+	@echo "... src/user.s"
 .PHONY : help
 
 

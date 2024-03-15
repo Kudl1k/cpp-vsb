@@ -21,7 +21,7 @@ set_property(GLOBAL PROPERTY _CMAKE_FindGit_GIT_EXECUTABLE_VERSION
 
 include(ExternalProject)
 ExternalProject_Add(ftxui-populate
-                     "UPDATE_DISCONNECTED" "True" "GIT_REPOSITORY" "https://github.com/ArthurSonzogni/ftxui" "GIT_TAG" "v4.0.0"
+                     "UPDATE_DISCONNECTED" "True" "GIT_REPOSITORY" "https://github.com/ArthurSonzogni/ftxui" "GIT_TAG" "v5.0.0"
                     SOURCE_DIR          "/home/kudla/cpp-vsb/budget-tracker/build/_deps/ftxui-src"
                     BINARY_DIR          "/home/kudla/cpp-vsb/budget-tracker/build/_deps/ftxui-build"
                     CONFIGURE_COMMAND   ""

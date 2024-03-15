@@ -19,7 +19,7 @@ set(CPACK_DEBIAN_PACKAGE_HOMEPAGE_URL "https://github.com/ArthurSonzogni/FTXUI/"
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Arthur Sonzogni")
 set(CPACK_DEBIAN_PACKAGE_VERSION "5.0.0")
 set(CPACK_DEFAULT_PACKAGE_DESCRIPTION_FILE "/usr/share/cmake-3.22/Templates/CPack.GenericDescription.txt")
-set(CPACK_DEFAULT_PACKAGE_DESCRIPTION_SUMMARY "budget-tracker-KUD0132 built using CMake")
+set(CPACK_DEFAULT_PACKAGE_DESCRIPTION_SUMMARY "budget-tracker built using CMake")
 set(CPACK_GENERATOR "TBZ2;TGZ;TXZ;TZ")
 set(CPACK_IGNORE_FILES "/CVS/;/\\.svn/;/\\.bzr/;/\\.hg/;/\\.git/;\\.swp\$;\\.#;/#")
 set(CPACK_INSTALLED_DIRECTORIES "/home/kudla/cpp-vsb/budget-tracker;/")

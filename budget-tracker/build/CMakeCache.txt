@@ -267,9 +267,6 @@ CPACK_SOURCE_TZ:BOOL=ON
 //Enable to build ZIP source packages
 CPACK_SOURCE_ZIP:BOOL=OFF
 
-//Do not use Address sanitizer
-DISABLE_ASAN:BOOL=OFF
-
 //Directory under which to collect all populated content
 FETCHCONTENT_BASE_DIR:PATH=/home/kudla/cpp-vsb/budget-tracker/build/_deps
 
@@ -324,15 +321,6 @@ FTXUI_QUIET:BOOL=OFF
 
 //Git command line client
 GIT_EXECUTABLE:FILEPATH=/usr/bin/git
-
-//Value Computed by CMake
-budget-tracker-KUD0132_BINARY_DIR:STATIC=/home/kudla/cpp-vsb/budget-tracker/build
-
-//Value Computed by CMake
-budget-tracker-KUD0132_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-budget-tracker-KUD0132_SOURCE_DIR:STATIC=/home/kudla/cpp-vsb/budget-tracker
 
 //Value Computed by CMake
 budget-tracker_BINARY_DIR:STATIC=/home/kudla/cpp-vsb/budget-tracker/build

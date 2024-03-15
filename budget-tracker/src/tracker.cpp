@@ -20,11 +20,25 @@ Tracker::~Tracker(){
 }
 
 void Tracker::tracker(){
-    
+    welcome_screen();
 }
 
 void Tracker::welcome_screen(){
-   
+
+    Element document =
+    hbox({
+        text("left")   | border,
+        text("middle") | border | flex,
+        text("right")  | border,
+    });
+
+    auto screen = Screen::Create(
+    Dimension::Full(),       // Width
+    Dimension::Fit(document) // Height
+    );
+    Render(screen, document);
+    screen.Print();
+    getchar();
 }
 
 

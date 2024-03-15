@@ -1,1 +1,0 @@
-/usr/bin/c++  -g -fsanitize=address -Wno-sign-compare CMakeFiles/main.dir/src/main.cpp.o CMakeFiles/main.dir/src/tracker.cpp.o CMakeFiles/main.dir/src/editor.cpp.o CMakeFiles/main.dir/src/user.cpp.o -o main 
