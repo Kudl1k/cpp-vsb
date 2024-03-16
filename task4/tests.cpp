@@ -7,14 +7,14 @@
 #include <sstream>
 #include <vector>
 
-// Comment out tests and functions that use code that you haven't implemented yet
+//Comment out tests and functions that use code that you haven't implemented yet
 
-// static std::string print(const Value& value) {
-//     std::stringstream ss;
-//     PrintVisitor visitor{ss};
-//     value.accept(visitor);
-//     return ss.str();
-// }
+static std::string print(const Value& value) {
+    std::stringstream ss;
+    PrintVisitor visitor{ss};
+    value.accept(visitor);
+    return ss.str();
+}
 
 TEST_SUITE("Integer") {
     TEST_CASE("Create integer") {
@@ -240,94 +240,94 @@ TEST_SUITE("Clone") {
     }
 }
 
-// TEST_SUITE("Print") {
-//     TEST_CASE("Integer") {
-//         Integer integer{5};
-//         REQUIRE(print(integer) == "5");
-//     }
+TEST_SUITE("Print") {
+    TEST_CASE("Integer") {
+        Integer integer{5};
+        REQUIRE(print(integer) == "5");
+    }
 
-//     TEST_CASE("Empty array") {
-//         REQUIRE(print(Array{}) == "[]");
-//     }
+    TEST_CASE("Empty array") {
+        REQUIRE(print(Array{}) == "[]");
+    }
 
-//     TEST_CASE("Array") {
-//         auto* obj = new Object{{
-//             {"a", new Integer{5}},
-//             {"b", new Array{{new Integer{1}, new Integer{2}}}}
-//         }};
-//         const Array value{{
-//                             new Integer{1},
-//                             new Integer{2},
-//                             obj,
-//                             new Array{{new Integer{10}, new Integer{11}}},
-//                             new Integer{4},
-//                             new Null{},
-//                     }};
-//         REQUIRE(print(value) == "[1, 2, {a: 5, b: [1, 2]}, [10, 11], 4, null]");
-//     }
+    TEST_CASE("Array") {
+        auto* obj = new Object{{
+            {"a", new Integer{5}},
+            {"b", new Array{{new Integer{1}, new Integer{2}}}}
+        }};
+        const Array value{{
+                            new Integer{1},
+                            new Integer{2},
+                            obj,
+                            new Array{{new Integer{10}, new Integer{11}}},
+                            new Integer{4},
+                            new Null{},
+                    }};
+        REQUIRE(print(value) == "[1, 2, {a: 5, b: [1, 2]}, [10, 11], 4, null]");
+    }
 
-//     TEST_CASE("Empty object") {
-//         REQUIRE(print(Object{}) == "{}");
-//     }
+    TEST_CASE("Empty object") {
+        REQUIRE(print(Object{}) == "{}");
+    }
 
-//     TEST_CASE("Object") {
-//         auto* array = new Array{{
-//                             new Integer{1},
-//                             new Integer{2},
-//                             new Array{{new Integer{10}, new Integer{11}}},
-//                             new Integer{4},
-//                     }};
-//         const Object value{{
-//                {"a", new Integer{5}},
-//                {"b", new Array{{new Integer{1}, new Integer{3}}}},
-//                {"c", array},
-//                {"d", new Object{{
-//                                         {"a", new Integer{5}},
-//                                         {"b", new Integer{6}}
-//                }}},
-//                {"e", new Null()},
-//        }};
-//         REQUIRE(print(value) == "{a: 5, b: [1, 3], c: [1, 2, [10, 11], 4], d: {a: 5, b: 6}, e: null}");
-//     }
+    TEST_CASE("Object") {
+        auto* array = new Array{{
+                            new Integer{1},
+                            new Integer{2},
+                            new Array{{new Integer{10}, new Integer{11}}},
+                            new Integer{4},
+                    }};
+        const Object value{{
+               {"a", new Integer{5}},
+               {"b", new Array{{new Integer{1}, new Integer{3}}}},
+               {"c", array},
+               {"d", new Object{{
+                                        {"a", new Integer{5}},
+                                        {"b", new Integer{6}}
+               }}},
+               {"e", new Null()},
+       }};
+        REQUIRE(print(value) == "{a: 5, b: [1, 3], c: [1, 2, [10, 11], 4], d: {a: 5, b: 6}, e: null}");
+    }
 
-//     TEST_CASE("Print value") {
-//         Value* value = new Array{{new Integer{1}, new Integer{2}}};
-//         REQUIRE(print(*value) == "[1, 2]");
-//         delete value;
-//     }
-// }
+    TEST_CASE("Print value") {
+        Value* value = new Array{{new Integer{1}, new Integer{2}}};
+        REQUIRE(print(*value) == "[1, 2]");
+        delete value;
+    }
+}
 
-// TEST_SUITE("Remove null") {
-//     TEST_CASE("Remove null") {
-//         auto* object = new Object{{
-//             {"a", new Integer{1}},
-//             {"b", new Null{}},
-//             {"c", new Integer{2}},
-//             {"d", new Object{{
-//                     {"a", new Null{}},
-//                     {"b", new Array(
-//                             {new Integer{1}, new Null{}, new Integer{3}, new Integer{2}, new Null{}}
-//                             )
-//                     }
-//                 }}
-//             },
-//         }};
+TEST_SUITE("Remove null") {
+    TEST_CASE("Remove null") {
+        auto* object = new Object{{
+            {"a", new Integer{1}},
+            {"b", new Null{}},
+            {"c", new Integer{2}},
+            {"d", new Object{{
+                    {"a", new Null{}},
+                    {"b", new Array(
+                            {new Integer{1}, new Null{}, new Integer{3}, new Integer{2}, new Null{}}
+                            )
+                    }
+                }}
+            },
+        }};
 
-//         RemoveNullVisitor v;
-//         object->accept(v);
+        RemoveNullVisitor v;
+        object->accept(v);
 
-//         REQUIRE(object->keys() == std::vector<std::string>{"a", "c", "d"});
+        REQUIRE(object->keys() == std::vector<std::string>{"a", "c", "d"});
 
-//         auto* d = dynamic_cast<Object*>(object->operator[]("d"));
-//         REQUIRE_NE(d, nullptr);
+        auto* d = dynamic_cast<Object*>(object->operator[]("d"));
+        REQUIRE_NE(d, nullptr);
 
-//         REQUIRE(d->keys() == std::vector<std::string>{"b"});
+        REQUIRE(d->keys() == std::vector<std::string>{"b"});
 
-//         auto* arr = dynamic_cast<Array*>(d->operator[]("b"));
-//         REQUIRE_NE(arr, nullptr);
-//         REQUIRE_EQ(arr->size(), 3);
-//         REQUIRE_NE(dynamic_cast<Integer*>(arr->operator[](1)), nullptr);
+        auto* arr = dynamic_cast<Array*>(d->operator[]("b"));
+        REQUIRE_NE(arr, nullptr);
+        REQUIRE_EQ(arr->size(), 3);
+        REQUIRE_NE(dynamic_cast<Integer*>(arr->operator[](1)), nullptr);
 
-//         delete object;
-//     }
-// }
+        delete object;
+    }
+}
