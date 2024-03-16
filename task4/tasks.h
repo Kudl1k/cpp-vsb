@@ -35,10 +35,10 @@ class RemoveNullVisitor : public MutatingVisitor {
 public:
     RemoveNullVisitor() = default;
     ~RemoveNullVisitor() = default;
-    void visit(Integer* integer) override;
+    void visit(Integer*) {};
     void visit(Array* array) override;
     void visit(Object* object) override;
-    void visit(Null* null) override;
+    void visit(Null*) {};
 };
 
 class PrintVisitor : public Visitor {
@@ -56,23 +56,14 @@ private:
 class Value {
 public:
     virtual ~Value(){};
-
     virtual Value* clone() const = 0;
-
     virtual Value* operator[](size_t idx) const = 0;
-
     virtual Value* operator[](const std::string& key) const = 0;
-
     virtual void accept( Visitor& visitor) const = 0;
-
     virtual void accept( MutatingVisitor& visitor) = 0;
-
     virtual int get_value() const {return -1;}
-
     virtual int size() const {return -1;}
-
     virtual void insert(const std::string& , Value* ){};
-
 };
 
 
@@ -96,20 +87,16 @@ public:
     Array();
     Array(std::initializer_list<Value*> init);
     ~Array() override;
-
     Value* clone() const override;
     Value* operator[](size_t idx) const override;
     Value* operator[](const std::string& key) const override;
     void accept( Visitor& visitor) const override;
     void accept( MutatingVisitor& visitor) override;
     int get_value();
-
-    void remove_nulls();
-
     int size() const ;
+
     void append(Value* value);
     void remove(size_t idx);
-
 private:
     std::vector<Value*> values;
 };
@@ -117,23 +104,19 @@ private:
 
 class Object : public Value {
 public:
-    Object();
+    Object(){};
     Object(std::initializer_list<std::pair<std::string, Value*>> init);
     ~Object() override;
-
     Value* clone() const override;
     Value* operator[](size_t idx) const override;
     Value* operator[](const std::string& key) const override;
     void accept( Visitor& visitor) const override;
     void accept( MutatingVisitor& visitor) override;
-
-    std::unordered_map<std::string, Value*>& get_values();
-
     int size() const override;
+    
     void insert(const std::string& key, Value* value) override;
     void remove(const std::string& key);
     std::vector<std::string> keys() const;
-    void remove_nulls();
 private:
     std::unordered_map<std::string, Value*> values;
 };
@@ -143,14 +126,9 @@ class Null : public Value {
 public:
     Null() = default;
     ~Null() override = default;
-
     Value* clone() const override;
-
     Value* operator[](size_t idx) const override;
-
     Value* operator[](const std::string& key) const override;
-
     void accept( Visitor& visitor) const override;
     void accept( MutatingVisitor& visitor) override;
-
 };

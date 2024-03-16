@@ -298,30 +298,6 @@ TEST_SUITE("Print") {
 }
 
 TEST_SUITE("Remove null") {
-    TEST_CASE("Array operations work correctly") {
-        Array* arr = new Array();
-
-        // Test adding elements
-        arr->append(new Integer{1});
-        arr->append(new Null{});
-        arr->append(new Integer{2});
-
-        // Test size
-        REQUIRE(arr->size() == 3);
-
-        // Test accessing elements
-        REQUIRE(dynamic_cast<Integer*>(arr->operator[](0))->get_value() == 1);
-        REQUIRE(dynamic_cast<Null*>(arr->operator[](1)) != nullptr);
-        REQUIRE(dynamic_cast<Integer*>(arr->operator[](2))->get_value() == 2);
-
-        // Test removing nulls
-        arr->remove_nulls();
-        REQUIRE(arr->size() == 2);
-        REQUIRE(dynamic_cast<Integer*>(arr->operator[](0))->get_value() == 1);
-        REQUIRE(dynamic_cast<Integer*>(arr->operator[](1))->get_value() == 2);
-
-        delete arr;
-    }
     TEST_CASE("Remove null") {
         auto* object = new Object{{
             {"a", new Integer{1}},
