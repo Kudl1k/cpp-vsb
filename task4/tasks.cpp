@@ -11,33 +11,11 @@ void RemoveNullVisitor::visit(Integer *integer)
 }
 
 void RemoveNullVisitor::visit(Array* array) {
-    for (size_t i = 0; i < array->size(); ++i) {
-        array->operator[](i)->accept(*this);
-    }
+    
 }
 
 void RemoveNullVisitor::visit(Object *object)
 {
-    std::vector<std::string> keysToRemove;
-    for (const auto& pair : object->get_values()) {
-        if (dynamic_cast<Null*>(pair.second) != nullptr) {
-            keysToRemove.push_back(pair.first);
-        } else {
-            pair.second->accept(*this);
-        }
-    }
-
-    // Remove the Null values after visiting all the values
-    for (const auto& key : keysToRemove) {
-        object->remove(key);
-    }
-
-    // Print keys after removal for debugging
-    std::cout << "Keys after removal: ";
-    for (const auto& key : object->keys()) {
-        std::cout << key << ", ";
-    }
-    std::cout << std::endl;
 }
 
 void RemoveNullVisitor::visit(Null *null)

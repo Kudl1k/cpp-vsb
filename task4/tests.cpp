@@ -16,17 +16,6 @@ static std::string print(const Value& value) {
     return ss.str();
 }
 
-std::string vectorToString(const std::vector<std::string>& vec) {
-    std::stringstream ss;
-    ss << "{";
-    for (size_t i = 0; i < vec.size(); ++i) {
-        if (i > 0) ss << ", ";
-        ss << vec[i];
-    }
-    ss << "}";
-    return ss.str();
-}
-
 TEST_SUITE("Integer") {
     TEST_CASE("Create integer") {
         const Integer value{1};
@@ -340,6 +329,5 @@ TEST_SUITE("Remove null") {
         REQUIRE_NE(dynamic_cast<Integer*>(arr->operator[](1)), nullptr);
 
         delete object;
-        
     }
 }
