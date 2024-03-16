@@ -1,1 +1,1 @@
-/usr/bin/c++  -g -fsanitize=address CMakeFiles/tasks.dir/main.cpp.o CMakeFiles/tasks.dir/tasks.cpp.o -o tasks 
+/usr/bin/c++  -g -fsanitize=address -Wunused-parameter CMakeFiles/tasks.dir/main.cpp.o CMakeFiles/tasks.dir/tasks.cpp.o -o tasks 

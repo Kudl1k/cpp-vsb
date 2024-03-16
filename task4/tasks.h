@@ -19,13 +19,13 @@ public:
 
     virtual Value* clone() const = 0;
 
-    virtual Value& operator[](int idx) const = 0;
+    virtual Value* operator[](int idx) const = 0;
 
-    virtual Value& operator[](const std::string& key) const = 0;
+    virtual Value* operator[](const std::string& key) const = 0;
 
     virtual void accept(Visitor& visitor) = 0;
 
-    virtual int get_value() = 0;
+    virtual int get_value(){return 0;}
 
 };
 
@@ -35,10 +35,10 @@ public:
     Integer(int value);
     ~Integer() override;
     Value* clone() const override;
-    Value& operator[](int idx) const override;
-    Value& operator[](const std::string& key) const override;
+    Value* operator[](int idx) const override;
+    Value* operator[](const std::string& key) const override;
     void accept(Visitor& visitor) override;
-    int get_value();
+    int get_value() const;
 private:
     int val;
 };
@@ -51,8 +51,8 @@ public:
     ~Array();
 
     Value* clone() const override;
-    Value& operator[](int idx) const override;
-    Value& operator[](const std::string& key) const override;
+    Value* operator[](int idx) const override;
+    Value* operator[](const std::string& key) const override;
     void accept(Visitor& visitor) override;
     int get_value();
 

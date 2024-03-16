@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = 
 
-CXX_FLAGS =  -g -fsanitize=address -Wall -Wextra -pedantic
+CXX_FLAGS =  -g -fsanitize=address -Wunused-parameter -Wall -Wextra -pedantic
 

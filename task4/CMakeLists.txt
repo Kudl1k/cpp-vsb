@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 option(DISABLE_ASAN "Do not use Address sanitizer" OFF)
 
 if(NOT DISABLE_ASAN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -Wunused-parameter")
 endif()
 
 add_compile_options(-Wall -Wextra -pedantic)
