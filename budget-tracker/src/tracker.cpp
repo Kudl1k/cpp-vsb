@@ -56,7 +56,7 @@ void Tracker::welcome_screen(){
                     hcenter({
                         text("Author: KUD0132")
                     })
-                })  | size(WIDTH,EQUAL,40) | size(HEIGHT,EQUAL,10) | border,
+                })  | size(WIDTH,EQUAL,40) | border,
                 filler()
             }) | flex ,            
             filler(),
@@ -89,7 +89,7 @@ void Tracker::setup_screen(){
         } else {
             this->main_screen(); 
         }
-    });
+    },ButtonOption::Animated());
 
     input_name |= CatchEvent([&](Event event){
         if (!error_message.empty() && name.empty() && !next_clicked)
@@ -117,8 +117,8 @@ void Tracker::setup_screen(){
         input_name,
         input_balance,
         Container::Horizontal({
-            next_button,
-            back_button
+            back_button,
+            next_button
         })
     });
 
@@ -127,6 +127,7 @@ void Tracker::setup_screen(){
 
     auto renderer = Renderer(layout, [&] {
         return vbox({
+            filler(),
             hbox({
                 filler(),
                 vbox({
@@ -136,18 +137,18 @@ void Tracker::setup_screen(){
                     hbox({text("Your balance:"),input_balance->Render()}),
                     filler(),
                     hcenter(text(error_message) | color(Color::Red)),
-                    separator(),
                     vbox({
                         hcenter({
                             hbox({
                                 back_button->Render(),
                                 next_button->Render(),
                             })
-                        })| flex,                        
+                        }),                        
                     }),
                 })  | size(WIDTH,EQUAL,40) | border,
                 filler()
-            }) | flex ,            
+            }) | flex ,
+            filler()            
         }) | flex;
     });
     screen.Loop(renderer);
