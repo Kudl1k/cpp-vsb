@@ -16,19 +16,19 @@ class Null;
 class Visitor {
 public:
     virtual ~Visitor() = default;
-    virtual void visit(const Integer* integer) {};
-    virtual void visit(const Array* array) {};
-    virtual void visit(const Object* object) {};
-    virtual void visit(const Null* null) {};
+    virtual void visit(const Integer*) {};
+    virtual void visit(const Array* ) {};
+    virtual void visit(const Object* ) {};
+    virtual void visit(const Null*) {};
 };
 
 class MutatingVisitor : public Visitor {
 public:
     virtual ~MutatingVisitor() = default;
-    virtual void visit(Integer* integer) {};
-    virtual void visit(Array* array) {};
-    virtual void visit(Object* object) {};
-    virtual void visit(Null* null) {};
+    virtual void visit(Integer*) {};
+    virtual void visit(Array*) {};
+    virtual void visit(Object*) {};
+    virtual void visit(Null*) {};
 };
 
 class RemoveNullVisitor : public MutatingVisitor {
@@ -58,7 +58,7 @@ public:
 
     virtual Value* clone() const = 0;
 
-    virtual Value* operator[](int idx) const = 0;
+    virtual Value* operator[](size_t idx) const = 0;
 
     virtual Value* operator[](const std::string& key) const = 0;
 
@@ -68,7 +68,7 @@ public:
 
     virtual int size() const {return -1;}
 
-    virtual void insert(const std::string& key, Value* value){};
+    virtual void insert(const std::string& , Value* ){};
 
 };
 
@@ -78,7 +78,7 @@ public:
     Integer(int value);
     ~Integer() override;
     Value* clone() const override;
-    Value* operator[](int idx) const override;
+    Value* operator[](size_t idx) const override;
     Value* operator[](const std::string& key) const override;
     void accept( Visitor& visitor) const override;
     int get_value() const override;
@@ -94,14 +94,16 @@ public:
     ~Array() override;
 
     Value* clone() const override;
-    Value* operator[](int idx) const override;
+    Value* operator[](size_t idx) const override;
     Value* operator[](const std::string& key) const override;
     void accept( Visitor& visitor) const override;
     int get_value();
 
+    void remove_nulls();
+
     int size() const ;
     void append(Value* value);
-    void remove(int idx);
+    void remove(size_t idx);
 
 private:
     std::vector<Value*> values;
@@ -115,7 +117,7 @@ public:
     ~Object() override;
 
     Value* clone() const override;
-    Value* operator[](int idx) const override;
+    Value* operator[](size_t idx) const override;
     Value* operator[](const std::string& key) const override;
     void accept( Visitor& visitor) const override;
     std::unordered_map<std::string, Value*> get_values() const;
@@ -136,7 +138,7 @@ public:
 
     Value* clone() const override;
 
-    Value* operator[](int idx) const override;
+    Value* operator[](size_t idx) const override;
 
     Value* operator[](const std::string& key) const override;
 

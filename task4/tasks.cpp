@@ -6,19 +6,19 @@
 // * RemoveNullVisitor class implementation
 
 
-void RemoveNullVisitor::visit(Integer *integer)
+void RemoveNullVisitor::visit(Integer *)
 {
 }
 
 void RemoveNullVisitor::visit(Array* array) {
-    
+   array->remove_nulls();
 }
 
 void RemoveNullVisitor::visit(Object *object)
 {
 }
 
-void RemoveNullVisitor::visit(Null *null)
+void RemoveNullVisitor::visit(Null*)
 {
 
 }
@@ -50,7 +50,7 @@ void PrintVisitor::visit(const Object *object)
 {
     stream << "{";
     std::vector<std::string> keys = object->keys();
-    for (int i = 0; i < keys.size(); ++i) {
+    for (size_t i = 0; i < keys.size(); ++i) {
         if (i != 0) {
             stream << ", ";
         }
@@ -60,7 +60,7 @@ void PrintVisitor::visit(const Object *object)
     stream << "}";
 }
 
-void PrintVisitor::visit(const Null *null) 
+void PrintVisitor::visit(const Null*) 
 {
     stream << "null";
 }
@@ -82,11 +82,11 @@ Value* Integer::clone() const {
     return new Integer{this->val};
 }
 
-Value* Integer::operator[](int idx) const {
+Value* Integer::operator[](size_t) const {
     throw std::runtime_error("Cannot use operator[] on an Integer");
 }
 
-Value* Integer::operator[](const std::string& key) const {
+Value* Integer::operator[](const std::string& ) const {
     throw std::runtime_error("Cannot use operator[] on an Integer");
 }
 
@@ -125,7 +125,7 @@ Value* Array::clone() const {
     return newarr;
 }
 
-Value* Array::operator[](int idx) const {
+Value* Array::operator[](size_t idx) const {
     if (idx >= values.size())
     {
         return nullptr;
@@ -133,7 +133,7 @@ Value* Array::operator[](int idx) const {
     return this->values[idx];
 }
 
-Value* Array::operator[](const std::string& key) const {
+Value* Array::operator[](const std::string&) const {
     throw std::invalid_argument("Cannot use string key to access array element");
 }
 
@@ -145,6 +145,12 @@ int Array::get_value() {
     throw std::logic_error("get_value is not supported for Array");
 }
 
+void Array::remove_nulls(){
+    values.erase(std::remove_if(values.begin(), values.end(), [](Value* item) {
+        return dynamic_cast<Null*>(item) != nullptr;
+    }), values.end());
+}
+
 int Array::size() const {
     return this->values.size();
 }
@@ -153,8 +159,8 @@ void Array::append(Value* value){
     values.push_back(value);
 }
 
-void Array::remove(int idx) {
-    if (idx >= 0 && idx < values.size()) {
+void Array::remove(size_t idx) {
+    if (idx < values.size()) {
         values.erase(values.begin() + idx);
     }
 }
@@ -188,7 +194,7 @@ Value *Object::clone() const{
     return newobj;
 }
 
-Value *Object::operator[](int idx) const{
+Value *Object::operator[](size_t) const{
         throw std::invalid_argument("Cannot use indexing to access Object element");
 }
 
@@ -249,11 +255,11 @@ Value* Null::clone() const  {
 }
 
 
-Value* Null::operator[](int idx) const  {
+Value* Null::operator[](size_t) const  {
     throw std::runtime_error("Cannot use operator[] on an Null");
 }
 
-Value* Null::operator[](const std::string& key) const  {
+Value* Null::operator[](const std::string& ) const  {
     throw std::runtime_error("Cannot use operator[] on an Null");
 
 }
