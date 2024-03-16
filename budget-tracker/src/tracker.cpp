@@ -26,13 +26,12 @@ void Tracker::tracker(){
 void Tracker::welcome_screen(){
     const std::vector<std::string> menu_entries = {
         "Plain",
-        "Simulation",
+        "Test version",
     };
     int menu_selected = 0;
     std::vector<Component> options;
-    for (const auto& entry : menu_entries) {
-        options.push_back(Button(entry, [&] { setup_screen(); }));
-    }
+    options.push_back(Button(menu_entries[0], [&] { setup_screen(); },ButtonOption::Ascii()));
+    options.push_back(Button(menu_entries[1], [&] { main_screen(); },ButtonOption::Ascii()));
     auto layout = Container::Vertical(options);
     auto renderer = Renderer(layout, [&] {
         return vbox({
@@ -45,8 +44,8 @@ void Tracker::welcome_screen(){
                     vcenter({
                         hcenter({
                             vbox({
-                                options[0]->Render(),
-                                options[1]->Render(),
+                                hcenter({options[0]->Render()}),
+                                hcenter({options[1]->Render()})
                             }) | flex
                         }),
                         
@@ -80,7 +79,7 @@ void Tracker::setup_screen(){
 
     // Clear the error message when the user starts typing
 
-        bool next_clicked = false;
+    bool next_clicked = false;
 
     auto next_button = Button("Next", [&] { 
         next_clicked = true;
@@ -89,7 +88,7 @@ void Tracker::setup_screen(){
         } else {
             this->main_screen(); 
         }
-    },ButtonOption::Animated());
+    },ButtonOption::Ascii());
 
     input_name |= CatchEvent([&](Event event){
         if (!error_message.empty() && name.empty() && !next_clicked)
@@ -109,7 +108,7 @@ void Tracker::setup_screen(){
         return event.is_character() && !std::isdigit(event.character()[0]);
     });
     
-    auto back_button = Button("Back", [&] { this->welcome_screen(); });
+    auto back_button = Button("Back", [&] { this->welcome_screen(); },ButtonOption::Ascii());
     
 
 
@@ -138,6 +137,7 @@ void Tracker::setup_screen(){
                     filler(),
                     hcenter(text(error_message) | color(Color::Red)),
                     vbox({
+                        separator(),
                         hcenter({
                             hbox({
                                 back_button->Render(),
@@ -156,12 +156,47 @@ void Tracker::setup_screen(){
 
 
 void Tracker::main_screen(){
-    auto renderer = Renderer([&]{
-        return hbox({
-            text("Hello"),
-        });
+    std::vector<std::string> tab_values{
+        "Main panel",
+        "This week",
+        "This month",
+    };
+    int tab_selected = 0;
+    auto tab_toggle = Toggle(&tab_values, &tab_selected);
+
+    auto tab_container = Container::Tab({
+
+    },&tab_selected);
+
+    auto button = Button("x",[&]{ 
+        screen.Exit();
+    },ButtonOption::Ascii());
+
+    auto container = Container::Vertical({
+        tab_toggle,
+        button,
+        tab_container,
     });
+
+    
+    auto renderer = Renderer(container, [&] {
+    return vbox({
+        hbox({
+           tab_toggle->Render(),
+           filler(),
+           button->Render()
+        }),
+        separator(),
+        text(tab_values[tab_selected]),
+        tab_container->Render(),
+    }) | border;
+    });
+    
     screen.Loop(renderer);
+}
+
+void Tracker::main_panel(){
+    
 }
 
 void Tracker::add_balance_action(){

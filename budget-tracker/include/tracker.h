@@ -33,6 +33,8 @@ public:
     void setup_screen();
     void main_screen();
 
+    void main_panel();
+
 
     void add_balance_action();
 
