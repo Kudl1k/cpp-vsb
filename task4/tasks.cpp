@@ -1,6 +1,96 @@
 #include "tasks.h"
 
 
+
+
+// * RemoveNullVisitor class implementation
+
+
+void RemoveNullVisitor::visit(Integer *integer)
+{
+}
+
+void RemoveNullVisitor::visit(Array* array) {
+    for (size_t i = 0; i < array->size(); ++i) {
+        array->operator[](i)->accept(*this);
+    }
+}
+
+void RemoveNullVisitor::visit(Object *object)
+{
+    std::vector<std::string> keysToRemove;
+    for (const auto& pair : object->get_values()) {
+        if (dynamic_cast<Null*>(pair.second) != nullptr) {
+            keysToRemove.push_back(pair.first);
+        } else {
+            pair.second->accept(*this);
+        }
+    }
+
+    // Remove the Null values after visiting all the values
+    for (const auto& key : keysToRemove) {
+        object->remove(key);
+    }
+
+    // Print keys after removal for debugging
+    std::cout << "Keys after removal: ";
+    for (const auto& key : object->keys()) {
+        std::cout << key << ", ";
+    }
+    std::cout << std::endl;
+}
+
+void RemoveNullVisitor::visit(Null *null)
+{
+
+}
+
+
+
+
+// * PrintVisitor class implementation
+
+
+void PrintVisitor::visit(const Integer *integer) 
+{
+    stream << integer->get_value();
+}
+
+void PrintVisitor::visit(const Array *array) 
+{
+    stream << "[";
+    for (int i = 0; i < array->size(); ++i) {
+        if (i != 0) {
+            stream << ", ";
+        }
+        array->operator[](i)->accept(*this);
+    }
+    stream << "]";
+}
+
+void PrintVisitor::visit(const Object *object) 
+{
+    stream << "{";
+    std::vector<std::string> keys = object->keys();
+    for (int i = 0; i < keys.size(); ++i) {
+        if (i != 0) {
+            stream << ", ";
+        }
+        stream << keys[i] << ": ";
+        object->operator[](keys[i])->accept(*this);
+    }
+    stream << "}";
+}
+
+void PrintVisitor::visit(const Null *null) 
+{
+    stream << "null";
+}
+
+
+
+
+
 // * Integer class implementation
 
 
@@ -22,8 +112,8 @@ Value* Integer::operator[](const std::string& key) const {
     throw std::runtime_error("Cannot use operator[] on an Integer");
 }
 
-void Integer::accept(Visitor& visitor) {
-    //visitor.visit(*this);
+void Integer::accept(Visitor& visitor) const{
+    visitor.visit(this);
 }
 
 int Integer::get_value() const{
@@ -43,7 +133,7 @@ Array::Array(std::initializer_list<Value*> init){
 }
 
 Array::~Array(){
-    for (auto value: values){
+    for (auto* value: values){
         delete value;
     }
 }
@@ -69,8 +159,8 @@ Value* Array::operator[](const std::string& key) const {
     throw std::invalid_argument("Cannot use string key to access array element");
 }
 
-void Array::accept(Visitor& visitor) {
-
+void Array::accept( Visitor& visitor) const {
+    visitor.visit(this);
 }
 
 int Array::get_value() {
@@ -85,6 +175,11 @@ void Array::append(Value* value){
     values.push_back(value);
 }
 
+void Array::remove(int idx) {
+    if (idx >= 0 && idx < values.size()) {
+        values.erase(values.begin() + idx);
+    }
+}
 
 
 
@@ -128,7 +223,13 @@ Value *Object::operator[](const std::string &key) const{
     }
 }
 
-void Object::accept(Visitor &visitor){
+void Object::accept( Visitor &visitor) const{
+    visitor.visit(this);
+}
+
+std::unordered_map<std::string, Value *> Object::get_values() const
+{
+    return values;
 }
 
 int Object::size() const {
@@ -143,7 +244,11 @@ void Object::insert(const std::string &key, Value *value){
 }
 
 void Object::remove(const std::string &key){
-    values.erase(key);
+    auto it = values.find(key);
+    if (it != values.end()) {
+        delete it->second; // delete the Value object
+        values.erase(it);
+    }
 }
 
 std::vector<std::string> Object::keys() const{
@@ -171,10 +276,12 @@ Value* Null::operator[](int idx) const  {
 }
 
 Value* Null::operator[](const std::string& key) const  {
-        throw std::runtime_error("Cannot use operator[] on an Null");
+    throw std::runtime_error("Cannot use operator[] on an Null");
 
 }
 
-void Null::accept(Visitor& visitor)  {
-    // Do nothing
+void Null::accept( Visitor& visitor) const {
+    visitor.visit(this);
 }
+
+
