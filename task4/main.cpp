@@ -1,4 +1,7 @@
 #include "tasks.h"
+#include <sstream>
+#include <vector>
+
 
 int main() {
 
@@ -9,6 +12,16 @@ int main() {
         new Array{{new Integer{10}, new Integer{11}}},
         new Integer{4},
     }};
+
+    std::cout << array->size() << std::endl;
+
+
+    RemoveNullVisitor v;
+    array->accept(v);
+    std::cout << array->size() << std::endl;
+    
+
+
     
     delete array;
     

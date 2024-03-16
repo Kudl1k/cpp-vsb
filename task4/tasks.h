@@ -33,6 +33,7 @@ public:
 
 class RemoveNullVisitor : public MutatingVisitor {
 public:
+    RemoveNullVisitor() = default;
     ~RemoveNullVisitor() = default;
     void visit(Integer* integer) override;
     void visit(Array* array) override;

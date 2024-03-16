@@ -11,11 +11,21 @@ void RemoveNullVisitor::visit(Integer *)
 }
 
 void RemoveNullVisitor::visit(Array* array) {
-   array->remove_nulls();
+    std::cout << "Before" << std::endl;
+    for (size_t i = 0; i < array->size(); ++i) {
+        Value* value = (*array)[i];
+        if (dynamic_cast<Null*>(value) != nullptr) {
+            array->remove(i--);
+        } else {
+            value->accept(*this);
+        }
+    }
+    std::cout << "After" << std::endl;
 }
 
 void RemoveNullVisitor::visit(Object *object)
 {
+
 }
 
 void RemoveNullVisitor::visit(Null*)
@@ -137,8 +147,11 @@ Value* Array::operator[](const std::string&) const {
     throw std::invalid_argument("Cannot use string key to access array element");
 }
 
-void Array::accept( Visitor& visitor) const {
-    visitor.visit(this);
+void Array::accept(Visitor& visitor) const {
+    std::cout << "accepted" << std::endl;
+    for (size_t i = 0; i < values.size(); ++i) {
+        values[i]->accept(visitor);
+    }
 }
 
 int Array::get_value() {
@@ -146,9 +159,19 @@ int Array::get_value() {
 }
 
 void Array::remove_nulls(){
-    values.erase(std::remove_if(values.begin(), values.end(), [](Value* item) {
-        return dynamic_cast<Null*>(item) != nullptr;
-    }), values.end());
+    std::cout << "Called remove nulls" << std::endl;
+    for (size_t i = 0; i < values.size(); i++)
+    {
+        auto value = values[i];
+        if(dynamic_cast<Null*>(value) != nullptr) {
+            delete value;
+            values.erase(values.begin() + i);
+            --i;
+        } else if(auto arrayValue = dynamic_cast<Array*>(value)) {
+            arrayValue->remove_nulls();
+        }
+    }
+    
 }
 
 int Array::size() const {
