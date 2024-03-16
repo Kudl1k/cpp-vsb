@@ -22,7 +22,7 @@ public:
     virtual void visit(const Null*) {};
 };
 
-class MutatingVisitor : public Visitor {
+class MutatingVisitor {
 public:
     virtual ~MutatingVisitor() = default;
     virtual void visit(Integer*) {};
@@ -65,6 +65,8 @@ public:
 
     virtual void accept( Visitor& visitor) const = 0;
 
+    virtual void accept( MutatingVisitor& visitor) = 0;
+
     virtual int get_value() const {return -1;}
 
     virtual int size() const {return -1;}
@@ -82,6 +84,7 @@ public:
     Value* operator[](size_t idx) const override;
     Value* operator[](const std::string& key) const override;
     void accept( Visitor& visitor) const override;
+    void accept( MutatingVisitor& visitor) override;
     int get_value() const override;
 private:
     int val;
@@ -98,6 +101,7 @@ public:
     Value* operator[](size_t idx) const override;
     Value* operator[](const std::string& key) const override;
     void accept( Visitor& visitor) const override;
+    void accept( MutatingVisitor& visitor) override;
     int get_value();
 
     void remove_nulls();
@@ -121,12 +125,15 @@ public:
     Value* operator[](size_t idx) const override;
     Value* operator[](const std::string& key) const override;
     void accept( Visitor& visitor) const override;
-    std::unordered_map<std::string, Value*> get_values() const;
+    void accept( MutatingVisitor& visitor) override;
+
+    std::unordered_map<std::string, Value*>& get_values();
 
     int size() const override;
     void insert(const std::string& key, Value* value) override;
     void remove(const std::string& key);
     std::vector<std::string> keys() const;
+    void remove_nulls();
 private:
     std::unordered_map<std::string, Value*> values;
 };
@@ -144,4 +151,6 @@ public:
     Value* operator[](const std::string& key) const override;
 
     void accept( Visitor& visitor) const override;
+    void accept( MutatingVisitor& visitor) override;
+
 };

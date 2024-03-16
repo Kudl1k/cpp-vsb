@@ -11,21 +11,12 @@ void RemoveNullVisitor::visit(Integer *)
 }
 
 void RemoveNullVisitor::visit(Array* array) {
-    std::cout << "Before" << std::endl;
-    for (size_t i = 0; i < array->size(); ++i) {
-        Value* value = (*array)[i];
-        if (dynamic_cast<Null*>(value) != nullptr) {
-            array->remove(i--);
-        } else {
-            value->accept(*this);
-        }
-    }
-    std::cout << "After" << std::endl;
+    array->remove_nulls();
 }
 
 void RemoveNullVisitor::visit(Object *object)
 {
-
+    object->remove_nulls();
 }
 
 void RemoveNullVisitor::visit(Null*)
@@ -104,6 +95,12 @@ void Integer::accept(Visitor& visitor) const{
     visitor.visit(this);
 }
 
+void Integer::accept(MutatingVisitor &visitor)
+{
+    visitor.visit(this);
+
+}
+
 int Integer::get_value() const{
     return val;
 }
@@ -148,10 +145,12 @@ Value* Array::operator[](const std::string&) const {
 }
 
 void Array::accept(Visitor& visitor) const {
-    std::cout << "accepted" << std::endl;
-    for (size_t i = 0; i < values.size(); ++i) {
-        values[i]->accept(visitor);
-    }
+    visitor.visit(this);
+}
+
+void Array::accept(MutatingVisitor &visitor)
+{
+    visitor.visit(this);
 }
 
 int Array::get_value() {
@@ -168,9 +167,11 @@ void Array::remove_nulls(){
             values.erase(values.begin() + i);
             --i;
         } else if(auto arrayValue = dynamic_cast<Array*>(value)) {
+            std::cout << i << " found array" << std::endl;
             arrayValue->remove_nulls();
         }
     }
+    std::cout << this->size() << std::endl;
     
 }
 
@@ -234,7 +235,12 @@ void Object::accept( Visitor &visitor) const{
     visitor.visit(this);
 }
 
-std::unordered_map<std::string, Value *> Object::get_values() const
+void Object::accept(MutatingVisitor &visitor){
+    visitor.visit(this);
+
+}
+
+std::unordered_map<std::string, Value *>& Object::get_values()
 {
     return values;
 }
@@ -267,8 +273,20 @@ std::vector<std::string> Object::keys() const{
     return keys;
 }
 
-
-
+void Object::remove_nulls()
+{
+    auto objkeys = keys();
+    for (auto key : objkeys){
+        auto value = this->operator[](key);
+        if (dynamic_cast<Null*>(value) != nullptr) {
+            this->remove(key);
+        } else if(auto arrayValue = dynamic_cast<Array*>(value)) {
+            arrayValue->remove_nulls();
+        } else if(auto object = dynamic_cast<Object*>(value)) {
+            object->remove_nulls();
+        }
+    }   
+}
 
 // * Null class implementation
 
@@ -291,4 +309,6 @@ void Null::accept( Visitor& visitor) const {
     visitor.visit(this);
 }
 
-
+void Null::accept(MutatingVisitor &visitor){
+    visitor.visit(this);
+}
