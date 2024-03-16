@@ -8,9 +8,7 @@ Integer::Integer(int value) {
     val = value;
 }
 
-Integer::~Integer() {
-    std::cout<< "Destuctor called" << std::endl;
-}
+Integer::~Integer() = default;
 
 Value* Integer::clone() const {
     return new Integer{this->val};
@@ -38,9 +36,7 @@ int Integer::get_value() const{
 // * Array class implementation
 
 
-Array::Array(){
-    // * Can be empty
-}
+Array::Array() = default;
 
 Array::Array(std::initializer_list<Value*> init){
     values = init;
@@ -62,6 +58,10 @@ Value* Array::clone() const {
 }
 
 Value* Array::operator[](int idx) const {
+    if (idx >= values.size())
+    {
+        return nullptr;
+    }
     return this->values[idx];
 }
 
@@ -77,7 +77,7 @@ int Array::get_value() {
     throw std::logic_error("get_value is not supported for Array");
 }
 
-size_t Array::size() const{
+int Array::size() const {
     return this->values.size();
 }
 
@@ -95,25 +95,86 @@ Object::Object(){
 }
 
 Object::Object(std::initializer_list<std::pair<std::string, Value *>> init){
+    for (auto pair : init){
+        values[pair.first] = pair.second;
+    }
 }
 
 Object::~Object(){
+    for (auto pair : values){
+        delete pair.second;
+    }
 }
 
 Value *Object::clone() const{
-    return nullptr;
+    Object *newobj = new Object{};
+
+    for(auto &pair : values){
+        newobj->insert(pair.first,pair.second->clone());
+    }
+    return newobj;
+}
+
+Value *Object::operator[](int idx) const{
+        throw std::invalid_argument("Cannot use indexing to access Object element");
 }
 
 Value *Object::operator[](const std::string &key) const{
-    return nullptr;
+    if (values.find(key) == values.end())
+    {
+        return nullptr;
+    } else {
+        return values.find(key)->second;
+    }
 }
 
 void Object::accept(Visitor &visitor){
 }
 
-size_t Object::size() const{
-    return size_t();
+int Object::size() const {
+    return values.size();
 }
 
 void Object::insert(const std::string &key, Value *value){
+    if (values.find(key) != values.end()) {
+        delete values.find(key)->second;
+    }
+    values[key] = value;
+}
+
+void Object::remove(const std::string &key){
+    values.erase(key);
+}
+
+std::vector<std::string> Object::keys() const{
+    std::vector<std::string> keys;
+    for (auto key: values){
+        keys.push_back(key.first);
+    }
+    std::sort(keys.begin(),keys.end());
+    return keys;
+}
+
+
+
+
+// * Null class implementation
+
+
+Value* Null::clone() const  {
+    return new Null();
+}
+
+
+Value* Null::operator[](int idx) const  {
+    throw std::runtime_error("Cannot use operator[] on an Null");
+}
+
+Value* Null::operator[](const std::string& key) const  {
+        throw std::runtime_error("Cannot use operator[] on an Null");
+
+}
+
+void Null::accept(Visitor& visitor)  {
+    // Do nothing
 }

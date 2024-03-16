@@ -2,13 +2,25 @@
 
 int main() {
 
-    const auto* a = new Integer{5};
-    auto arr = new Array{{new Integer{1},new Integer{2}}};
+    Object object{{
+        {"a", new Integer{1}},
+        {"b", new Integer{3}},
+        {"c", new Integer{2}},
+    }};
+    object.insert("d", new Integer{10});
+    object.insert("e", new Array{{new Integer{11}, new Integer{12}}});
+
+
+    if (object.size() == 5)
+    {
+        std::cout << "True" << std::endl;
+    }
+    if (dynamic_cast<const Array*>(object["e"])->size() == 2)
+    {
+        std::cout << "True" << std::endl;
+    }
     
-
-    delete a;
-    delete arr;
-
+    
 
     return 0;
 }

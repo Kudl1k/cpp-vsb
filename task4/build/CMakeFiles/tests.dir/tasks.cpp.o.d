@@ -1,4 +1,4 @@
-CMakeFiles/tasks.dir/main.cpp.o: /home/kudla/cpp-vsb/task4/main.cpp \
+CMakeFiles/tests.dir/tasks.cpp.o: /home/kudla/cpp-vsb/task4/tasks.cpp \
  /usr/include/stdc-predef.h /home/kudla/cpp-vsb/task4/tasks.h \
  /usr/include/c++/11/iostream \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <algorithm>
 
 
 class Visitor {
@@ -26,7 +27,11 @@ public:
 
     virtual void accept(Visitor& visitor) = 0;
 
-    virtual int get_value(){return 0;}
+    virtual int get_value() const {return -1;}
+
+    virtual int size() const {return -1;}
+
+    virtual void insert(const std::string& key, Value* value){};
 
 };
 
@@ -39,7 +44,7 @@ public:
     Value* operator[](int idx) const override;
     Value* operator[](const std::string& key) const override;
     void accept(Visitor& visitor) override;
-    int get_value() const;
+    int get_value() const override;
 private:
     int val;
 };
@@ -57,7 +62,7 @@ public:
     void accept(Visitor& visitor) override;
     int get_value();
 
-    size_t size() const;
+    int size() const ;
     void append(Value* value);
 
 private:
@@ -72,12 +77,29 @@ public:
     ~Object() override;
 
     Value* clone() const override;
+    Value* operator[](int idx) const override;
     Value* operator[](const std::string& key) const override;
     void accept(Visitor& visitor) override;
 
-    size_t size() const;
-    void insert(const std::string& key, Value* value);
-
+    int size() const override;
+    void insert(const std::string& key, Value* value) override;
+    void remove(const std::string& key);
+    std::vector<std::string> keys() const;
 private:
     std::unordered_map<std::string, Value*> values;
+};
+
+
+class Null : public Value {
+public:
+    Null() = default;
+    ~Null() override = default;
+
+    Value* clone() const override;
+
+    Value* operator[](int idx) const override;
+
+    Value* operator[](const std::string& key) const override;
+
+    void accept(Visitor& visitor) override;
 };
