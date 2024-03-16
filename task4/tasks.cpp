@@ -87,3 +87,33 @@ void Array::append(Value* value){
 
 
 
+
+// * Object class implementation
+
+
+Object::Object(){
+}
+
+Object::Object(std::initializer_list<std::pair<std::string, Value *>> init){
+}
+
+Object::~Object(){
+}
+
+Value *Object::clone() const{
+    return nullptr;
+}
+
+Value *Object::operator[](const std::string &key) const{
+    return nullptr;
+}
+
+void Object::accept(Visitor &visitor){
+}
+
+size_t Object::size() const{
+    return size_t();
+}
+
+void Object::insert(const std::string &key, Value *value){
+}

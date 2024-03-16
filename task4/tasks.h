@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 
 class Visitor {
@@ -48,7 +49,7 @@ class Array : public Value {
 public:
     Array();
     Array(std::initializer_list<Value*> init);
-    ~Array();
+    ~Array() override;
 
     Value* clone() const override;
     Value* operator[](int idx) const override;
@@ -64,5 +65,19 @@ private:
 };
 
 
+class Object : public Value {
+public:
+    Object();
+    Object(std::initializer_list<std::pair<std::string, Value*>> init);
+    ~Object() override;
 
+    Value* clone() const override;
+    Value* operator[](const std::string& key) const override;
+    void accept(Visitor& visitor) override;
 
+    size_t size() const;
+    void insert(const std::string& key, Value* value);
+
+private:
+    std::unordered_map<std::string, Value*> values;
+};
