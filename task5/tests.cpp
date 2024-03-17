@@ -369,200 +369,200 @@ TEST_SUITE("UTF8String old") {
     }
 }
 
-// template<typename Item, typename Iterator>
-// std::vector<Item> collect(Iterator iterator) {
-//     std::vector<Item> items;
-//     for (const auto& item: iterator) {
-//         items.push_back(item);
-//     }
-//     return items;
-// }
+template<typename Item, typename Iterator>
+std::vector<Item> collect(Iterator iterator) {
+    std::vector<Item> items;
+    for (const auto& item: iterator) {
+        items.push_back(item);
+    }
+    return items;
+}
 
-// // This function is used to avoid problems with SFINAE in GCC 11.
-// template <typename T>
-// void check_vectors(std::vector<T> a, std::vector<T> b) {
-//     REQUIRE_EQ(a.size(), b.size());
-//     for (size_t i = 0; i < a.size(); i++) {
-//         REQUIRE_EQ(a[i], b[i]);
-//     }
-// }
+// This function is used to avoid problems with SFINAE in GCC 11.
+template <typename T>
+void check_vectors(std::vector<T> a, std::vector<T> b) {
+    REQUIRE_EQ(a.size(), b.size());
+    for (size_t i = 0; i < a.size(); i++) {
+        REQUIRE_EQ(a[i], b[i]);
+    }
+}
 
-// // New string tests with move semantics and iterator
-// TEST_SUITE("UTF8String new") {
-//     TEST_CASE("Move string") {
-//         auto fn = [](UTF8String string) {
-//             REQUIRE(string.get_byte_count() == 4);
-//             REQUIRE(string.get_point_count() == 4);
-//             REQUIRE(string[0].value() == 'a');
-//             REQUIRE(string[1].value() == 'h');
-//             REQUIRE(string[2].value() == 'o');
-//             REQUIRE(string[3].value() == 'j');
-//         };
+// New string tests with move semantics and iterator
+TEST_SUITE("UTF8String new") {
+    TEST_CASE("Move string") {
+        auto fn = [](UTF8String string) {
+            REQUIRE(string.get_byte_count() == 4);
+            REQUIRE(string.get_point_count() == 4);
+            REQUIRE(string[0].value() == 'a');
+            REQUIRE(string[1].value() == 'h');
+            REQUIRE(string[2].value() == 'o');
+            REQUIRE(string[3].value() == 'j');
+        };
 
-//         UTF8String str{"ahoj"};
-//         fn(std::move(str));
-//         REQUIRE(str.get_point_count() == 0);
-//     }
+        UTF8String str{"ahoj"};
+        fn(std::move(str));
+        REQUIRE(str.get_point_count() == 0);
+    }
 
-//     TEST_CASE("Move assign") {
-//         UTF8String str{"ahoj"};
-//         str = UTF8String{"cau"};
+    TEST_CASE("Move assign") {
+        UTF8String str{"ahoj"};
+        str = UTF8String{"cau"};
 
-//         REQUIRE(str.get_point_count() == 3);
-//     }
+        REQUIRE(str.get_point_count() == 3);
+    }
 
-//     TEST_CASE("Iterate bytes empty") {
-//         UTF8String str;
-//         REQUIRE(collect<uint8_t>(str.bytes()).empty());
+    // TEST_CASE("Iterate bytes empty") {
+    //     UTF8String str;
+    //     REQUIRE(collect<uint8_t>(str.bytes()).empty());
 
-//         auto it = str.bytes();
-//         REQUIRE(!(it.begin() != it.end()));
-//     }
+    //     auto it = str.bytes();
+    //     REQUIRE(!(it.begin() != it.end()));
+    // }
 
-//     TEST_CASE("Const string can be byte-iterated") {
-//         const UTF8String str{"ahoj"};
-//         auto iterator = str.bytes().begin();
-//         ++iterator;
-//     }
+    // TEST_CASE("Const string can be byte-iterated") {
+    //     const UTF8String str{"ahoj"};
+    //     auto iterator = str.bytes().begin();
+    //     ++iterator;
+    // }
 
-//     TEST_CASE("Iterate bytes") {
-//         UTF8String str{std::vector<CodePoint>{
-//                 0x1F601, // 😁
-//                 0x1F614, // 😔
-//                 static_cast<CodePoint>('0'),
-//                 0x010D // č
-//         }};
-//         check_vectors(collect<uint8_t>(str.bytes()), std::vector<uint8_t>{
-//                 0xF0, 0x9F, 0x98, 0x81,
-//                 0xF0, 0x9F, 0x98, 0x94,
-//                 0x30,
-//                 0xC4, 0x8D
-//         });
-//     }
+    // TEST_CASE("Iterate bytes") {
+    //     UTF8String str{std::vector<CodePoint>{
+    //             0x1F601, // 😁
+    //             0x1F614, // 😔
+    //             static_cast<CodePoint>('0'),
+    //             0x010D // č
+    //     }};
+    //     check_vectors(collect<uint8_t>(str.bytes()), std::vector<uint8_t>{
+    //             0xF0, 0x9F, 0x98, 0x81,
+    //             0xF0, 0x9F, 0x98, 0x94,
+    //             0x30,
+    //             0xC4, 0x8D
+    //     });
+    // }
 
-//     TEST_CASE("Iterate bytes concurrently") {
-//         UTF8String str{"ahoj"};
+    // TEST_CASE("Iterate bytes concurrently") {
+    //     UTF8String str{"ahoj"};
 
-//         auto byte_iter = str.bytes();
-//         auto it1 = byte_iter.begin();
-//         auto it2 = byte_iter.begin();
+    //     auto byte_iter = str.bytes();
+    //     auto it1 = byte_iter.begin();
+    //     auto it2 = byte_iter.begin();
 
-//         REQUIRE(*it1 == 'a');
-//         REQUIRE(*it2 == 'a');
-//         ++it2;
-//         REQUIRE(*it1 == 'a');
-//         REQUIRE(*it2 == 'h');
-//         ++it2;
-//         ++it1;
-//         REQUIRE(*it1 == 'h');
-//         REQUIRE(*it2 == 'o');
-//     }
+    //     REQUIRE(*it1 == 'a');
+    //     REQUIRE(*it2 == 'a');
+    //     ++it2;
+    //     REQUIRE(*it1 == 'a');
+    //     REQUIRE(*it2 == 'h');
+    //     ++it2;
+    //     ++it1;
+    //     REQUIRE(*it1 == 'h');
+    //     REQUIRE(*it2 == 'o');
+    // }
 
-//     TEST_CASE("Random access byte iterators") {
-//         UTF8String str{"I Love Haskell"};
+    // TEST_CASE("Random access byte iterators") {
+    //     UTF8String str{"I Love Haskell"};
 
-//         auto it = str.bytes().begin();
+    //     auto it = str.bytes().begin();
 
-//         it += 7;
-//         REQUIRE_EQ(*it, 'H');
-//         it -= 3;
-//         REQUIRE_EQ(*it, 'v');
+    //     it += 7;
+    //     REQUIRE_EQ(*it, 'H');
+    //     it -= 3;
+    //     REQUIRE_EQ(*it, 'v');
 
-//         auto it2 = it + 6;
-//         REQUIRE_EQ(*it2, 'k');
+    //     auto it2 = it + 6;
+    //     REQUIRE_EQ(*it2, 'k');
 
-//         auto it3 = it2 - 2;
-//         REQUIRE_EQ(*it3, 'a');
-//     }
+    //     auto it3 = it2 - 2;
+    //     REQUIRE_EQ(*it3, 'a');
+    // }
 
-//     TEST_CASE("Iterate codepoints empty") {
-//         UTF8String str;
-//         REQUIRE(collect<CodePoint>(str.codepoints()).empty());
+    // TEST_CASE("Iterate codepoints empty") {
+    //     UTF8String str;
+    //     REQUIRE(collect<CodePoint>(str.codepoints()).empty());
 
-//         auto it = str.codepoints();
-//         REQUIRE(!(it.begin() != it.end()));
-//     }
+    //     auto it = str.codepoints();
+    //     REQUIRE(!(it.begin() != it.end()));
+    // }
 
-//     TEST_CASE("Const string can be codepoint-iterated") {
-//         const UTF8String str{"ahoj"};
-//         auto iterator = str.codepoints().begin();
-//         ++iterator;
-//     }
+    // TEST_CASE("Const string can be codepoint-iterated") {
+    //     const UTF8String str{"ahoj"};
+    //     auto iterator = str.codepoints().begin();
+    //     ++iterator;
+    // }
 
-//     TEST_CASE("Bidirectional codepoint iterators") {
-//         UTF8String str{std::vector<CodePoint>{
-//                 0x1F601, // 😁
-//                 0x1F614, // 😔
-//                 static_cast<CodePoint>('0'),
-//                 0x010D // č
-//         }};
+    // TEST_CASE("Bidirectional codepoint iterators") {
+    //     UTF8String str{std::vector<CodePoint>{
+    //             0x1F601, // 😁
+    //             0x1F614, // 😔
+    //             static_cast<CodePoint>('0'),
+    //             0x010D // č
+    //     }};
 
-//         auto it = str.codepoints().begin();
+    //     auto it = str.codepoints().begin();
 
-//         ++it;
-//         REQUIRE_EQ(*it, 0x1F614);
-//         ++it;
-//         REQUIRE_EQ(*it, static_cast<CodePoint>('0'));
-//         --it;
-//         REQUIRE_EQ(*it, 0x1F614);
-//         --it;
-//         REQUIRE_EQ(*it, 0x1F601);
-//     }
+    //     ++it;
+    //     REQUIRE_EQ(*it, 0x1F614);
+    //     ++it;
+    //     REQUIRE_EQ(*it, static_cast<CodePoint>('0'));
+    //     --it;
+    //     REQUIRE_EQ(*it, 0x1F614);
+    //     --it;
+    //     REQUIRE_EQ(*it, 0x1F601);
+    // }
 
-//     TEST_CASE("Iterate codepoints 1") {
-//         UTF8String str{std::vector<CodePoint>{
-//                 0x1F601, // 😁
-//                 0x1F614, // 😔
-//                 static_cast<CodePoint>('0'),
-//                 0x010D // č
-//         }};
-//         check_vectors(collect<CodePoint>(str.codepoints()), std::vector<CodePoint>{
-//                 0x1F601, // 😁
-//                 0x1F614, // 😔
-//                 static_cast<CodePoint>('0'),
-//                 0x010D // č
-//         });
-//     }
+    // TEST_CASE("Iterate codepoints 1") {
+    //     UTF8String str{std::vector<CodePoint>{
+    //             0x1F601, // 😁
+    //             0x1F614, // 😔
+    //             static_cast<CodePoint>('0'),
+    //             0x010D // č
+    //     }};
+    //     check_vectors(collect<CodePoint>(str.codepoints()), std::vector<CodePoint>{
+    //             0x1F601, // 😁
+    //             0x1F614, // 😔
+    //             static_cast<CodePoint>('0'),
+    //             0x010D // č
+    //     });
+    // }
 
-//     TEST_CASE("Iterate codepoints 2") {
-//         std::vector<uint8_t> utf8input{
-//                 0xF0, 0x9F, 0x98, 0x81,
-//                 0xF0, 0x9F, 0x98, 0x94,
-//                 0x30,
-//                 0xC4, 0x8D
-//         };
-//         UTF8String str{utf8input};
-//         check_vectors(collect<CodePoint>(str.codepoints()), std::vector<CodePoint>{
-//                 0x1F601, // 😁
-//                 0x1F614, // 😔
-//                 static_cast<CodePoint>('0'),
-//                 0x010D // č
-//         });
-//     }
+    // TEST_CASE("Iterate codepoints 2") {
+    //     std::vector<uint8_t> utf8input{
+    //             0xF0, 0x9F, 0x98, 0x81,
+    //             0xF0, 0x9F, 0x98, 0x94,
+    //             0x30,
+    //             0xC4, 0x8D
+    //     };
+    //     UTF8String str{utf8input};
+    //     check_vectors(collect<CodePoint>(str.codepoints()), std::vector<CodePoint>{
+    //             0x1F601, // 😁
+    //             0x1F614, // 😔
+    //             static_cast<CodePoint>('0'),
+    //             0x010D // č
+    //     });
+    // }
 
-//     TEST_CASE("Iterate codepoints concurrently") {
-//         UTF8String str{std::vector<CodePoint>{
-//                 0x1F601, // 😁
-//                 0x1F614, // 😔
-//                 static_cast<CodePoint>('0'),
-//                 0x010D // č
-//         }};
+    // TEST_CASE("Iterate codepoints concurrently") {
+    //     UTF8String str{std::vector<CodePoint>{
+    //             0x1F601, // 😁
+    //             0x1F614, // 😔
+    //             static_cast<CodePoint>('0'),
+    //             0x010D // č
+    //     }};
 
-//         auto codepoint_iter = str.codepoints();
-//         auto it1 = codepoint_iter.begin();
-//         auto it2 = codepoint_iter.begin();
+    //     auto codepoint_iter = str.codepoints();
+    //     auto it1 = codepoint_iter.begin();
+    //     auto it2 = codepoint_iter.begin();
 
-//         REQUIRE(*it1 == 0x1F601);
-//         REQUIRE(*it2 == 0x1F601);
-//         ++it2;
-//         REQUIRE(*it1 == 0x1F601);
-//         REQUIRE(*it2 == 0x1F614);
-//         ++it2;
-//         ++it1;
-//         REQUIRE(*it1 == 0x1F614);
-//         REQUIRE(*it2 == static_cast<CodePoint>('0'));
-//     }
-// }
+    //     REQUIRE(*it1 == 0x1F601);
+    //     REQUIRE(*it2 == 0x1F601);
+    //     ++it2;
+    //     REQUIRE(*it1 == 0x1F601);
+    //     REQUIRE(*it2 == 0x1F614);
+    //     ++it2;
+    //     ++it1;
+    //     REQUIRE(*it1 == 0x1F614);
+    //     REQUIRE(*it2 == static_cast<CodePoint>('0'));
+    // }
+}
 
 // // Tree tests
 // TEST_SUITE("Tree") {

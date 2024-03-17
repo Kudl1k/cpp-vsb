@@ -44,6 +44,15 @@ UTF8String::UTF8String(const UTF8String &ptr){
     buffer = ptr.buffer;
 }
 
+UTF8String::UTF8String(UTF8String &&other)
+{
+    points = other.points;
+    bytes = other.bytes;
+    buffer = std::move(other.buffer);
+    other.points = 0;
+    other.bytes = 0;
+}
+
 UTF8String& UTF8String::operator=(const UTF8String &ptr){
     points = ptr.points;
     bytes = ptr.bytes;
@@ -182,6 +191,17 @@ UTF8String& UTF8String::operator+=(const UTF8String& str){
     buffer.insert(buffer.end(),str.buffer.begin(),str.buffer.end());
     bytes += str.bytes;
     points += str.points;
+    return *this;
+}
+
+UTF8String &UTF8String::operator=(UTF8String &&other){
+    if (this != &other) {
+        points = other.points;
+        bytes = other.bytes;
+        buffer = std::move(other.buffer);
+        other.points = 0;
+        other.bytes = 0;
+    }
     return *this;
 }
 

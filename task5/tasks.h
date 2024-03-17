@@ -29,6 +29,7 @@ public:
     UTF8String(const std::string& s);
     UTF8String(const std::vector<CodePoint>&ptr);
     UTF8String(const UTF8String &ptr);
+    UTF8String(UTF8String&& other);
 
     UTF8String& operator=(const UTF8String &ptr);
 
@@ -52,6 +53,7 @@ public:
     friend UTF8String operator+(const UTF8String &lhs,const UTF8String &rhs);
 
     UTF8String& operator+=(const UTF8String& str);
+    UTF8String& operator=(UTF8String&& other);
 
     friend bool operator==(const UTF8String &lhs,const UTF8String &rhs);
     friend bool operator!=(const UTF8String &lhs,const UTF8String &rhs);
