@@ -132,3 +132,53 @@ public:
     void accept( Visitor& visitor) const override;
     void accept( MutatingVisitor& visitor) override;
 };
+
+
+/*
+* Questions
+? Can individual elements be shared among different JSON containers (array/object) with the mentioned
+? design? Can you take one specific element (e.g. an integer) allocated on the heap and place it inside
+? an array and also inside an object?
+
+Nemůžou, protože každý ten JSON container má své unikátní elementy.
+Nemůžu, musím si vytvořit jeho kopii.
+
+
+? Could references (or non-owned pointers) be used for storing the elements in JSON containers?
+? How would it affect the usability of arrays and objects? Try it and see how easy or hard it is :)
+
+Myslím si, že kdyby se to ukládalo referenci, tak by to přidalo na složitosti co se týče kontrolování paměti,
+kde by jsme museli dávat pozor na jejich lifetime.
+Tak byla by tam větší šance na memory leaky a omezovalo by to jeho flexibilnost.
+
+
+? Think about this interface. What are its benefits or disadvantages? Is it better to put the
+? indexers into the root `Value` element? Or should it only be supported by types that actually
+? implement indexing (arrays/objects)? Think about the trade-offs (compile-time safety vs ergonomics).
+? Think about the return type. What should it be? Is `std::optional` required here?
+
+ Tak výhoda je to že tě to nechá zkompilovat, ale pak ti to hodí exception při runtime.
+ std::optional by se hodil v případě kdy klíč nebo index není.
+
+
+
+? How can you implement copying for a polymorphic object hierarchy? What should be the return type
+? of the `clone` method? If you are interested, look for "C++ covariance".
+
+Clone metoda bude vrace pointer na base classu Value
+
+
+? Think about the constness of the `accept` method and of the methods in the visitor. What
+? parameter type should they take? Should it be const or not?
+
+Pokud je immutable visitor tak to bude const pokud to je mutable tak nebude const.
+Parametr bere classu kterou posilám ig.
+
+
+? How would the implementation look like if you have used e.g. algebraic data types instead?
+? Would you need the Visitor design pattern in that case?
+
+Implementace by asi určitě vypadala jinak, a tím pádem by jsme nejspíš visitora nepotřebovali.
+
+
+*/
