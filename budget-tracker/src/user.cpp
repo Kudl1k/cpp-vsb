@@ -2,15 +2,9 @@
 
 
 
-User::User(std::string name, float balance)
-{
-    this->name = name;
-    this->balance = balance;
-}
+User::User(std::string name, float balance) : name{name},balance{balance} {}
 
-User::~User()
-{
-}
+User::~User(){}
 
 
 std::string User::getName(){

@@ -7,6 +7,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <iostream>
+#include <chrono>
+#include <sstream>
 
 
 
@@ -56,7 +59,14 @@ private:
 
     State state = WELCOME;
 
-    User *user;
+    User *user = nullptr;
+
+    time_t curtime;
+
+    int time_manager = 0;
+
+
+
 
 };
 

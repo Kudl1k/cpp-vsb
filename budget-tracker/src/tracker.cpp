@@ -7,6 +7,7 @@ Disabling the cursor and obtaining the maximum values for x and y sides.
 Allowing arrowkeys for movement in terminal.
 */
 Tracker::Tracker(){
+    curtime = time(0);
 }
 
 
@@ -28,10 +29,14 @@ void Tracker::welcome_screen(){
         "Plain",
         "Test version",
     };
+
     int menu_selected = 0;
     std::vector<Component> options;
     options.push_back(Button(menu_entries[0], [&] { setup_screen(); },ButtonOption::Ascii()));
-    options.push_back(Button(menu_entries[1], [&] { main_screen(); },ButtonOption::Ascii()));
+    options.push_back(Button(menu_entries[1], [&] { 
+        this->user = new User("Test User",50000);
+        main_screen();
+    },ButtonOption::Ascii()));
     auto layout = Container::Vertical(options);
     auto renderer = Renderer(layout, [&] {
         return vbox({
@@ -87,6 +92,7 @@ void Tracker::setup_screen(){
             error_message = "Please fill in all fields.";
         } else {
             this->main_screen(); 
+            this->user = new User(name,std::stof(balance));
         }
     },ButtonOption::Ascii());
 
@@ -108,7 +114,9 @@ void Tracker::setup_screen(){
         return event.is_character() && !std::isdigit(event.character()[0]);
     });
     
-    auto back_button = Button("Back", [&] { this->welcome_screen(); },ButtonOption::Ascii());
+    auto back_button = Button("Back", [&] { 
+        this->welcome_screen(); 
+    },ButtonOption::Ascii());
     
 
 
@@ -172,24 +180,46 @@ void Tracker::main_screen(){
         screen.Exit();
     },ButtonOption::Ascii());
 
+    auto add_day_button = Button("Add day",[&]{
+        time_manager += 86400;
+    },ButtonOption::Ascii());
+
+    auto remove_day_button = Button("Remove day",[&]{
+        time_manager -= 86400;
+    },ButtonOption::Ascii());
+
     auto container = Container::Vertical({
-        tab_toggle,
-        button,
+        Container::Horizontal({
+            tab_toggle,
+            add_day_button,
+            remove_day_button,
+            button,
+        }),
         tab_container,
     });
 
     
     auto renderer = Renderer(container, [&] {
-    return vbox({
-        hbox({
-           tab_toggle->Render(),
-           filler(),
-           button->Render()
-        }),
-        separator(),
-        text(tab_values[tab_selected]),
-        tab_container->Render(),
-    }) | border;
+        curtime = time(0) + time_manager;
+        char buff[20];
+        strftime(buff, 20, "%Y-%m-%d %H:%M", localtime(&curtime));
+        std::string balance = std::to_string(user->getBalance());
+        return vbox({
+            hbox({
+            tab_toggle->Render(),
+            filler(),
+            text(user->getName() + "  "),
+            text(balance.substr(0,balance.size()-4) + "kč  "),
+            filler(),
+            text(buff),
+            filler(),
+            add_day_button->Render(),
+            remove_day_button->Render(),
+            button->Render()
+            }),
+            separator(),
+            tab_container->Render(),
+        }) | border;
     });
     
     screen.Loop(renderer);
