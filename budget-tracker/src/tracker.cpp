@@ -29,7 +29,6 @@ void Tracker::welcome_screen(){
         "Plain",
         "Test version",
     };
-
     int menu_selected = 0;
     std::vector<Component> options;
     options.push_back(Button(menu_entries[0], [&] { setup_screen(); },ButtonOption::Ascii()));
@@ -37,38 +36,11 @@ void Tracker::welcome_screen(){
         this->user = new User("Test User",50000);
         main_screen();
     },ButtonOption::Ascii()));
+
     auto layout = Container::Vertical(options);
-    auto renderer = Renderer(layout, [&] {
-        return vbox({
-            filler(),
-            hbox({
-                filler(),
-                vbox({
-                    hcenter({text("Budget Tracker") | bold | underlined}),
-                    separator(),
-                    vcenter({
-                        hcenter({
-                            vbox({
-                                hcenter({options[0]->Render()}),
-                                hcenter({options[1]->Render()})
-                            }) | flex
-                        }),
-                        
-                    })| flex,
-                    filler(),
-                    separator(),
-                    hcenter({
-                        text("Author: KUD0132")
-                    })
-                })  | size(WIDTH,EQUAL,40) | border,
-                filler()
-            }) | flex ,            
-            filler(),
-        }) | flex;
-    });
+    
+    auto renderer = ui::create_welcomescreen(layout,options);
     screen.Loop(renderer);
-    
-    
 }
 
 

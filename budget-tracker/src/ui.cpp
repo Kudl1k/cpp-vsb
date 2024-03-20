@@ -3,35 +3,33 @@
 
 
 
-Component ui::create_welcomescreen(Component menu){
-    return Renderer(menu,[menu]{
+Component ui::create_welcomescreen(Component comp, std::vector<Component> options){
+    return Renderer(comp,[options]{
         return vbox({
             filler(),
             hbox({
                 filler(),
                 vbox({
-                    filler(),
-                    hcenter({
-                        text("Budget Tracker") | bold
-                    }),
-                    vbox({
-                        filler(),
+                    hcenter({text("Budget Tracker") | bold | underlined}),
+                    separator(),
+                    vcenter({
                         hcenter({
-                            text("Choose your version:") | underlined
+                            vbox({
+                                hcenter({options[0]->Render()}),
+                                hcenter({options[1]->Render()})
+                            }) | flex
                         }),
-                        filler(),
-                        hcenter({
-                            menu->Render()
-                        }),
-                    }) | flex,
+                        
+                    })| flex,
                     filler(),
+                    separator(),
                     hcenter({
-                        text("Created by: KUD0132") | bold
+                        text("Author: KUD0132")
                     })
-                }) | flex | border,
+                })  | size(WIDTH,EQUAL,40) | border,
                 filler()
-            }) | flex,
-            filler()
+            }) | flex ,            
+            filler(),
         }) | flex;
     });
 }
