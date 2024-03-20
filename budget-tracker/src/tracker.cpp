@@ -32,7 +32,7 @@ void Tracker::welcome_screen(){
     int menu_selected = 0;
     std::vector<Component> options;
     options.push_back(Button(menu_entries[0], [&] { setup_screen(); },ButtonOption::Ascii()));
-    options.push_back(Button(menu_entries[1], [&] { 
+    options.push_back(Button(menu_entries[1], [&] {
         this->user = new User("Test User",50000);
         main_screen();
     },ButtonOption::Ascii()));
@@ -63,8 +63,8 @@ void Tracker::setup_screen(){
         if(name.empty() || balance.empty()) {
             error_message = "Please fill in all fields.";
         } else {
-            this->main_screen(); 
             this->user = new User(name,std::stof(balance));
+            this->main_screen(); 
         }
     },ButtonOption::Ascii());
 
