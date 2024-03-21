@@ -17,7 +17,7 @@ Deconstructor of Tracker class
 Disabling the terminal state.
 */
 Tracker::~Tracker(){
-
+    delete user;
 }
 
 void Tracker::tracker(){
@@ -28,6 +28,7 @@ void Tracker::welcome_screen(){
     const std::vector<std::string> menu_entries = {
         "Plain",
         "Test version",
+        "Quit"
     };
     int menu_selected = 0;
     std::vector<Component> options;
@@ -35,6 +36,10 @@ void Tracker::welcome_screen(){
     options.push_back(Button(menu_entries[1], [&] {
         this->user = new User("Test User",50000);
         main_screen();
+    },ButtonOption::Ascii()));
+    options.push_back(Button(menu_entries[2], [&] {
+        user->~User();
+        screen.Exit();
     },ButtonOption::Ascii()));
 
     auto layout = Container::Vertical(options);
@@ -90,19 +95,22 @@ void Tracker::setup_screen(){
         this->welcome_screen(); 
     },ButtonOption::Ascii());
     
+    int neceserry = 50;
+    auto neceserry_slider = Slider("", &neceserry, 30, 60, 1);
 
+    int entertainment = 30;
+    auto entertainment_slider = Slider("", &entertainment, 10, 40, 1);
 
     auto layout = Container::Vertical({
         input_name,
         input_balance,
+        neceserry_slider,
+        entertainment_slider,
         Container::Horizontal({
             back_button,
             next_button
         })
     });
-
-    
-    
 
     auto renderer = Renderer(layout, [&] {
         return vbox({
@@ -114,6 +122,15 @@ void Tracker::setup_screen(){
                     separator(),
                     hbox({text("Your name: "),input_name->Render()}),
                     hbox({text("Your balance:"),input_balance->Render()}),
+                    separator(),
+                    hbox({text("Necessary:"),text(std::to_string(neceserry) + "%"),neceserry_slider->Render()}),
+                    hbox({text("Entertainment:"),text(std::to_string(entertainment) + "%"),entertainment_slider->Render()}),
+                    hcenter({
+                        hbox({
+                            text("Info: ")|bold,
+                            text("Rest of the percentage is for saving")
+                        })
+                    }),
                     filler(),
                     hcenter(text(error_message) | color(Color::Red)),
                     vbox({
@@ -125,7 +142,7 @@ void Tracker::setup_screen(){
                             })
                         }),                        
                     }),
-                })  | size(WIDTH,EQUAL,40) | border,
+                })  | size(WIDTH,EQUAL,60) | border,
                 filler()
             }) | flex ,
             filler()            
@@ -143,9 +160,9 @@ void Tracker::main_screen(){
     };
     int tab_selected = 0;
     auto tab_toggle = Toggle(&tab_values, &tab_selected);
-
+    time_t now = 0;
     auto tab_container = Container::Tab({
-
+        ui::create_calendar(now,curtime) // Add this line
     },&tab_selected);
 
     auto button = Button("x",[&]{ 

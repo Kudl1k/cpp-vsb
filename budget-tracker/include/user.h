@@ -17,6 +17,11 @@ public:
 private:
     std::string name;
     float balance;
+
+    float necessary_outcomes_perct;
+    float entertainment_outcomes_perct;
+    float savings_perct;
+    float month_goal;
     
 
 };

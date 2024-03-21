@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <cstring>
+#include <ctime>
+#include <iomanip>
 
 #include "ftxui/component/captured_mouse.hpp"  // for ftxui
 #include "ftxui/component/component.hpp"       // for Menu, Horizontal, Renderer
@@ -14,5 +16,5 @@ using namespace ftxui;
 
 namespace ui{
     Component create_welcomescreen(Component comp, std::vector<Component> options);
-
+    Component create_calendar(time_t &result,time_t curtime);
 };
