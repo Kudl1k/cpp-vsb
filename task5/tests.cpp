@@ -377,7 +377,6 @@ std::vector<Item> collect(Iterator iterator) {
     }
     return items;
 }
-
 // This function is used to avoid problems with SFINAE in GCC 11.
 template <typename T>
 void check_vectors(std::vector<T> a, std::vector<T> b) {
