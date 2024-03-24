@@ -123,18 +123,13 @@ struct BigData {
 
 class Tree {
 public:
-    // Constructors
     explicit Tree(std::shared_ptr<BigData> value): value(value) {}
     explicit Tree(int value): value(std::make_shared<BigData>(value)) {}
-
-    // Accessors
     BigData& get_value() const { return *value; }
     Tree* get_parent() const { return parent; }
     Tree* get_left_child() const { return leftChild.get(); }
     Tree* get_right_child() const { return rightChild.get(); }
     Tree* get_root() const;
-
-    // Mutators
     std::unique_ptr<Tree> set_left_child(std::unique_ptr<Tree> child);
     std::unique_ptr<Tree> set_right_child(std::unique_ptr<Tree> child);
     std::unique_ptr<Tree> take_left_child();
@@ -142,11 +137,8 @@ public:
     std::unique_ptr<Tree> take_child(const Tree& child);
     void swap_children();
     void replace_value(std::shared_ptr<BigData> newValue);
-
-    // Utility functions
     bool has_parent() const { return parent != nullptr; }
-    bool is_same_tree_as(const Tree* other) const;
-    
+    bool is_same_tree_as(const Tree* other) const;    
 private:
     std::shared_ptr<BigData> value;
     Tree* parent = nullptr;

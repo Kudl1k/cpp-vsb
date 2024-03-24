@@ -167,7 +167,6 @@ void UTF8String::append(const char c){
 
 void UTF8String::append(const CodePoint cp){
     size_t cpBytes = get_number_of_bytes(cp);
-    size_t idx = bytes_count;
     if (cp <=   0x7F) {
         buffer.push_back(static_cast<uint8_t>(cp));
     } else if (cp <=   0x7FF) {
@@ -336,45 +335,55 @@ CodePointIterator CodePointIterator::end() const
 
 
 std::unique_ptr<Tree> Tree::set_left_child(std::unique_ptr<Tree> child) {
-    auto previous = std::move(leftChild);
+    std::unique_ptr<Tree> previous = std::move(leftChild);
     if (child) {
         leftChild = std::move(child);
         leftChild->parent = this;
-    }
-    if (previous)
+    } 
+    if (previous){
         previous->parent = nullptr;
+    }
     return previous;
 }
 
 std::unique_ptr<Tree> Tree::set_right_child(std::unique_ptr<Tree> child) {
-    auto previous = std::move(rightChild);
+    std::unique_ptr<Tree> previous = std::move(rightChild);
     if (child) {
         rightChild = std::move(child);
         rightChild->parent = this;
     }
-    if (previous)
+    if (previous){
         previous->parent = nullptr;
+    }
     return previous;
 }
 
 std::unique_ptr<Tree> Tree::take_left_child() {
-    if (!leftChild) return nullptr;
-    auto takenChild = std::move(leftChild);
+    if (!leftChild) {
+        return nullptr;
+    }
+    std::unique_ptr<Tree> takenChild = std::move(leftChild);
     takenChild->parent = nullptr;
     return takenChild;
 }
 
 std::unique_ptr<Tree> Tree::take_right_child() {
-    if (!rightChild) return nullptr;
-    auto takenChild = std::move(rightChild);
+    if (!rightChild) {
+        return nullptr;
+    }
+    std::unique_ptr<Tree> takenChild = std::move(rightChild);
     takenChild->parent = nullptr;
     return takenChild;
 }
 
 std::unique_ptr<Tree> Tree::take_child(const Tree& child) {
-    if (&child == leftChild.get()) return take_left_child();
-    if (&child == rightChild.get()) return take_right_child();
-    throw std::invalid_argument("Provided child is not a direct child of this tree.");
+    if (&child == leftChild.get()){ 
+        return take_left_child();
+    }
+    if (&child == rightChild.get()) {
+        return take_right_child();
+    }
+    throw std::invalid_argument("Error, no child");
 }
 
 void Tree::swap_children() {
