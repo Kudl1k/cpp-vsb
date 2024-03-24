@@ -4,7 +4,7 @@
 
 UTF8String::UTF8String(const std::string& s) : buffer(std::vector<uint8_t>()){
     points = s.length();
-    bytes = points;
+    bytes_count = points;
     for (size_t i = 0; i < points; i++)
     {
         buffer.push_back(static_cast<uint8_t>(s[i]));
@@ -15,7 +15,7 @@ UTF8String::UTF8String(const std::vector<CodePoint>& ptr) : buffer(std::vector<u
     points = ptr.size();
     for (size_t i = 0; i < points; i++)
     {
-        bytes += get_number_of_bytes(ptr[i]);
+        bytes_count += get_number_of_bytes(ptr[i]);
     }
 
     for (size_t i = 0; i < points;i++)
@@ -38,24 +38,35 @@ UTF8String::UTF8String(const std::vector<CodePoint>& ptr) : buffer(std::vector<u
     }
 }
 
+UTF8String::UTF8String(const std::vector<uint8_t>& ptr){
+    buffer = ptr;
+    bytes_count = ptr.size();
+    points = 0;
+    for (auto byte : ptr) {
+        if ((byte & 0xC0) != 0x80) {
+            ++points;
+        }
+    }
+}
+
 UTF8String::UTF8String(const UTF8String &ptr){
     points = ptr.points;
-    bytes = ptr.bytes;
+    bytes_count = ptr.bytes_count;
     buffer = ptr.buffer;
 }
 
 UTF8String::UTF8String(UTF8String &&other)
 {
     points = other.points;
-    bytes = other.bytes;
+    bytes_count = other.bytes_count;
     buffer = std::move(other.buffer);
     other.points = 0;
-    other.bytes = 0;
+    other.bytes_count = 0;
 }
 
 UTF8String& UTF8String::operator=(const UTF8String &ptr){
     points = ptr.points;
-    bytes = ptr.bytes;
+    bytes_count = ptr.bytes_count;
     buffer = ptr.buffer;
     return *this;
 }
@@ -81,11 +92,11 @@ int UTF8String::get_point_count() const {
 }
 
 int UTF8String::get_byte_count() const {
-    return bytes;
+    return bytes_count;
 }
 
 std::optional<uint8_t> UTF8String::operator[](const size_t idx) const{
-    if (idx >= bytes)
+    if (idx >= bytes_count)
     {
         return std::nullopt;   
     } else {
@@ -101,13 +112,13 @@ std::optional<CodePoint> UTF8String::nth_code_point(const size_t idx) const {
     size_t byteIdx = 0;
     size_t pointCount = 0;
 
-    while (byteIdx < bytes && pointCount < idx) {
+    while (byteIdx < bytes_count && pointCount < idx) {
         uint8_t firstByte = buffer.at(byteIdx);
         if ((firstByte & 0x80) == 0) {
             ++pointCount;
             ++byteIdx;
         } else if ((firstByte & 0xE0) == 0xC0) {
-            if (byteIdx + 1 < bytes) {
+            if (byteIdx + 1 < bytes_count) {
                 ++pointCount;
                 byteIdx += 2;
             } else {
@@ -115,14 +126,14 @@ std::optional<CodePoint> UTF8String::nth_code_point(const size_t idx) const {
             }
         } else if ((firstByte & 0xF0) == 0xE0) {
             // Three byte character
-            if (byteIdx + 2 < bytes) {
+            if (byteIdx + 2 < bytes_count) {
                 ++pointCount;
                 byteIdx += 3;
             } else {
                 return std::nullopt;
             }
         } else if ((firstByte & 0xF8) == 0xF0) {
-            if (byteIdx + 3 < bytes) {
+            if (byteIdx + 3 < bytes_count) {
                 ++pointCount;
                 byteIdx += 4;
             } else {
@@ -151,12 +162,12 @@ std::optional<CodePoint> UTF8String::nth_code_point(const size_t idx) const {
 void UTF8String::append(const char c){
     buffer.push_back(static_cast<CodePoint>(c));
     points +=  1;
-    bytes += 1;
+    bytes_count += 1;
 }
 
 void UTF8String::append(const CodePoint cp){
     size_t cpBytes = get_number_of_bytes(cp);
-    size_t idx = bytes;
+    size_t idx = bytes_count;
     if (cp <=   0x7F) {
         buffer.push_back(static_cast<uint8_t>(cp));
     } else if (cp <=   0x7FF) {
@@ -173,14 +184,14 @@ void UTF8String::append(const CodePoint cp){
         buffer.push_back(static_cast<uint8_t>(0x80 | (cp &   0x3F)));
     }
     points +=  1;
-    bytes += cpBytes;
+    bytes_count += cpBytes;
 }
 
 UTF8String operator+(const UTF8String &lhs,const UTF8String &rhs){
     size_t newSize = lhs.points + rhs.points;
     UTF8String result;
     result.points = newSize;
-    result.bytes = lhs.bytes + rhs.bytes;
+    result.bytes_count = lhs.bytes_count + rhs.bytes_count;
     result.buffer.reserve(lhs.buffer.size() + rhs.buffer.size());
     result.buffer.insert( result.buffer.end(), lhs.buffer.begin(), lhs.buffer.end());
     result.buffer.insert( result.buffer.end(), rhs.buffer.begin(), rhs.buffer.end());
@@ -189,7 +200,7 @@ UTF8String operator+(const UTF8String &lhs,const UTF8String &rhs){
 
 UTF8String& UTF8String::operator+=(const UTF8String& str){
     buffer.insert(buffer.end(),str.buffer.begin(),str.buffer.end());
-    bytes += str.bytes;
+    bytes_count += str.bytes_count;
     points += str.points;
     return *this;
 }
@@ -197,10 +208,10 @@ UTF8String& UTF8String::operator+=(const UTF8String& str){
 UTF8String &UTF8String::operator=(UTF8String &&other){
     if (this != &other) {
         points = other.points;
-        bytes = other.bytes;
+        bytes_count = other.bytes_count;
         buffer = std::move(other.buffer);
         other.points = 0;
-        other.bytes = 0;
+        other.bytes_count = 0;
     }
     return *this;
 }
@@ -210,7 +221,7 @@ bool operator==(const UTF8String &lhs,const UTF8String &rhs){
     {
         return false;
     }
-    if (lhs.bytes != rhs.bytes)
+    if (lhs.bytes_count != rhs.bytes_count)
     {
         return false;
     }
@@ -227,4 +238,98 @@ bool operator==(const UTF8String &lhs,const UTF8String &rhs){
 bool operator!=(const UTF8String &lhs, const UTF8String &rhs)
 {
     return !(lhs == rhs);
+}
+
+uint8_t ByteIterator::operator*() const
+{
+    return str[index].value();
+}
+
+ByteIterator &ByteIterator::operator++()
+{
+    ++index;
+    return *this;
+}
+
+ByteIterator &ByteIterator::operator+=(int n)
+{
+    index += n;
+        return *this;
+}
+
+ByteIterator &ByteIterator::operator-=(int n)
+{
+    index -= n;
+    return *this;
+}
+
+ByteIterator ByteIterator::operator+(int n) const
+{
+    ByteIterator temp = *this;
+    temp += n;
+    return temp;
+}
+
+ByteIterator ByteIterator::operator-(int n) const
+{
+    ByteIterator temp = *this;
+    temp -= n;
+    return temp;
+}
+
+bool ByteIterator::operator==(const ByteIterator &other) const
+{
+    return &str == &other.str && index == other.index;
+}
+
+bool ByteIterator::operator!=(const ByteIterator &other) const
+{
+    return !(*this == other);
+}
+
+ByteIterator ByteIterator::begin() const
+{
+    return ByteIterator(str, 0);
+}
+
+ByteIterator ByteIterator::end() const
+{
+    return ByteIterator(str, str.get_byte_count());
+}
+
+CodePoint CodePointIterator::operator*() const
+{
+    return str.nth_code_point(index).value();
+}
+
+CodePointIterator &CodePointIterator::operator++()
+{
+    ++index;
+    return *this;
+}
+
+CodePointIterator &CodePointIterator::operator--()
+{
+    --index;
+    return *this;
+}
+
+bool CodePointIterator::operator==(const CodePointIterator &other) const
+{
+    return &str == &other.str && index == other.index;
+}
+
+bool CodePointIterator::operator!=(const CodePointIterator &other) const
+{
+    return !(*this == other);
+}
+
+CodePointIterator CodePointIterator::begin() const
+{
+    return CodePointIterator(str, 0);
+}
+
+CodePointIterator CodePointIterator::end() const
+{
+    return CodePointIterator(str, str.get_point_count());
 }
