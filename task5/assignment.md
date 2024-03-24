@@ -72,24 +72,22 @@ The parent will be the only owner of its child elements.
 the child nodes? What type of pointer should be used for the parent link? Think about ownership -
 who is the owner of what data and which data is shared by whom.
 
-Implement methods for getting the value of a node, its parent and its left/right child.
 - `get_parent()`, `bool has_parent()`, `get_left_child()`, `get_right_child()`
-Implement method for getting the root node of the tree.
+Implement methods for getting the value of a node, its parent and its left/right child.
 - `get_root()`
-Implement methods for taking the left/right child of a node. Taking removes the child from the node and returns it.
+Implement method for getting the root node of the tree.
 - `take_left_child()`, `take_right_child`()
-Implement a method for taking a given child of a node. If the given tree is not a child of the node,
-throw an exception.
+Implement methods for taking the left/right child of a node. Taking removes the child from the node and returns it.
 - `take_child(Tree&)`
-Implement methods for setting the left/right child of a node. Setting returns the previous child.
+Implement a method for taking a given child of a node. If the given tree is not a child of the node, throw an exception.
 - `set_left_child(...)`, `set_right_child(...)`
-Implement a method for swapping the left/right child of a node.
+Implement methods for setting the left/right child of a node. Setting returns the previous child.
 - `swap_children()`
-Implement a method for finding if two nodes belong to the same tree.
+Implement a method for swapping the left/right child of a node.
 - `bool is_same_tree_as(Tree*)`
-Implement a method for replacing the shared value of the current node and of all its descendants
-to the passed value.
+Implement a method for finding if two nodes belong to the same tree.
 - `replace_value(...)`
+Implement a method for replacing the shared value of the current node and of all its descendants to the passed value.
 
 ### Bonus task
 Implement inorder traversal of the binary tree using the *iterator protocol*.

@@ -333,3 +333,72 @@ CodePointIterator CodePointIterator::end() const
 {
     return CodePointIterator(str, str.get_point_count());
 }
+
+
+std::unique_ptr<Tree> Tree::set_left_child(std::unique_ptr<Tree> child) {
+    auto previous = std::move(leftChild);
+    if (child) {
+        leftChild = std::move(child);
+        leftChild->parent = this;
+    }
+    if (previous)
+        previous->parent = nullptr;
+    return previous;
+}
+
+std::unique_ptr<Tree> Tree::set_right_child(std::unique_ptr<Tree> child) {
+    auto previous = std::move(rightChild);
+    if (child) {
+        rightChild = std::move(child);
+        rightChild->parent = this;
+    }
+    if (previous)
+        previous->parent = nullptr;
+    return previous;
+}
+
+std::unique_ptr<Tree> Tree::take_left_child() {
+    if (!leftChild) return nullptr;
+    auto takenChild = std::move(leftChild);
+    takenChild->parent = nullptr;
+    return takenChild;
+}
+
+std::unique_ptr<Tree> Tree::take_right_child() {
+    if (!rightChild) return nullptr;
+    auto takenChild = std::move(rightChild);
+    takenChild->parent = nullptr;
+    return takenChild;
+}
+
+std::unique_ptr<Tree> Tree::take_child(const Tree& child) {
+    if (&child == leftChild.get()) return take_left_child();
+    if (&child == rightChild.get()) return take_right_child();
+    throw std::invalid_argument("Provided child is not a direct child of this tree.");
+}
+
+void Tree::swap_children() {
+    std::swap(leftChild, rightChild);
+}
+
+void Tree::replace_value(std::shared_ptr<BigData> newValue) {
+    value = newValue;
+    if (leftChild) {
+        leftChild->replace_value(newValue);
+    }
+    if (rightChild) {
+        rightChild->replace_value(newValue);
+    }
+}
+
+Tree* Tree::get_root() const {
+    Tree* root = const_cast<Tree*>(this);
+    while (root->parent) {
+        root = root->parent;
+    }
+    return root;
+}
+
+bool Tree::is_same_tree_as(const Tree* other) const {
+    return this->get_root() == other->get_root();
+}

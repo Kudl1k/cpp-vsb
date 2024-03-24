@@ -110,109 +110,47 @@ private:
 
 
 
-// /// Binary tree
-// // Big data that we cannot afford to copy
-// struct BigData {
-//     explicit BigData(int value): value(value) {}
+/// Binary tree
+// Big data that we cannot afford to copy
+struct BigData {
+    explicit BigData(int value): value(value) {}
 
-//     BigData(const BigData&) = delete;
-//     BigData& operator=(const BigData&) = delete;
+    BigData(const BigData&) = delete;
+    BigData& operator=(const BigData&) = delete;
 
-//     int value;
-// };
+    int value;
+};
 
-// // Define Tree class
-// class Tree {
-// private:
-//     std::shared_ptr<BigData> value;
-//     Tree* parent;
-//     std::unique_ptr<Tree> left;
-//     std::unique_ptr<Tree> right;
+class Tree {
+public:
+    // Constructors
+    explicit Tree(std::shared_ptr<BigData> value): value(value) {}
+    explicit Tree(int value): value(std::make_shared<BigData>(value)) {}
 
-// public:
-//     // Constructor
-//     Tree(const std::shared_ptr<BigData>& val) : value(val), parent(nullptr) {}
+    // Accessors
+    BigData& get_value() const { return *value; }
+    Tree* get_parent() const { return parent; }
+    Tree* get_left_child() const { return leftChild.get(); }
+    Tree* get_right_child() const { return rightChild.get(); }
+    Tree* get_root() const;
 
-//     // Method to get the value of a node
-//     const BigData& get_value() const {
-//         return *value;
-//     }
+    // Mutators
+    std::unique_ptr<Tree> set_left_child(std::unique_ptr<Tree> child);
+    std::unique_ptr<Tree> set_right_child(std::unique_ptr<Tree> child);
+    std::unique_ptr<Tree> take_left_child();
+    std::unique_ptr<Tree> take_right_child();
+    std::unique_ptr<Tree> take_child(const Tree& child);
+    void swap_children();
+    void replace_value(std::shared_ptr<BigData> newValue);
 
-//     // Method to get the parent of a node
-//     Tree* get_parent() const {
-//         return parent;
-//     }
+    // Utility functions
+    bool has_parent() const { return parent != nullptr; }
+    bool is_same_tree_as(const Tree* other) const;
+    
+private:
+    std::shared_ptr<BigData> value;
+    Tree* parent = nullptr;
+    std::unique_ptr<Tree> leftChild;
+    std::unique_ptr<Tree> rightChild;
+};
 
-//     // Method to check if a node has a parent
-//     bool has_parent() const {
-//         return parent != nullptr;
-//     }
-
-//     // Method to get the left child of a node
-//     std::unique_ptr<Tree> get_left_child() {
-//         return std::move(left);
-//     }
-
-//     // Method to get the right child of a node
-//     std::unique_ptr<Tree> get_right_child() {
-//         return std::move(right);
-//     }
-
-//     // Method to set the left child of a node
-//     std::unique_ptr<Tree> set_left_child(std::unique_ptr<Tree> new_left) {
-//         std::swap(left, new_left);
-//         if (left)
-//             left->parent = this;
-//         return new_left;
-//     }
-
-//     // Method to set the right child of a node
-//     std::unique_ptr<Tree> set_right_child(std::unique_ptr<Tree> new_right) {
-//         std::swap(right, new_right);
-//         if (right)
-//             right->parent = this;
-//         return new_right;
-//     }
-
-//     // Method to take the left child of a node
-//     std::unique_ptr<Tree> take_left_child() {
-//         auto child = std::move(left);
-//         if (child)
-//             child->parent = nullptr;
-//         return child;
-//     }
-
-//     // Method to take the right child of a node
-//     std::unique_ptr<Tree> take_right_child() {
-//         auto child = std::move(right);
-//         if (child)
-//             child->parent = nullptr;
-//         return child;
-//     }
-
-//     // Method to take a specific child of a node
-//     std::unique_ptr<Tree> take_child(Tree& child) {
-//         if (left.get() == &child) {
-//             return take_left_child();
-//         } else if (right.get() == &child) {
-//             return take_right_child();
-//         } else {
-//             throw std::invalid_argument("Given node is not a child of the current node");
-//         }
-//     }
-
-//     // Method to swap the left and right children of a node
-//     void swap_children() {
-//         std::swap(left, right);
-//     }
-
-//     // Method to check if two nodes belong to the same tree
-//     bool is_same_tree_as(const Tree* other) const {
-//         return this == other;
-//     }
-
-//     // Method to replace the shared value of the current node and its descendants
-//     void replace_value(const std::shared_ptr<BigData>& new_value) {
-//         value = new_value;
-//     }
-// };
