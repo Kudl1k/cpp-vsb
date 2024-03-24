@@ -839,14 +839,14 @@ TEST_SUITE("Tree") {
         REQUIRE(tree->get_value().value == 1);
     }
 
-    // TEST_CASE("Inorder traversal (bonus)") {
-    //     auto tree = christmas_tree();
+    TEST_CASE("Inorder traversal (bonus)") {
+        auto tree = christmas_tree();
 
-    //     std::vector<int> values;
-    //     for (const auto& node : *tree) {
-    //         values.push_back(node.get_value().value);
-    //     }
+        std::vector<int> values;
+        for (const auto& node : *tree) {
+            values.push_back(node.get_value().value);
+        }
 
-    //     REQUIRE(values == std::vector<int>{8, 3, 2, 4, 1, 6, 5, 7, 9});
-    // }
+        REQUIRE(values == std::vector<int>{8, 3, 2, 4, 1, 6, 5, 7, 9});
+    }
 }

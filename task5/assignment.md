@@ -110,4 +110,4 @@ for (auto& node: tree) {
  std::cout << node.get_value() << " ";
 }
 ```
-Prints `0, 1, 2, 3, 4`.
+Prints `1, 0, 2, 3, 4`.

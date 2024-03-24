@@ -17,7 +17,6 @@ using CodePoint = uint32_t;
 
 class UTF8String;
 
-
 class ByteIterator {
 public:
     ByteIterator(const UTF8String& s, int i) : str(s), index(i) {}
@@ -50,7 +49,6 @@ private:
     const UTF8String& str;
     int index;
 };
-
 
 class UTF8String {
 public:
@@ -105,10 +103,8 @@ private:
     std::vector<uint8_t> buffer;
 };
 
-
-
-
-
+class TreeIterator;
+class Tree;
 
 /// Binary tree
 // Big data that we cannot afford to copy
@@ -123,8 +119,8 @@ struct BigData {
 
 class Tree {
 public:
-    explicit Tree(std::shared_ptr<BigData> value): value(value) {}
-    explicit Tree(int value): value(std::make_shared<BigData>(value)) {}
+    Tree(std::shared_ptr<BigData> value): value(value) {}
+    Tree(int value): value(std::make_shared<BigData>(value)) {}
     BigData& get_value() const { return *value; }
     Tree* get_parent() const { return parent; }
     Tree* get_left_child() const { return leftChild.get(); }
@@ -138,7 +134,9 @@ public:
     void swap_children();
     void replace_value(std::shared_ptr<BigData> newValue);
     bool has_parent() const { return parent != nullptr; }
-    bool is_same_tree_as(const Tree* other) const;    
+    bool is_same_tree_as(const Tree* other) const;
+    TreeIterator begin();
+    TreeIterator end();
 private:
     std::shared_ptr<BigData> value;
     Tree* parent = nullptr;
@@ -146,3 +144,11 @@ private:
     std::unique_ptr<Tree> rightChild;
 };
 
+class TreeIterator {
+    Tree* current;
+public:
+    TreeIterator(Tree* root);
+    Tree& operator*();
+    TreeIterator& operator++();
+    bool operator!=(const TreeIterator& other) const;
+};

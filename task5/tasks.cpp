@@ -411,3 +411,45 @@ Tree* Tree::get_root() const {
 bool Tree::is_same_tree_as(const Tree* other) const {
     return this->get_root() == other->get_root();
 }
+
+TreeIterator::TreeIterator(Tree *root) : current(root) {
+    while(current && current->get_left_child()) {
+        current = current->get_left_child();
+    }
+}
+
+Tree &TreeIterator::operator*() { 
+    return *current; 
+}
+
+TreeIterator &TreeIterator::operator++()
+ {
+    if(current->get_right_child()) {
+        current = current->get_right_child();
+        while(current->get_left_child()) {
+            current = current->get_left_child();
+        }
+    } else {
+        Tree* parent = current->get_parent();
+        while(parent && current == parent->get_right_child()) {
+            current = parent;
+            parent = current->get_parent();
+        }
+        current = parent;
+    }
+    return *this;
+}
+
+bool TreeIterator::operator!=(const TreeIterator &other) const {
+    return current != other.current;
+}
+
+TreeIterator Tree::begin()
+{
+     return TreeIterator(this);
+}
+TreeIterator Tree::end()
+{
+     return TreeIterator(nullptr);
+}
+
