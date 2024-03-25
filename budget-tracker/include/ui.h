@@ -16,5 +16,5 @@ using namespace ftxui;
 
 namespace ui{
     Component create_welcomescreen(Component comp, std::vector<Component> options);
-    Component create_calendar(time_t &result,time_t curtime);
+    Component create_calendar(std::tm *curtime);
 };

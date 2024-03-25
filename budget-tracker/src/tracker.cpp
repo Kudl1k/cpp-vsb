@@ -1,27 +1,19 @@
 #include "tracker.h"
 
-/*
-Default constructor for setting up the budget tracker.
-Initialize the terminal state by ncurses library.
-Disabling the cursor and obtaining the maximum values for x and y sides.
-Allowing arrowkeys for movement in terminal.
-*/
+
 Tracker::Tracker(){
     curtime = time(0);
+    time_manager = 0;
+    local_time = *localtime(&curtime);
 }
 
-
-
-/*
-Deconstructor of Tracker class
-Disabling the terminal state.
-*/
 Tracker::~Tracker(){
     delete user;
 }
 
 void Tracker::tracker(){
     welcome_screen();
+    curtime = time(0);
 }
 
 void Tracker::welcome_screen(){
@@ -153,6 +145,8 @@ void Tracker::setup_screen(){
 
 
 void Tracker::main_screen(){
+    curtime = time(0) + time_manager;
+    local_time = *localtime(&curtime);
     std::vector<std::string> tab_values{
         "Main panel",
         "This week",
@@ -160,9 +154,8 @@ void Tracker::main_screen(){
     };
     int tab_selected = 0;
     auto tab_toggle = Toggle(&tab_values, &tab_selected);
-    time_t now = 0;
     auto tab_container = Container::Tab({
-        ui::create_calendar(now,curtime) // Add this line
+        ui::create_calendar(&local_time)
     },&tab_selected);
 
     auto button = Button("x",[&]{ 
@@ -190,8 +183,9 @@ void Tracker::main_screen(){
     
     auto renderer = Renderer(container, [&] {
         curtime = time(0) + time_manager;
+        local_time = *localtime(&curtime);
         char buff[20];
-        strftime(buff, 20, "%Y-%m-%d %H:%M", localtime(&curtime));
+        strftime(buff, 20, "%Y-%m-%d %H:%M", &local_time);
         std::string balance = std::to_string(user->getBalance());
         return vbox({
             hbox({

@@ -62,8 +62,9 @@ private:
     User *user = nullptr;
 
     time_t curtime;
+    std::tm local_time;
 
-    int time_manager = 0;
+    int time_manager;
 
 
 
