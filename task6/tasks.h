@@ -62,7 +62,7 @@ struct Object {
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
-// TODO: Implement the following functions
+// TODO: Impl<ement the following functions
 std::optional<Value> parse_json(std::istream& is);
 std::ostream& operator<<(std::ostream& os, const Value& value);
 
