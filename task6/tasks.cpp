@@ -41,6 +41,11 @@ std::optional<Value> parse_json(std::istream& is) {
             // Parse the key
             std::string key;
             while (is.get(ch) && ch != '"') {
+                if (ch == '\\') {
+                    if (!(is.get(ch))) {
+                        return std::nullopt;  // Unexpected end of string
+                    }
+                }
                 key += ch;
             }
 
@@ -48,34 +53,87 @@ std::optional<Value> parse_json(std::istream& is) {
                 return std::nullopt;  // Expected a colon
             }
 
-            // Parse the value (only strings are supported in this example)
-            if (!(is >> ch) || ch != '"') {
-                return std::nullopt;  // Expected a string value
+            // Parse the value
+            auto value = parse_json(is);
+            if (!value) {
+                return std::nullopt;  // Invalid value
             }
 
-            std::string value;
-            while (is.get(ch) && ch != '"') {
-                value += ch;
-            }
-
-            obj.items[key] = String{value};
+            obj.items[key] = *value;
 
             // Consume the comma if there is one
             is >> ch;
             if (ch != ',') {
                 is.putback(ch);
             }
-            if (ch == 'n') {
-                char u, l1, l2;
-                if (is.get(u) && is.get(l1) && is.get(l2) && u == 'u' && l1 == 'l' && l2 == 'l') {
-                    return Value{Null{}};
-                } else {
-                    return std::nullopt;  // Invalid "null" value
-                }
-            }
         }
 
         return Value{obj};
+    } else if (ch == '[') {
+        // Parse an array
+        Array arr;
+        while (is >> ch && ch != ']') {
+            is.putback(ch);
+
+            // Parse the value
+            auto value = parse_json(is);
+            if (!value) {
+                return std::nullopt;  // Invalid value
+            }
+
+            arr.items.push_back(*value);
+
+            // Consume the comma if there is one
+            is >> ch;
+            if (ch != ',') {
+                is.putback(ch);
+            }
+        }
+
+        return Value{arr};
+    } else if (ch == '"') {
+        // Parse a string
+        std::string value;
+        while (is.get(ch) && ch != '"') {
+            if (ch == '\\') {
+                if (!(is.get(ch))) {
+                    return std::nullopt;  // Unexpected end of string
+                }
+            }
+            value += ch;
+        }
+
+        return Value{String{value}};
+    } else if (ch == 'n') {
+        // Parse a null
+        char u, l1, l2;
+        if (is.get(u) && is.get(l1) && is.get(l2) && u == 'u' && l1 == 'l' && l2 == 'l') {
+            return Value{Null{}};
+        } else {
+            return std::nullopt;  // Invalid "null" value
+        }
+    } else if (ch == 't' || ch == 'f') {
+        // Parse a boolean
+        char rest[4];
+        if (ch == 't') {
+            if (!is.read(rest, 3) || std::strncmp(rest, "rue", 3) != 0) {
+                return std::nullopt;  // Invalid "true" value
+            }
+            return Value{Boolean{true}};
+        } else {
+            if (!is.read(rest, 4) || std::strncmp(rest, "alse", 4) != 0) {
+                return std::nullopt;  // Invalid "false" value
+            }
+            return Value{Boolean{false}};
+        }
+    } else if (std::isdigit(ch) || ch == '-') {
+        // Parse a number
+        std::string value(1, ch);
+        while (is.get(ch) && (std::isdigit(ch) || ch == '.' || ch == 'e' || ch == 'E' || ch == '+' || ch == '-')) {
+            value += ch;
+        }
+        is.putback(ch);
+        return Value{Number{std::stod(value)}};
     }
 
     return std::nullopt;  // Unsupported value type
