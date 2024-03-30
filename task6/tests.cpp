@@ -11,6 +11,7 @@
 
 #include "doctest.h"
 #include "tasks.h"
+
 using Stream = std::stringstream;
 using JsonParseResult = std::optional<Value>;
 
