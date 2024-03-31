@@ -14,6 +14,8 @@
 struct Boolean {
     bool value;
 
+    Boolean() = default;
+
     Boolean(bool value): value(value) {};
 
     bool operator==(const Boolean& other) const;
@@ -21,6 +23,8 @@ struct Boolean {
 
 struct Number {
     double value;
+
+    Number() = default;
 
     Number(double value): value(value) {};
 
@@ -33,6 +37,8 @@ struct Null {
 
 struct String {
     std::string value;
+
+    String() = default;
 
     String(std::string value): value(value) {};
 
@@ -59,6 +65,8 @@ struct Object {
     bool operator==(const Object& other) const;
 
     Object() = default;
+
+    Object(const std::map<std::string, Value>& items) : items(items) {}
 
     [[nodiscard]] std::vector<std::string> keys() const {
         std::vector<std::string> keys;

@@ -214,14 +214,23 @@ std::optional<Value> parse_json(std::istream& is) {
 std::ostream &operator<<(std::ostream &os, const Value &value)
 {
     std::visit(overloaded{
-        [&os](const String &v) { os << '"' << v.value << '"'; },
+        [&os](const String &v) { 
+            os << '"';
+            for (char c : v.value) {
+                if (c == '\\' || c == '"') {
+                    os << '\\';
+                }
+                os << c;
+            }
+            os << '"';
+        },
         [&os](const Number &v) { os << v.value; },
         [&os](const Boolean &v) { os << (v.value ? "true" : "false"); },
         [&os](const Null &) { os << "null"; },
         [&os](const Array &v) {
             os << '[';
             for (size_t i = 0; i < v.items.size(); ++i) {
-                if (i != 0) os << ',';
+                if (i != 0) os << ", ";
                 os << v.items[i];
             }
             os << ']';
@@ -230,9 +239,9 @@ std::ostream &operator<<(std::ostream &os, const Value &value)
             os << '{';
             bool first = true;
             for (const auto& [key, val] : v.items) {
-                if (!first) os << ',';
+                if (!first) os << ", ";
                 first = false;
-                os << '"' << key << "\":" << val;
+                os << '"' << key << "\": " << val;
             }
             os << '}';
         }
