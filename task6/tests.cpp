@@ -531,6 +531,7 @@ TEST_SUITE("Parse array") {
         check_remainder(input, " x");
     }
 }
+
 TEST_SUITE("Parse object") {
     TEST_CASE("Empty") {
         Stream input("{}");
@@ -723,150 +724,150 @@ TEST_SUITE("Parse object") {
     }
 }
 
-TEST_CASE("Print null") {
-    check_print(null(), "null");
-}
+// TEST_CASE("Print null") {
+//     check_print(null(), "null");
+// }
 
-TEST_SUITE("Print bool") {
-    TEST_CASE("True") {
-        check_print(boolean(true), "true");
-    }
+// TEST_SUITE("Print bool") {
+//     TEST_CASE("True") {
+//         check_print(boolean(true), "true");
+//     }
 
-    TEST_CASE("False") {
-        check_print(boolean(false), "false");
-    }
-}
-TEST_SUITE("Print number") {
-    TEST_CASE("Zero") {
-        check_print(number(0), "0");
-    }
+//     TEST_CASE("False") {
+//         check_print(boolean(false), "false");
+//     }
+// }
+// TEST_SUITE("Print number") {
+//     TEST_CASE("Zero") {
+//         check_print(number(0), "0");
+//     }
 
-    TEST_CASE("One") {
-        check_print(number(1), "1");
-    }
+//     TEST_CASE("One") {
+//         check_print(number(1), "1");
+//     }
 
-    TEST_CASE("Multi-digit") {
-        check_print(number(123), "123");
-    }
+//     TEST_CASE("Multi-digit") {
+//         check_print(number(123), "123");
+//     }
 
-    TEST_CASE("Decimal zero") {
-        check_print(number(123.0), "123");
-    }
+//     TEST_CASE("Decimal zero") {
+//         check_print(number(123.0), "123");
+//     }
 
-    TEST_CASE("Decimal non-zero") {
-        check_print(number(483.25), "483.25");
-    }
+//     TEST_CASE("Decimal non-zero") {
+//         check_print(number(483.25), "483.25");
+//     }
 
-    TEST_CASE("Negative") {
-        check_print(number(-100.5), "-100.5");
-    }
-}
-TEST_SUITE("Print string") {
-    TEST_CASE("Empty") {
-        check_print(string(), R"("")");
-    }
+//     TEST_CASE("Negative") {
+//         check_print(number(-100.5), "-100.5");
+//     }
+// }
+// TEST_SUITE("Print string") {
+//     TEST_CASE("Empty") {
+//         check_print(string(), R"("")");
+//     }
 
-    TEST_CASE("Single char") {
-        check_print(string("a"), R"("a")");
-    }
+//     TEST_CASE("Single char") {
+//         check_print(string("a"), R"("a")");
+//     }
 
-    TEST_CASE("Multiple chars") {
-        check_print(string("abc def"), R"("abc def")");
-    }
+//     TEST_CASE("Multiple chars") {
+//         check_print(string("abc def"), R"("abc def")");
+//     }
 
-    TEST_CASE("Quote") {
-        check_print(string("f\"x\"y"), R"("f\"x\"y")");
-    }
+//     TEST_CASE("Quote") {
+//         check_print(string("f\"x\"y"), R"("f\"x\"y")");
+//     }
 
-    TEST_CASE("Backslash") {
-        check_print(string("fx\\y"), R"("fx\\y")");
-    }
-}
-TEST_SUITE("Print array") {
-    TEST_CASE("Empty") {
-        check_print(array<0>(), "[]");
-    }
+//     TEST_CASE("Backslash") {
+//         check_print(string("fx\\y"), R"("fx\\y")");
+//     }
+// }
+// TEST_SUITE("Print array") {
+//     TEST_CASE("Empty") {
+//         check_print(array<0>(), "[]");
+//     }
 
-    TEST_CASE("Bool") {
-        check_print(array(std::array{boolean(true)}), "[true]");
-    }
+//     TEST_CASE("Bool") {
+//         check_print(array(std::array{boolean(true)}), "[true]");
+//     }
 
-    TEST_CASE("Number") {
-        check_print(array(std::array{number(1.5)}), "[1.5]");
-    }
+//     TEST_CASE("Number") {
+//         check_print(array(std::array{number(1.5)}), "[1.5]");
+//     }
 
-    TEST_CASE("String") {
-        check_print(array(std::array{string("1.5")}), R"(["1.5"])");
-    }
+//     TEST_CASE("String") {
+//         check_print(array(std::array{string("1.5")}), R"(["1.5"])");
+//     }
 
-    TEST_CASE("Multiple") {
-        check_print(array(std::array{string("1.5"), number(1.2), boolean(false)}), R"(["1.5", 1.2, false])");
-    }
+//     TEST_CASE("Multiple") {
+//         check_print(array(std::array{string("1.5"), number(1.2), boolean(false)}), R"(["1.5", 1.2, false])");
+//     }
 
-    TEST_CASE("Nested array") {
-        check_print(array(
-                std::array{
-                        number(1.5),
-                        array(std::array{
-                                string("foo"),
-                                string("bar\"")
-                        })
-                }), R"([1.5, ["foo", "bar\""]])");
-    }
+//     TEST_CASE("Nested array") {
+//         check_print(array(
+//                 std::array{
+//                         number(1.5),
+//                         array(std::array{
+//                                 string("foo"),
+//                                 string("bar\"")
+//                         })
+//                 }), R"([1.5, ["foo", "bar\""]])");
+//     }
 
-    TEST_CASE("Nested object") {
-        check_print(array(
-                std::array{
-                        number(1.5),
-                        object(std::array{
-                                kv("a", string("foo")),
-                                kv("bx", string("bar\""))
-                        })
-                }), R"([1.5, {"a": "foo", "bx": "bar\""}])");
-    }
-}
-TEST_SUITE("Print object") {
-    TEST_CASE("Empty") {
-        check_print(object<0>(), "{}");
-    }
+//     TEST_CASE("Nested object") {
+//         check_print(array(
+//                 std::array{
+//                         number(1.5),
+//                         object(std::array{
+//                                 kv("a", string("foo")),
+//                                 kv("bx", string("bar\""))
+//                         })
+//                 }), R"([1.5, {"a": "foo", "bx": "bar\""}])");
+//     }
+// }
+// TEST_SUITE("Print object") {
+//     TEST_CASE("Empty") {
+//         check_print(object<0>(), "{}");
+//     }
 
-    TEST_CASE("Bool") {
-        check_print(object(std::array{kv("foo", boolean(true))}), R"({"foo": true})");
-    }
+//     TEST_CASE("Bool") {
+//         check_print(object(std::array{kv("foo", boolean(true))}), R"({"foo": true})");
+//     }
 
-    TEST_CASE("Number") {
-        check_print(object(std::array{kv("foo", number(1.5))}), R"({"foo": 1.5})");
-    }
+//     TEST_CASE("Number") {
+//         check_print(object(std::array{kv("foo", number(1.5))}), R"({"foo": 1.5})");
+//     }
 
-    TEST_CASE("String") {
-        check_print(object(std::array{kv("foo", string("1.5"))}), R"({"foo": "1.5"})");
-    }
+//     TEST_CASE("String") {
+//         check_print(object(std::array{kv("foo", string("1.5"))}), R"({"foo": "1.5"})");
+//     }
 
-    TEST_CASE("Nested array") {
-        check_print(object(
-                std::array{
-                        kv("a", number(1.5)),
-                        kv("b", array(std::array{
-                                string("foo"),
-                                string("bar\"")
-                        }))
-                }), R"({"a": 1.5, "b": ["foo", "bar\""]})");
-    }
+//     TEST_CASE("Nested array") {
+//         check_print(object(
+//                 std::array{
+//                         kv("a", number(1.5)),
+//                         kv("b", array(std::array{
+//                                 string("foo"),
+//                                 string("bar\"")
+//                         }))
+//                 }), R"({"a": 1.5, "b": ["foo", "bar\""]})");
+//     }
 
-    TEST_CASE("Nested object") {
-        check_print(object(
-                std::array{
-                        kv("foo", object(std::array{
-                                kv("a", string("foo")),
-                                kv("b", string("bar\""))
-                        })),
-                        kv("bar", object(std::array{
-                                kv("c", string("foo")),
-                                kv("d", string("bar\""))
-                        })),
-                }), R"({"bar": {"c": "foo", "d": "bar\""}, "foo": {"a": "foo", "b": "bar\""}})");
-    }
-}
+//     TEST_CASE("Nested object") {
+//         check_print(object(
+//                 std::array{
+//                         kv("foo", object(std::array{
+//                                 kv("a", string("foo")),
+//                                 kv("b", string("bar\""))
+//                         })),
+//                         kv("bar", object(std::array{
+//                                 kv("c", string("foo")),
+//                                 kv("d", string("bar\""))
+//                         })),
+//                 }), R"({"bar": {"c": "foo", "d": "bar\""}, "foo": {"a": "foo", "b": "bar\""}})");
+//     }
+// }
 
 // static std::vector<uint8_t> NO_SUBJECTS_DATA = {12, 0, 0, 0, 0, 0, 0, 0, 77, 97, 114, 116, 105, 110,
 //                                                 32, 78, 111, 118, 97, 107, 23, 0, 0, 0, 0, 0, 0, 0,

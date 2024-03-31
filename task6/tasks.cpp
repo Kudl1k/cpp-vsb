@@ -27,121 +27,217 @@ bool Boolean::operator==(const Boolean& other) const {
 std::optional<Value> parse_json(std::istream& is) {
     char ch;
     if (!(is >> ch)) {
-        return std::nullopt;  // Stream is empty
+        return std::nullopt;
     }
 
-    if (ch == '{') {
-        // Parse an object
-        Object obj;
-        while (is >> ch && ch != '}') {
-            if (ch != '"') {
-                return std::nullopt;  // Expected a string key
-            }
-
-            // Parse the key
-            std::string key;
-            while (is.get(ch) && ch != '"') {
-                if (ch == '\\') {
-                    if (!(is.get(ch))) {
-                        return std::nullopt;  // Unexpected end of string
-                    }
-                }
-                key += ch;
-            }
-
-            if (!(is >> ch) || ch != ':') {
-                return std::nullopt;  // Expected a colon
-            }
-
-            // Parse the value
-            auto value = parse_json(is);
-            if (!value) {
-                return std::nullopt;  // Invalid value
-            }
-
-            obj.items[key] = *value;
-
-            // Consume the comma if there is one
-            is >> ch;
-            if (ch != ',') {
-                is.putback(ch);
-            }
-        }
-
-        return Value{obj};
-    } else if (ch == '[') {
-        // Parse an array
-        Array arr;
-        while (is >> ch && ch != ']') {
-            is.putback(ch);
-
-            // Parse the value
-            auto value = parse_json(is);
-            if (!value) {
-                return std::nullopt;  // Invalid value
-            }
-
-            arr.items.push_back(*value);
-
-            // Consume the comma if there is one
-            is >> ch;
-            if (ch != ',') {
-                is.putback(ch);
-            }
-        }
-
-        return Value{arr};
-    } else if (ch == '"') {
-        // Parse a string
-        std::string value;
-        while (is.get(ch) && ch != '"') {
-            if (ch == '\\') {
-                if (!(is.get(ch))) {
-                    return std::nullopt;  // Unexpected end of string
-                }
-            }
-            value += ch;
-        }
-
-        return Value{String{value}};
-    } else if (ch == 'n') {
-        // Parse a null
-        char u, l1, l2;
-        if (is.get(u) && is.get(l1) && is.get(l2) && u == 'u' && l1 == 'l' && l2 == 'l') {
-            return Value{Null{}};
+    if (ch == 'n') {
+        if (is.get() == 'u' && is.get() == 'l' && is.get() == 'l') {
+            return Null();
         } else {
-            return std::nullopt;  // Invalid "null" value
+            return std::nullopt;
         }
     } else if (ch == 't' || ch == 'f') {
-        // Parse a boolean
-        char rest[4];
         if (ch == 't') {
-            if (!is.read(rest, 3) || std::strncmp(rest, "rue", 3) != 0) {
-                return std::nullopt;  // Invalid "true" value
+            if (is.get() == 'r' && is.get() == 'u' && is.get() == 'e') {
+                return Boolean(true);
+            } else {
+                return std::nullopt;
             }
-            return Value{Boolean{true}};
-        } else {
-            if (!is.read(rest, 4) || std::strncmp(rest, "alse", 4) != 0) {
-                return std::nullopt;  // Invalid "false" value
+        } else if (ch == 'f') {
+            if (is.get() == 'a' && is.get() == 'l' && is.get() == 's' && is.get() == 'e') {
+                return Boolean(false);
+            } else {
+                return std::nullopt;
             }
-            return Value{Boolean{false}};
         }
+    } else if (ch == '\"') {
+        std::string value;
+        char c;
+        while (is.get(c)) {
+            if (c == '\"') {
+                return String(value);
+            } else if (c == '\\') {
+                if (!is.get(c)) {
+                    return std::nullopt;
+                }
+                switch (c) {
+                    case '\"':
+                        value += '\"';
+                        break;
+                    case '\\':
+                        value += '\\';
+                        break;
+                    default:
+                        return std::nullopt;
+                }
+            } else {
+                value += c;
+            }
+        }
+        return std::nullopt;
     } else if (std::isdigit(ch) || ch == '-') {
-        // Parse a number
-        std::string value(1, ch);
-        while (is.get(ch) && (std::isdigit(ch) || ch == '.' || ch == 'e' || ch == 'E' || ch == '+' || ch == '-')) {
-            value += ch;
-        }
-        is.putback(ch);
-        return Value{Number{std::stod(value)}};
-    }
+        std::string number_str;
+        number_str += ch;
+        bool decimal_point_encountered = false;
 
-    return std::nullopt;  // Unsupported value type
+        while (is.get(ch)) {
+            if (std::isdigit(ch)) {
+                number_str += ch;
+            } else if (ch == '.') {
+                if (decimal_point_encountered) {
+                    is.unget();
+                    break;
+                } else {
+                    number_str += ch;
+                    decimal_point_encountered = true;
+                }
+            } else {
+                is.unget();
+                break;
+            }
+        }
+
+        try {
+            double number = std::stod(number_str);
+            return Number(number);
+        } catch (const std::invalid_argument& e) {
+            return std::nullopt;
+        } catch (const std::out_of_range& e) {
+            return std::nullopt;
+        }
+    } else if (ch == '[') {
+        // Parse array
+        Array array;
+        while (std::isspace(is.peek())) {
+            is.get();
+        }
+
+        if (is.peek() == ']') {
+            is.get();
+            return array;
+        }
+
+        while (true) {
+            auto value = parse_json(is);
+            if (!value) {
+                return std::nullopt;
+            }
+            array.items.push_back(*value);
+
+            while (std::isspace(is.peek())) {
+                is.get();
+            }
+            ch = is.get();
+            if (ch == ']') {
+                break;
+            }
+            else if (ch != ',') {
+                return std::nullopt;
+            }
+            while (std::isspace(is.peek())) {
+                is.get();
+            }
+        }
+
+        return array;
+    } else if (ch == '{') {
+        Object object;
+        while (std::isspace(is.peek())) {
+            is.get();
+        }
+        if (is.peek() == '}') {
+            is.get();
+            return object;
+        }
+        while (true) {
+            if (is.get() != '\"') {
+                return std::nullopt;
+            }
+            std::string key;
+            char c;
+            while (is.get(c)) {
+                if (c == '\"') {
+                    break;
+                } else if (c == '\\') {
+                    if (!is.get(c)) {
+                        return std::nullopt;
+                    }
+                    switch (c) {
+                        case '\"':
+                            key += '\"';
+                            break;
+                        case '\\':
+                            key += '\\';
+                            break;
+                        default:
+                            return std::nullopt;
+                    }
+                } else {
+                    key += c;
+                }
+            }
+            while (std::isspace(is.peek())) {
+                is.get();
+            }
+            if (is.get() != ':') {
+                return std::nullopt;
+            }
+            while (std::isspace(is.peek())) {
+                is.get();
+            }
+            auto value = parse_json(is);
+            if (!value) {
+                return std::nullopt;
+            }
+            object.items[key] = *value;
+            while (std::isspace(is.peek())) {
+                is.get();
+            }
+            ch = is.get();
+            if (ch == '}') {
+                break;
+            }
+            else if (ch != ',') {
+                return std::nullopt;
+            }
+            while (std::isspace(is.peek())) {
+                is.get();
+            }
+        }
+        return object;
+    } else {
+        // Invalid JSON
+        return std::nullopt;
+    }
 }
 
 std::ostream &operator<<(std::ostream &os, const Value &value)
 {
-    // TODO: insert return statement here
+    std::visit(overloaded{
+        [&os](const String &v) { os << '"' << v.value << '"'; },
+        [&os](const Number &v) { os << v.value; },
+        [&os](const Boolean &v) { os << (v.value ? "true" : "false"); },
+        [&os](const Null &) { os << "null"; },
+        [&os](const Array &v) {
+            os << '[';
+            for (size_t i = 0; i < v.items.size(); ++i) {
+                if (i != 0) os << ',';
+                os << v.items[i];
+            }
+            os << ']';
+        },
+        [&os](const Object &v) {
+            os << '{';
+            bool first = true;
+            for (const auto& [key, val] : v.items) {
+                if (!first) os << ',';
+                first = false;
+                os << '"' << key << "\":" << val;
+            }
+            os << '}';
+        }
+    }, value);
+    return os;
 }
 
 std::vector<uint8_t> serialize(const Value &value)

@@ -14,11 +14,15 @@
 struct Boolean {
     bool value;
 
+    Boolean(bool value): value(value) {};
+
     bool operator==(const Boolean& other) const;
 };
 
 struct Number {
     double value;
+
+    Number(double value): value(value) {};
 
     bool operator==(const Number& other) const;
 };
@@ -30,16 +34,21 @@ struct Null {
 struct String {
     std::string value;
 
+    String(std::string value): value(value) {};
+
     bool operator==(const String& other) const;
 };
 
 struct Array;
 struct Object;
 
+
 using Value = std::variant<Boolean, Number, String, Null, Array, Object>;
 
 struct Array {
     std::vector<Value> items;
+
+    Array() = default;
 
     bool operator==(const Array& other) const;
 };
@@ -48,6 +57,8 @@ struct Object {
     std::map<std::string, Value> items;
 
     bool operator==(const Object& other) const;
+
+    Object() = default;
 
     [[nodiscard]] std::vector<std::string> keys() const {
         std::vector<std::string> keys;
