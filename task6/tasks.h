@@ -8,6 +8,7 @@
 #include <map>
 #include <optional>
 #include <cstring>
+#include <functional>
 
 // JSON document: implement parsing.
 // JSON is implemented using algebraic data types here, it should be more practical than working

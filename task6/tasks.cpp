@@ -78,18 +78,18 @@ std::optional<Value> parse_json(std::istream& is) {
     } else if (std::isdigit(ch) || ch == '-') {
         std::string number_str;
         number_str += ch;
-        bool decimal_point_encountered = false;
+        bool decimal_point = false;
 
         while (is.get(ch)) {
             if (std::isdigit(ch)) {
                 number_str += ch;
             } else if (ch == '.') {
-                if (decimal_point_encountered) {
+                if (decimal_point) {
                     is.unget();
                     break;
                 } else {
                     number_str += ch;
-                    decimal_point_encountered = true;
+                    decimal_point = true;
                 }
             } else {
                 is.unget();
@@ -106,7 +106,6 @@ std::optional<Value> parse_json(std::istream& is) {
             return std::nullopt;
         }
     } else if (ch == '[') {
-        // Parse array
         Array array;
         while (std::isspace(is.peek())) {
             is.get();
@@ -206,7 +205,6 @@ std::optional<Value> parse_json(std::istream& is) {
         }
         return object;
     } else {
-        // Invalid JSON
         return std::nullopt;
     }
     return std::nullopt;
@@ -313,7 +311,10 @@ Value deserialize(const std::vector<uint8_t>& data) {
     size_t index = 0;
 
     auto read_size = [&data, &index](size_t& value) {
-        std::memcpy(&value, &data[index], sizeof(size_t));
+        value = 0;
+        for (size_t i = 0; i < sizeof(size_t); ++i) {
+            value |= static_cast<size_t>(data[index + i]) << (i * 8);
+        }
         index += sizeof(size_t);
     };
 
