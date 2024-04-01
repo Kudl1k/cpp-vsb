@@ -209,6 +209,7 @@ std::optional<Value> parse_json(std::istream& is) {
         // Invalid JSON
         return std::nullopt;
     }
+    return std::nullopt;
 }
 
 std::ostream &operator<<(std::ostream &os, const Value &value)
@@ -254,7 +255,7 @@ std::vector<uint8_t> serialize(const Value &value)
     std::vector<uint8_t> data;
 
     std::visit(overloaded{
-        [&data](const Null &v) {
+        [&data](const Null) {
             data.push_back(0);
         },
         [&data](const Boolean &v) {
@@ -310,62 +311,68 @@ std::vector<uint8_t> serialize(const Value &value)
 
 Value deserialize(const std::vector<uint8_t>& data) {
     size_t index = 0;
-    if (index >= data.size()) {
-        throw std::runtime_error("Unexpected end of data during deserialization.");
-    }
 
-    auto readSize = [&data, &index]() -> size_t {
-        size_t size = 0;
-        for (int i = 0; i < 8; ++i) {
-            size |= static_cast<size_t>(data[index++]) << (i * 8);
-        }
-        return size;
+    // Deserialize based on the type ID
+    auto read_size = [&data, &index](size_t& value) {
+        std::memcpy(&value, &data[index], sizeof(size_t));
+        index += sizeof(size_t);
     };
 
-    uint8_t type = data[index++];
-    switch (type) {
-        case 0: // Null
-            return Null();
-        case 1: { // Boolean
-            bool value = data[index++] != 0;
-            return Boolean{value};
-        }
-        case 2: { // Number
-            uint64_t num = 0;
-            for (int i = 0; i < 8; ++i) {
-                num |= static_cast<uint64_t>(data[index++]) << (i * 8);
+    auto read_double = [&data, &index]() -> double {
+        double value;
+        std::memcpy(&value, &data[index], sizeof(double));
+        index += sizeof(double);
+        return value;
+    };
+
+    auto read_string = [&data, &index]() -> std::string {
+        size_t size;
+        std::memcpy(&size, &data[index], sizeof(size_t));
+        index += sizeof(size_t);
+        std::string str(data.begin() + index, data.begin() + index + size);
+        index += size;
+        return str;
+    };
+
+    auto read_value = [&data, &index, &read_size, &read_double, &read_string]() -> Value {
+        std::function<Value()> read_recursive_value;
+        read_recursive_value = [&]() -> Value {
+            uint8_t type_id = data[index++];
+            switch (type_id) {
+                case 0: return Null();
+                case 1: return Boolean(data[index++] != 0);
+                case 2: return Number(read_double());
+                case 3: return String(read_string());
+                case 4: {
+                    size_t size;
+                    read_size(size);
+                    Array array;
+                    for (size_t i = 0; i < size; ++i) {
+                        Value val = read_recursive_value(); // Use the helper function recursively
+                        array.items.push_back(val);
+                    }
+                    return array;
+                }
+                case 5: {
+                    size_t size;
+                    read_size(size);
+                    Object obj;
+                    for (size_t i = 0; i < size; ++i) {
+                        std::string key = read_string();
+                        Value val = read_recursive_value(); // Use the helper function recursively
+                        obj.items[key] = val;
+                    }
+                    return obj;
+                }
+                default: throw std::runtime_error("Invalid type ID");
             }
-            double value;
-            std::memcpy(&value, &num, sizeof(double));
-            return Number{value};
-        }
-        case 3: { // String
-            size_t size = readSize();
-            std::string value;
-            value.resize(size); // Resize the string to the expected size
-            for (size_t i = 0; i < size; ++i) {
-                value[i] = data[index++];
-            }
-            return String{value};
-        }
-        case 4: { // Array
-            size_t size = readSize();
-            Array array;
-            for (size_t i = 0; i < size; ++i) {
-                array.items.push_back(std::get<String>(deserialize(data)));
-            }
-            return array;
-        }
-        case 5: { // Object
-            size_t size = readSize();
-            Object obj;
-            for (size_t i = 0; i < size; ++i) {
-                std::string key = std::get<String>(deserialize(data)).value;
-                obj.items[key] = std::get<String>(deserialize(data));
-            }
-            return obj;
-        }
-        default:
-            throw std::runtime_error("Unknown type during deserialization.");
-    }
+        };
+
+        // Call the helper function for the first time
+        return read_recursive_value();
+    };
+
+
+
+    return read_value();
 }
