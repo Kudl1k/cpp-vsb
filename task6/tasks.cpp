@@ -312,7 +312,6 @@ std::vector<uint8_t> serialize(const Value &value)
 Value deserialize(const std::vector<uint8_t>& data) {
     size_t index = 0;
 
-    // Deserialize based on the type ID
     auto read_size = [&data, &index](size_t& value) {
         std::memcpy(&value, &data[index], sizeof(size_t));
         index += sizeof(size_t);
@@ -348,7 +347,7 @@ Value deserialize(const std::vector<uint8_t>& data) {
                     read_size(size);
                     Array array;
                     for (size_t i = 0; i < size; ++i) {
-                        Value val = read_recursive_value(); // Use the helper function recursively
+                        Value val = read_recursive_value(); 
                         array.items.push_back(val);
                     }
                     return array;
@@ -359,7 +358,7 @@ Value deserialize(const std::vector<uint8_t>& data) {
                     Object obj;
                     for (size_t i = 0; i < size; ++i) {
                         std::string key = read_string();
-                        Value val = read_recursive_value(); // Use the helper function recursively
+                        Value val = read_recursive_value();
                         obj.items[key] = val;
                     }
                     return obj;
@@ -367,12 +366,7 @@ Value deserialize(const std::vector<uint8_t>& data) {
                 default: throw std::runtime_error("Invalid type ID");
             }
         };
-
-        // Call the helper function for the first time
         return read_recursive_value();
     };
-
-
-
     return read_value();
 }
