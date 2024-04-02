@@ -34,49 +34,82 @@ std::vector<std::pair<Student, Score>> find_best_n_students(std::vector<Student>
         return std::make_pair(student, score);
     });
 
-    std::partial_sort(student_scores.begin(), student_scores.begin() + n, student_scores.end(), [](const auto& pair1, const auto& pair2) { 
+    std::sort(student_scores.begin(), student_scores.end(), [](const auto& pair1, const auto& pair2) { 
         return pair1.second > pair2.second; 
     });
+
+    if (n > student_scores.size()) {
+        n = student_scores.size();
+    }
 
     return std::vector<std::pair<Student, Score>>(student_scores.begin(), student_scores.begin() + n);
 }
 
-size_t max_score_difference(const std::vector<Student> &students, const std::vector<Exam> &exams)
-{
-    std::vector<std::vector<Score>> all_scores(exams.size(), std::vector<Score>(students.size()));
+size_t max_score_difference(const std::vector<Student>& students, const std::vector<Exam>& exams) {
+    std::vector<size_t> max_diffs;
 
-    std::transform(exams.begin(),exams.end(),all_scores.begin(), [&students](const Exam &exam){
-        std::vector<Score> scores(students.size());
-        std::transform(students.begin(),students.end(),scores.begin(),[&exam](const Student &student){
-            return calculate_score(student,exam);
+    std::transform(exams.begin(), exams.end(), std::back_inserter(max_diffs), [&](const Exam& exam) {
+        std::vector<Score> scores;
+
+        std::transform(students.begin(), students.end(), std::back_inserter(scores), [&](const Student& student) {
+            return calculate_score(student, exam);
         });
-        std::sort(scores.begin(),scores.end(), std::greater<Score>());
-        return scores;
+
+        if (!scores.empty()) {
+            auto minmax = std::minmax_element(scores.begin(), scores.end());
+            return *minmax.second - *minmax.first;
+        } else {
+            return 0;
+        }
     });
 
-    std::vector<std::vector<Score>> all_differences(exams.size());
-
-    std::transform(all_scores.begin(),all_scores.end(),all_differences.begin(),[](const std::vector<Score>& scores){
-        std::vector<Score> differencies(scores.size() - 1);
-        std::adjacent_difference(scores.begin(),scores.end(),differencies.begin());
-        return differencies;
-    });
-
-    std::vector<Score> max_differencies(exams.size());
-    std::transform(all_differences.begin(),all_differences.end(),max_differencies.end(),[](const std::vector<Score>& differencies){
-        return *std::max_element(differencies.begin(),differencies.end());
-    });
-
-
-    return *std::max_element(max_differencies.begin(),max_differencies.end());
+    return max_diffs.empty() ? 0 : *std::max_element(max_diffs.begin(), max_diffs.end());
 }
 
 std::pair<std::unordered_set<Student>, std::unordered_set<Student>> filter_students(const std::vector<Student> &students, const std::vector<Exam> &exams)
 {
-    return std::pair<std::unordered_set<Student>, std::unordered_set<Student>>();
+    std::unordered_set<Student> passed_all_exams;
+    std::unordered_set<Student> passed_single_exam;
+
+    std::for_each(students.begin(), students.end(), [&](const Student& student) {
+        bool passed_all = std::all_of(exams.begin(), exams.end(), [&](const Exam& exam) {
+            Score score = calculate_score(student, exam);
+            return score >= 100;
+        });
+
+        bool passed_single = std::any_of(exams.begin(), exams.end(), [&](const Exam& exam) {
+            Score score = calculate_score(student, exam);
+            return score >= 100;
+        });
+
+        if (passed_all) {
+            passed_all_exams.insert(student);
+        }
+        if (passed_single) {
+            passed_single_exam.insert(student);
+        }
+    });
+
+    return std::make_pair(passed_all_exams, passed_single_exam);
 }
 
-Leaderboard get_leaderboard_of_each_subject(const std::vector<Student> &students, const std::vector<Exam> &exams)
-{
-    return Leaderboard();
+Leaderboard get_leaderboard_of_each_subject(const std::vector<Student>& students, const std::vector<Exam>& exams) {
+    Leaderboard leaderboard;
+
+    std::for_each(exams.begin(), exams.end(), [&](const Exam& exam) {
+        std::vector<std::pair<Student, Score>> student_scores = find_best_n_students(students, exam, students.size());
+        leaderboard.emplace(exam.subject, std::move(student_scores));
+    });
+
+    std::for_each(leaderboard.begin(), leaderboard.end(), [](auto& entry) {
+        std::sort(entry.second.begin(), entry.second.end(), [](const auto& pair1, const auto& pair2) {
+            if (pair1.second == pair2.second) {
+                return pair1.first.name < pair2.first.name;
+            }
+            return pair1.second > pair2.second;
+        });
+    });
+
+    return leaderboard;
 }
+
