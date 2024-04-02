@@ -50,18 +50,24 @@ size_t max_score_difference(const std::vector<Student>& students, const std::vec
         return 0;
     }
 
-    std::vector<size_t> max_diffs;
+    size_t max_diff = 0;
 
-    std::transform(exams.begin(), exams.end(), std::back_inserter(max_diffs), [&](const Exam& exam) {
-        std::vector<Score> scores(students.size());
-        std::transform(students.begin(), students.end(), scores.begin(), [&](const Student& student) {
-            return calculate_score(student, exam);
-        });
-        auto minmax = std::minmax_element(scores.begin(), scores.end());
-        return *minmax.second - *minmax.first;
-    });
+    for (const auto& exam : exams) {
+        std::vector<Score> scores;
 
-    return *std::max_element(max_diffs.begin(), max_diffs.end());
+        for (const auto& student : students) {
+            scores.push_back(calculate_score(student, exam));
+        }
+
+        std::sort(scores.begin(), scores.end(), std::greater<>());
+
+        for (size_t i = 1; i < scores.size(); ++i) {
+            size_t diff = scores[i - 1] - scores[i];
+            max_diff = std::max(max_diff, diff);
+        }
+    }
+
+    return max_diff;
 }
 
 
@@ -97,7 +103,20 @@ Leaderboard get_leaderboard_of_each_subject(const std::vector<Student>& students
 
     std::for_each(exams.begin(), exams.end(), [&](const Exam& exam) {
         std::vector<std::pair<Student, Score>> student_scores = find_best_n_students(students, exam, students.size());
-        leaderboard.emplace(exam.subject, std::move(student_scores));
+        if (leaderboard.count(exam.subject) == 0) {
+            leaderboard.emplace(exam.subject, std::move(student_scores));
+        } else {
+            for (const auto& pair : student_scores) {
+                auto it = std::find_if(leaderboard[exam.subject].begin(), leaderboard[exam.subject].end(), [&](const auto& p) {
+                    return p.first.name == pair.first.name;
+                });
+                if (it != leaderboard[exam.subject].end()) {
+                    it->second += pair.second;
+                } else {
+                    leaderboard[exam.subject].push_back(pair);
+                }
+            }
+        }
     });
 
     std::for_each(leaderboard.begin(), leaderboard.end(), [](auto& entry) {
