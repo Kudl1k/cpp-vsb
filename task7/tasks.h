@@ -16,6 +16,8 @@
 
 struct Student
 {
+    Student() = default;
+
     explicit Student(
         std::string_view name,
         size_t math_skill = 1,

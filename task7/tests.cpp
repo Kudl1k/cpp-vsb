@@ -19,125 +19,125 @@ std::vector<Student> get_students() {
     };
 }
 
-// TEST_CASE("Find best 3 students") {
-//     std::vector<Student> students = get_students();
-//     Exam exam{"SKJ", 10, 80};
+TEST_CASE("Find best 3 students") {
+    std::vector<Student> students = get_students();
+    Exam exam{"SKJ", 10, 80};
 
-//     auto best3 = find_best_n_students(students, exam, 3);
+    auto best3 = find_best_n_students(students, exam, 3);
 
-//     decltype(best3) expected{
-//             {students[1], 208},
-//             {students[6], 162},
-//             {students[2], 144}
-//     };
-//     REQUIRE(best3 == expected);
-// }
+    decltype(best3) expected{
+            {students[1], 208},
+            {students[6], 162},
+            {students[2], 144}
+    };
+    REQUIRE(best3 == expected);
+}
 
-// TEST_CASE("Find best n larger than student count") {
-//     std::vector<Student> students = get_students();
-//     Exam exam{"SKJ", 10, 80};
+TEST_CASE("Find best n larger than student count") {
+    std::vector<Student> students = get_students();
+    Exam exam{"SKJ", 10, 80};
 
-//     auto best_n = find_best_n_students(students, exam, students.size() + 1);
+    auto best_n = find_best_n_students(students, exam, students.size() + 1);
 
-//     decltype(best_n) expected{
-//             {students[1], 208},
-//             {students[6], 162},
-//             {students[2], 144},
-//             {students[5], 132},
-//             {students[7], 110},
-//             {students[0], 102},
-//             {students[3], 72},
-//             {students[4], 50}
-//     };
-//     REQUIRE(best_n == expected);
-// }
+    decltype(best_n) expected{
+            {students[1], 208},
+            {students[6], 162},
+            {students[2], 144},
+            {students[5], 132},
+            {students[7], 110},
+            {students[0], 102},
+            {students[3], 72},
+            {students[4], 50}
+    };
+    REQUIRE(best_n == expected);
+}
 
-// TEST_CASE("Find best 0 students") {
-//     std::vector<Student> students = get_students();
-//     Exam exam{"SKJ", 10, 80};
+TEST_CASE("Find best 0 students") {
+    std::vector<Student> students = get_students();
+    Exam exam{"SKJ", 10, 80};
 
-//     auto best = find_best_n_students(students, exam, 0);
-//     REQUIRE(best.empty());
-// }
+    auto best = find_best_n_students(students, exam, 0);
+    REQUIRE(best.empty());
+}
 
-// TEST_CASE("No students") {
-//     std::vector<Student> students;
-//     std::vector<Exam> exams{
-//             Exam{"SKJ", 40, 50},
-//             Exam{"C++I", 20, 90}
-//     };
+TEST_CASE("No students") {
+    std::vector<Student> students;
+    std::vector<Exam> exams{
+            Exam{"SKJ", 40, 50},
+            Exam{"C++I", 20, 90}
+    };
 
-//     REQUIRE(max_score_difference(students, exams) == 0);
-// }
+    REQUIRE(max_score_difference(students, exams) == 0);
+}
 
-// TEST_CASE("No exams") {
-//     std::vector<Student> students = get_students();
-//     std::vector<Exam> exams;
+TEST_CASE("No exams") {
+    std::vector<Student> students = get_students();
+    std::vector<Exam> exams;
 
-//     REQUIRE(max_score_difference(students, exams) == 0);
-// }
+    REQUIRE(max_score_difference(students, exams) == 0);
+}
 
-// TEST_CASE("No exams and no students") {
-//     std::vector<Student> students;
-//     std::vector<Exam> exams;
+TEST_CASE("No exams and no students") {
+    std::vector<Student> students;
+    std::vector<Exam> exams;
 
-//     REQUIRE(max_score_difference(students, exams) == 0);
-// }
+    REQUIRE(max_score_difference(students, exams) == 0);
+}
 
-// TEST_CASE("Single exam") {
-//     std::vector<Student> students = get_students();
-//     std::vector<Exam> exams{
-//             Exam{"C++I", 20, 90}
-//     };
+TEST_CASE("Single exam") {
+    std::vector<Student> students = get_students();
+    std::vector<Exam> exams{
+            Exam{"C++I", 20, 90}
+    };
 
-//     REQUIRE(max_score_difference(students, exams) == 44);
-// }
+    REQUIRE(max_score_difference(students, exams) == 44);
+}
 
-// TEST_CASE("Multiple exams 1") {
-//     std::vector<Student> students{
-//             Student{"Jarmila", 90, 5},
-//             Student{"Petr", 10, 90},
-//     };
-//     std::vector<Exam> exams{
-//             Exam{"DIM", 80, 35},
-//             Exam{"UPR", 5, 75},
-//             Exam{"ZPG", 65, 90},
-//     };
+TEST_CASE("Multiple exams 1") {
+    std::vector<Student> students{
+            Student{"Jarmila", 90, 5},
+            Student{"Petr", 10, 90},
+    };
+    std::vector<Exam> exams{
+            Exam{"DIM", 80, 35},
+            Exam{"UPR", 5, 75},
+            Exam{"ZPG", 65, 90},
+    };
 
-//     REQUIRE(max_score_difference(students, exams) == 109);
-// }
+    REQUIRE(max_score_difference(students, exams) == 109);
+}
 
-// TEST_CASE("Multiple exams 2") {
-//     std::vector<Student> students{
-//             Student{"A", 91, 5},
-//             Student{"B", 92, 5},
-//             Student{"C", 93, 5},
-//     };
-//     std::vector<Exam> exams{
-//             Exam{"A", 80, 35},
-//             Exam{"B", 81, 35},
-//             Exam{"C", 82, 35},
-//     };
+TEST_CASE("Multiple exams 2") {
+    std::vector<Student> students{
+            Student{"A", 91, 5},
+            Student{"B", 92, 5},
+            Student{"C", 93, 5},
+    };
+    std::vector<Exam> exams{
+            Exam{"A", 80, 35},
+            Exam{"B", 81, 35},
+            Exam{"C", 82, 35},
+    };
 
-//     REQUIRE(max_score_difference(students, exams) == 1);
-// }
+    REQUIRE(max_score_difference(students, exams) == 1);
+}
 
-// TEST_CASE("Multiple exams 3") {
-//     std::vector<Student> students{
-//             Student{"A", 111, 5},
-//             Student{"B", 110, 5},
-//             Student{"C", 90, 5},
-//             Student{"D", 70, 5},
-//             Student{"E", 50, 5},
-//     };
-//     std::vector<Exam> exams{
-//             Exam{"A", 80, 35},
-//             Exam{"B", 60, 35},
-//             Exam{"C", 40, 35},
-//     };
+TEST_CASE("Multiple exams 3") {
+    std::vector<Student> students{
+            Student{"A", 111, 5},
+            Student{"B", 110, 5},
+            Student{"C", 90, 5},
+            Student{"D", 70, 5},
+            Student{"E", 50, 5},
+    };
+    std::vector<Exam> exams{
+            Exam{"A", 80, 35},
+            Exam{"B", 60, 35},
+            Exam{"C", 40, 35},
+    };
 
-//     REQUIRE(max_score_difference(students, exams) == 24);
-// }
+    REQUIRE(max_score_difference(students, exams) == 24);
+}
 
 // static std::unordered_set<Student> to_set(std::vector<Student> students) {
 //     std::unordered_set<Student> set;
