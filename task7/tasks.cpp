@@ -46,25 +46,24 @@ std::vector<std::pair<Student, Score>> find_best_n_students(std::vector<Student>
 }
 
 size_t max_score_difference(const std::vector<Student>& students, const std::vector<Exam>& exams) {
+    if (students.empty() || exams.empty()) {
+        return 0;
+    }
+
     std::vector<size_t> max_diffs;
 
     std::transform(exams.begin(), exams.end(), std::back_inserter(max_diffs), [&](const Exam& exam) {
-        std::vector<Score> scores;
-
-        std::transform(students.begin(), students.end(), std::back_inserter(scores), [&](const Student& student) {
+        std::vector<Score> scores(students.size());
+        std::transform(students.begin(), students.end(), scores.begin(), [&](const Student& student) {
             return calculate_score(student, exam);
         });
-
-        if (!scores.empty()) {
-            auto minmax = std::minmax_element(scores.begin(), scores.end());
-            return *minmax.second - *minmax.first;
-        } else {
-            return 0;
-        }
+        auto minmax = std::minmax_element(scores.begin(), scores.end());
+        return *minmax.second - *minmax.first;
     });
 
-    return max_diffs.empty() ? 0 : *std::max_element(max_diffs.begin(), max_diffs.end());
+    return *std::max_element(max_diffs.begin(), max_diffs.end());
 }
+
 
 std::pair<std::unordered_set<Student>, std::unordered_set<Student>> filter_students(const std::vector<Student> &students, const std::vector<Exam> &exams)
 {
