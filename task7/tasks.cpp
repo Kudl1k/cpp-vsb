@@ -70,7 +70,6 @@ size_t max_score_difference(const std::vector<Student>& students, const std::vec
     return max_diff;
 }
 
-
 std::pair<std::unordered_set<Student>, std::unordered_set<Student>> filter_students(const std::vector<Student> &students, const std::vector<Exam> &exams)
 {
     std::unordered_set<Student> passed_all_exams;
