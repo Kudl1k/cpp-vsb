@@ -1,12 +1,11 @@
-#include "tracker.h"
+#include <QApplication>
  
-int main(void) {
+int main(int argc, char **argv) {
+  QApplication a(argc,argv);
   
-  Tracker tracker;
 
 
-  tracker.welcome_screen();
 
 
-  return 0;
+  return a.exec();
 }
