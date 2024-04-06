@@ -1,11 +1,9 @@
-// #include "tracker.h"
+#include "tracker.h"
 
 
-// Tracker::Tracker(){
-//     curtime = time(0);
-//     time_manager = 0;
-//     local_time = *localtime(&curtime);
-// }
+Tracker::Tracker(){
+    user = new User("Franta",50000);
+}
 
 // Tracker::~Tracker(){
 //     delete user;
