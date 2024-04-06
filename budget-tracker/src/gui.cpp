@@ -57,12 +57,13 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
     
     QPushButton* addExpanse = new QPushButton("Add Expanse");
     header->addWidget(addExpanse);
-    toggleButton = new QCheckBox("Toggle adding new lines");
+    toggleButton = new QCheckBox("Toggle adding multiple expanses");
     connect(toggleButton, &QCheckBox::stateChanged, [this, expanseLinesLayout](int state) {
         if (state == Qt::Checked) {
             for (auto& expanseLine : this->expanseLines) {
                 expanseLine->show();
                 expanseLine->getRemoveButton()->show();
+                expanseLine->getRemoveButton()->setDisabled(true);
                 expanseLine->getAddButton()->show();
             }
         } else {
@@ -100,8 +101,10 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
     mainLayout->addLayout(header);
     toggleButton->hide();
     mainLayout->addWidget(toggleButton);
-
     bottomWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding); // Make the bottom widget expandable
+
+    
+
 
     mainLayout->addLayout(expanseLinesLayout); // Add the expanseLinesLayout to the mainLayout
     mainLayout->addWidget(bottomWidget);
