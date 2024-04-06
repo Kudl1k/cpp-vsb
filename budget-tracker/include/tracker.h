@@ -30,7 +30,7 @@ class Tracker
 public:
     Tracker();
     ~Tracker();
-    std::pair<bool, std::string> addExpanse(QDate *date, int category, int subcategory, std::string title, double value);
+    std::pair<bool, std::string> addExpanse(QDate date, std::string category_name,std::string subcategory_name, std::string title, double value);
     std::vector<Expanse> getExpanses();
 private:
     User *user = nullptr;

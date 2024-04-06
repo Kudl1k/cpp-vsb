@@ -8,7 +8,7 @@ GUI::GUI(QWidget* parent) : QMainWindow(parent)
 
 
     this->setWindowTitle("Budget Tracker - KUD0132");
-    this->setMinimumSize(640,480);
+    this->setMinimumSize(1280,720);
     this->move(100,100);
 
     tabs = new QTabWidget();
@@ -49,14 +49,18 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
 {
     QVBoxLayout* mainLayout = new QVBoxLayout();
     QVBoxLayout* expanseLinesLayout = new QVBoxLayout();
-    QScrollArea *scrollarea = new QScrollArea();
+    scrollarea = new QScrollArea();
     scrollarea->hide();
-    QWidget* bottomWidget = new QWidget();
+    scrollarea->setFixedHeight(75);
+
+    QVBoxLayout* bottomWidget = new QVBoxLayout();
+    tableView = new ExpanseTableView(this);
 
     QHBoxLayout* header = new QHBoxLayout();
-    QPushButton* editButton = new QPushButton("Edit");
+    QPushButton* editButton = new QPushButton("New");
     header->addWidget(editButton,0);
     QPushButton* addExpanses = new QPushButton("Add expanses");
+    addExpanses->hide();
     header->addWidget(addExpanses,0);
     header->addStretch(1);
     
@@ -70,12 +74,15 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
                 expanseLine->show();
                 expanseLine->getRemoveButton()->show();
                 expanseLine->getAddButton()->show();
+                scrollarea->setFixedHeight(200);
+
             }
         } else {
             for (auto& expanseLine : this->expanseLines) {
                 expanseLine->hide();
                 expanseLine->getRemoveButton()->hide();
                 expanseLine->getAddButton()->hide();
+                scrollarea->setFixedHeight(75);
             }
             if (!this->expanseLines.empty()) {
                 this->expanseLines.front()->show();
@@ -83,7 +90,7 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
         }
     });
 
-    connect(editButton, &QPushButton::clicked, [this,expanseLinesLayout,scrollarea]() {
+    connect(editButton, &QPushButton::clicked, [this,expanseLinesLayout,addExpanses]() {
         if (this->expanseLines.size() == 0)
         {
             this->createNewExpanse(expanseLinesLayout);
@@ -91,12 +98,14 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
         
         if (toggleButton->isVisible())
         {
+            addExpanses->hide();
             toggleButton->hide();
             scrollarea->hide(); 
             for (auto& expanseLine : this->expanseLines) {
                 expanseLine->hide();
             }
         } else {
+            addExpanses->show();
             toggleButton->show();
             scrollarea->show();
             for (auto& expanseLine : this->expanseLines) {
@@ -105,17 +114,51 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
         }
     });
 
+    connect(addExpanses, &QPushButton::clicked, [this,tracker]() {
+        for (auto& expanseLine : this->expanseLines) {
+            QDate date = expanseLine->getDate();
+            QString category = expanseLine->getCategory();
+            QString subcategory = expanseLine->getSubcategory();
+            QString text = expanseLine->getText();
+            QString value = expanseLine->getValue();
+
+            QList<QStandardItem*> items;
+            items.append(new QStandardItem(date.toString()));
+            items.append(new QStandardItem(category));
+            items.append(new QStandardItem(subcategory));
+            items.append(new QStandardItem(text));
+            items.append(new QStandardItem(value));
+
+            std::pair<bool,std::string> added = tracker->addExpanse(
+                date,
+                category.toStdString(),
+                subcategory.toStdString(),
+                text.toStdString(),
+                value.toDouble()
+            );
+            if (added.first)
+            {
+                tableView->getModel()->appendRow(items);
+                tableView->hideColumn(tableView->getModel()->columnCount() - 1);
+                this->removeExpanse(expanseLine);
+            }
+        }
+        std::cout << tracker->getExpanses().size() << std::endl;
+    });
+
+
+
     mainLayout->addLayout(header);
     toggleButton->hide();
     mainLayout->addWidget(toggleButton);
-    bottomWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    
 
     
 
     
 
     QWidget *scrollWidget = new QWidget();
-    scrollarea->setFixedHeight(200);
+    scrollarea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     expanseLinesLayout->setAlignment(Qt::AlignTop);
     scrollWidget->setLayout(expanseLinesLayout);
 
@@ -124,7 +167,7 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
     scrollarea->setWidget(scrollWidget);
 
     mainLayout->addWidget(scrollarea);
-    mainLayout->addWidget(bottomWidget);
+    mainLayout->addWidget(tableView);
 
 
 
@@ -162,8 +205,12 @@ void ExpansesTab::removeExpanse(ExpanseLine *expanseLine){
     auto it = std::find(expanseLines.begin(), expanseLines.end(), expanseLine);
     if (it != expanseLines.end()) {
         expanseLines.erase(it);
+        expanseLine->deleteLater();
     }
-    if (expanseLines.size() == 1) {
+    if (expanseLines.empty()) {
+        toggleButton->hide();
+        scrollarea->hide();
+    } else if (expanseLines.size() == 1) {
         expanseLines.front()->getRemoveButton()->setDisabled(true);
     }
 }
@@ -171,19 +218,21 @@ void ExpansesTab::removeExpanse(ExpanseLine *expanseLine){
 ExpanseLine::ExpanseLine(QVBoxLayout* layout, std::function<QWidget*()> createNewExpanse, std::function<void(ExpanseLine*)> removeExpanse) : layout(layout), position(position) {
     QGridLayout* lineLayout = new QGridLayout();
 
-    QDateEdit* dateEdit = new QDateEdit();
-    QComboBox* comboBox1 = new QComboBox();
+    dateEdit = new QDateEdit();
+    comboBox1 = new QComboBox();
     comboBox1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-    QComboBox* comboBox2 = new QComboBox();
+    comboBox2 = new QComboBox();
     comboBox2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-    QLineEdit* textField = new QLineEdit();
+    textField = new QLineEdit();
     textField->setPlaceholderText("New thing");
 
 
-    QLineEdit* valueField = new QLineEdit();
+    valueField = new QLineEdit();
     valueField->setPlaceholderText("Enter value");
+    QValidator *validator = new QDoubleValidator(this);
+    valueField->setValidator(validator);
 
     textField->setDisabled(true);
     valueField->setDisabled(true);
@@ -204,13 +253,15 @@ ExpanseLine::ExpanseLine(QVBoxLayout* layout, std::function<QWidget*()> createNe
     {
         comboBox1->addItem(QString::fromStdString(categories[i].first));
     }
-    connect(comboBox1, QOverload<int>::of(&QComboBox::currentIndexChanged), [this, comboBox2,textField,valueField](int index){
+    comboBox1->setCurrentIndex(0);
+    connect(comboBox1, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index){
         comboBox2->clear();
         if(index >= 0 && index < categories.size()) {
             for(const auto& subcategory : categories[index].second) {
                 comboBox2->addItem(QString::fromStdString(subcategory));
             }
         }
+        comboBox2->setCurrentIndex(0);
         if (!comboBox2->currentText().isEmpty())
         {
             textField->setDisabled(false);
@@ -221,6 +272,9 @@ ExpanseLine::ExpanseLine(QVBoxLayout* layout, std::function<QWidget*()> createNe
         }
         
     });
+
+    
+
     textField->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     connect(addButton, &QPushButton::clicked, [createNewExpanse](){
         createNewExpanse();
@@ -249,4 +303,25 @@ QPushButton* ExpanseLine::getRemoveButton() {
 QPushButton * ExpanseLine::getAddButton()
 {
     return addButton;
+}
+
+
+QDate ExpanseLine::getDate() {
+    return dateEdit->date();
+}
+
+QString ExpanseLine::getCategory() {
+    return comboBox1->currentText();
+}
+
+QString ExpanseLine::getSubcategory() {
+    return comboBox2->currentText();
+}
+
+QString ExpanseLine::getText() {
+    return textField->text();
+}
+
+QString ExpanseLine::getValue() {
+    return valueField->text();
 }
