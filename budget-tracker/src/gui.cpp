@@ -48,22 +48,27 @@ IncomesTab::IncomesTab(Tracker *tracker)
 ExpansesTab::ExpansesTab(Tracker *tracker)
 {
     QVBoxLayout* mainLayout = new QVBoxLayout();
-    QVBoxLayout* expanseLinesLayout = new QVBoxLayout(); // New layout for the ExpanseLine widgets
-
+    QVBoxLayout* expanseLinesLayout = new QVBoxLayout();
+    QScrollArea *scrollarea = new QScrollArea();
+    scrollarea->hide();
     QWidget* bottomWidget = new QWidget();
 
     QHBoxLayout* header = new QHBoxLayout();
-
+    QPushButton* editButton = new QPushButton("Edit");
+    header->addWidget(editButton,0);
+    QPushButton* addExpanses = new QPushButton("Add expanses");
+    header->addWidget(addExpanses,0);
+    header->addStretch(1);
     
-    QPushButton* addExpanse = new QPushButton("Add Expanse");
-    header->addWidget(addExpanse);
+
+
+
     toggleButton = new QCheckBox("Toggle adding multiple expanses");
     connect(toggleButton, &QCheckBox::stateChanged, [this, expanseLinesLayout](int state) {
         if (state == Qt::Checked) {
             for (auto& expanseLine : this->expanseLines) {
                 expanseLine->show();
                 expanseLine->getRemoveButton()->show();
-                expanseLine->getRemoveButton()->setDisabled(true);
                 expanseLine->getAddButton()->show();
             }
         } else {
@@ -78,7 +83,7 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
         }
     });
 
-    connect(addExpanse, &QPushButton::clicked, [this,expanseLinesLayout]() {
+    connect(editButton, &QPushButton::clicked, [this,expanseLinesLayout,scrollarea]() {
         if (this->expanseLines.size() == 0)
         {
             this->createNewExpanse(expanseLinesLayout);
@@ -87,11 +92,13 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
         if (toggleButton->isVisible())
         {
             toggleButton->hide();
+            scrollarea->hide(); 
             for (auto& expanseLine : this->expanseLines) {
                 expanseLine->hide();
             }
         } else {
             toggleButton->show();
+            scrollarea->show();
             for (auto& expanseLine : this->expanseLines) {
                 expanseLine->show();
             }
@@ -101,13 +108,25 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
     mainLayout->addLayout(header);
     toggleButton->hide();
     mainLayout->addWidget(toggleButton);
-    bottomWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding); // Make the bottom widget expandable
+    bottomWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
     
 
+    
 
-    mainLayout->addLayout(expanseLinesLayout); // Add the expanseLinesLayout to the mainLayout
+    QWidget *scrollWidget = new QWidget();
+    scrollarea->setFixedHeight(200);
+    expanseLinesLayout->setAlignment(Qt::AlignTop);
+    scrollWidget->setLayout(expanseLinesLayout);
+
+
+    scrollarea->setWidgetResizable(true);
+    scrollarea->setWidget(scrollWidget);
+
+    mainLayout->addWidget(scrollarea);
     mainLayout->addWidget(bottomWidget);
+
+
 
     this->setLayout(mainLayout);
 }

@@ -15,6 +15,12 @@
 #include <QPushButton>
 #include <QCheckBox>
 #include <QStackedLayout>
+#include <QScrollArea>
+#include <QTableView>
+#include <QAbstractItemView>
+#include <QStandardItem>
+
+
 
 
 class GUI;
@@ -82,4 +88,31 @@ private:
     QPushButton* removeButton;
     QPushButton* addButton;
     int position;
+};
+
+class ExpanseTableView : public QTableView
+{
+public:
+    ExpanseTableView(QWidget* parent = nullptr)
+        : QTableView(parent)
+        , model(new QStandardItemModel(this))
+    {
+        // Set the column headers
+        model->setHorizontalHeaderLabels(QStringList() << "Date" << "Category" << "Amount");
+
+        // Set the model on the table view
+        this->setModel(model);
+    }
+
+    void addExpanse(const QString& date, const QString& category, const QString& amount)
+    {
+        QList<QStandardItem *> rowItems;
+        rowItems.append(new QStandardItem(date));
+        rowItems.append(new QStandardItem(category));
+        rowItems.append(new QStandardItem(amount));
+        model->appendRow(rowItems);
+    }
+
+private:
+    QStandardItemModel *model;
 };
