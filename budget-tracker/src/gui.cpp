@@ -14,15 +14,23 @@ GUI::GUI(QWidget* parent) : QMainWindow(parent)
     tabs = new QTabWidget();
     tabs->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
+    QMenuBar *menu = this->menuBar();
+
+    QMenu *navigation = menu->addMenu("Navigation");
+
+    navigation->addAction("Main Dashboard");
+
 
     mainDashboardTab = new MainDashboardTab(tracker);
     incomesTab = new IncomesTab(tracker);
     expansesTab = new ExpansesTab(tracker);
+    goalsTab = new GoalsTab(tracker);
     
     
     tabs->addTab(mainDashboardTab, QString("Main Dashboard"));
     tabs->addTab(incomesTab, QString("Incomes"));
     tabs->addTab(expansesTab, QString("Expanses"));
+    tabs->addTab(goalsTab, QString("Goals"));
 
 
     setCentralWidget(tabs);
@@ -55,6 +63,15 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
     addExpanses->hide();
     header->addWidget(addExpanses,0);
     header->addStretch(1);
+    QLabel* filterLabel = new QLabel("Display:");
+    header->addWidget(filterLabel);
+
+    QComboBox* filterComboBox = new QComboBox();
+    filterComboBox->addItem("All");
+    filterComboBox->addItem("Next 7 days");
+    filterComboBox->addItem("Next 14 days");
+    filterComboBox->addItem("Next month");
+    header->addWidget(filterComboBox);
     
 
 
@@ -105,6 +122,7 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
             }
         }
     });
+
 
     connect(addExpanses, &QPushButton::clicked, [this,tracker]() {
         for (auto& expanseLine : this->expanseLines) {
@@ -335,6 +353,16 @@ IncomesTab::IncomesTab(Tracker *tracker)
     addIncomes->hide();
     header->addWidget(addIncomes,0);
     header->addStretch(1);
+
+    QLabel* filterLabel = new QLabel("Display:");
+    header->addWidget(filterLabel);
+
+    QComboBox* filterComboBox = new QComboBox();
+    filterComboBox->addItem("All");
+    filterComboBox->addItem("Next 7 days");
+    filterComboBox->addItem("Next 14 days");
+    filterComboBox->addItem("Next month");
+    header->addWidget(filterComboBox);
 
     toggleButton = new QCheckBox("Toggle adding multiple incomes");
     connect(toggleButton, &QCheckBox::stateChanged, [this, incomeLinesLayout](int state) {
@@ -589,4 +617,64 @@ QString IncomeLine::getText() {
 
 QString IncomeLine::getValue() {
     return valueField->text();
+}
+
+GoalsTab::GoalsTab(Tracker * tracker) : tracker(tracker)
+{
+    QVBoxLayout* mainLayout = new QVBoxLayout();
+    QVBoxLayout* addGoal = new QVBoxLayout();
+
+    QVBoxLayout* bottomWidget = new QVBoxLayout();
+    tableView = new GoalsTableView(this);
+
+    QHBoxLayout* header = new QHBoxLayout();
+    QPushButton* editButton = new QPushButton("New");
+    header->addWidget(editButton,0);
+    QPushButton* addGoalButton = new QPushButton("Add Goal");
+    addGoalButton->hide();
+    header->addWidget(addGoalButton,0);
+    header->addStretch(1);
+    QLabel* filterLabel = new QLabel("Display:");
+    header->addWidget(filterLabel);
+
+    QComboBox* filterComboBox = new QComboBox();
+    filterComboBox->addItem("All");
+    filterComboBox->addItem("Next 7 days");
+    filterComboBox->addItem("Next 14 days");
+    filterComboBox->addItem("Next month");
+    header->addWidget(filterComboBox);
+    
+
+    mainLayout->addLayout(header);
+    
+
+    QHBoxLayout* addSection = new QHBoxLayout();
+
+    
+
+    QDateEdit* datePicker = new QDateEdit();
+    QComboBox* priorityComboBox = new QComboBox();
+    priorityComboBox->addItem("Low");
+    priorityComboBox->addItem("Medium");
+    priorityComboBox->addItem("High");
+    QLineEdit* titleTextField = new QLineEdit();
+    QLineEdit* valueTextField = new QLineEdit();
+
+    addSection->addWidget(datePicker);
+    addSection->addWidget(priorityComboBox);
+    addSection->addWidget(titleTextField);
+    addSection->addWidget(valueTextField);
+
+    addGoal->addLayout(addSection);
+    addGoal->addLayout(bottomWidget);
+    mainLayout->addLayout(addGoal);
+
+
+
+
+    mainLayout->addWidget(tableView);
+
+
+
+    this->setLayout(mainLayout);
 }

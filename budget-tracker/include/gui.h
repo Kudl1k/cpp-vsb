@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tracker.h>
+#include <goal.h>
 
 
 #include <QMainWindow>
@@ -22,6 +23,7 @@
 #include <QHeaderView>
 #include <QRegularExpressionValidator>
 #include <QMenu>
+#include <QMenuBar>
 #include <QContextMenuEvent>
 
 
@@ -35,6 +37,7 @@ class ExpanseLine;
 class ExpanseTableView;
 class IncomeLine;
 class IncomeTableView;
+class GoalsTab;
 
 
 class GUI: public QMainWindow {
@@ -50,6 +53,7 @@ private:
     MainDashboardTab* mainDashboardTab;
     IncomesTab* incomesTab;
     ExpansesTab* expansesTab;
+    GoalsTab* goalsTab;
 };
 
 class MainDashboardTab : public QFrame
@@ -226,6 +230,67 @@ public:
         rowItems.append(new QStandardItem(category));
         rowItems.append(new QStandardItem(subcategory));
         rowItems.append(new QStandardItem(amount));
+
+    }
+protected:
+    void contextMenuEvent(QContextMenuEvent* event) override {
+        QMenu menu(this);
+        QAction* deleteRowAction = menu.addAction("Delete Row");
+        connect(deleteRowAction, &QAction::triggered, [this, event]() {
+            QModelIndex index = indexAt(event->pos());
+            if(index.isValid()) {
+                model->removeRow(index.row());
+            }
+        });
+        menu.exec(event->globalPos());
+    }
+
+private:
+    QStandardItemModel *model;
+};
+
+class GoalsTab : public QFrame
+{
+public:
+    GoalsTab(Tracker* tracker);
+private:
+    Tracker* tracker;
+
+
+    QTableView* tableView;
+
+    std::vector<Goal*> goals;
+};
+
+
+class GoalsTableView : public QTableView
+{
+public:
+    GoalsTableView(QWidget* parent = nullptr)
+        : QTableView(parent)
+        , model(new QStandardItemModel(this))
+    {
+        // Set the column headers
+        model->setHorizontalHeaderLabels(QStringList() << "Target date" << "Priority" << "Title" << "Goal");
+
+        // Set the model on the table view
+        this->setModel(model);
+
+        this->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    }
+
+    QStandardItemModel* getModel(){
+        return model;
+    }
+
+    void addIncome(const QString& date, const Priority& priority, const QString& title, const QString& goal)
+    {
+        QList<QStandardItem *> rowItems;
+        rowItems.append(new QStandardItem(date));
+        rowItems.append(new QStandardItem(priority));
+        rowItems.append(new QStandardItem(title));
+        rowItems.append(new QStandardItem(goal));
 
     }
 protected:
