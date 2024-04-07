@@ -1,6 +1,6 @@
 # Budget Tracker
 
-Budget tracker created in C++ using the Qt library. The tracker is able to track your expenses and incomes, set goals, and calculate investments. First, it will check if there is no data from the past session. If there is data, the user will be launched into the main window; if not, the user will go through the setup. The user will be asked several questions about their budgeting, such as the amount of income, distribution of expenses by healthy budget, etc. Then the user will be launched into the main window, which is divided into 5 sections.
+Budget tracker created in C++ using the Qt library. The tracker is able to track your expenses and incomes, set goals, and calculate investments. First, it will check if there is no data from the past session. If there is data, the user will be launched into the main window; if not, the user will go through the setup. The user will be asked several questions about their budgeting, such as the amount of income, distribution of expenses by healthy budget, etc. Then the user will be launched into the main window, which is divided into 5 sections. Project will be using serialization and deserialization.
 
 ## 1. Main Dashboard
 
@@ -28,4 +28,6 @@ The source of your passive income. This tab will help you calculate how much mon
 - [ ] Expense and Income tabs, issue with deleting rows, and adding multiple records.
 - [ ] Goals tab. Implement functions in UI.
 - [ ] Investment Calculator. Create its functionality and connect it with incomes.
-- [ ] Clean up the code 🤓
+- [ ] Clean up the code 🤓 <br>
+
+Link to [github repo](https://github.com/Kudl1k/cpp-vsb/tree/main/budget-tracker)
