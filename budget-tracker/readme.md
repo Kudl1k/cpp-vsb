@@ -16,10 +16,6 @@ Same as for the incomes.
 
 ## 4. Goals
 
-<<<<<<< HEAD
-## 5. Investment calculator
-The source of your pasive income. These tab will help you to calculate, how much money you will make in the future, if you invest this amount for a centar time.
-=======
 A tab for making your dreams come true by achieving the goals you desire. You can set the priority of the goal, target date when you want to reach it, title, and also desired amount.
 
 ## 5. Investment Calculator
@@ -33,4 +29,3 @@ The source of your passive income. This tab will help you calculate how much mon
 - [ ] Goals tab. Implement functions in UI.
 - [ ] Investment Calculator. Create its functionality and connect it with incomes.
 - [ ] Clean up the code 🤓
->>>>>>> 2809da1c8cf9032b9d9256a0c32e6d300f808b38
