@@ -22,8 +22,27 @@ std::pair<bool, std::string> Tracker::addExpanse(QDate date, std::string categor
     return std::make_pair(true,"Expanse was successfully added");
 }
 
+std::pair<bool, std::string> Tracker::addIncome(QDate date, std::string category_name,std::string subcategory_name, std::string title, double value){
+
+    if (title.empty())
+    {
+        title = category_name + " - " + subcategory_name;
+    }
+    Income *i = new Income(date,category_name,subcategory_name,title,value);
+    
+    incomes.push_back(*i);
+    
+    return std::make_pair(true,"Expanse was successfully added");
+}
+
 std::vector<Expanse> Tracker::getExpanses()
 {
     return expanses;
 }
+
+std::vector<Income> Tracker::getIncomes()
+{
+    return incomes;
+}
+
 

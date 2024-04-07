@@ -33,6 +33,8 @@ class IncomesTab;
 class ExpansesTab;
 class ExpanseLine;
 class ExpanseTableView;
+class IncomeLine;
+class IncomeTableView;
 
 
 class GUI: public QMainWindow {
@@ -58,15 +60,6 @@ private:
     Tracker* tracker;
 };
 
-class IncomesTab : public QFrame
-{
-public:
-    IncomesTab(Tracker* tracker);
-private:
-    Tracker* tracker;
-
-    
-};
 
 class ExpansesTab : public QFrame
 {
@@ -128,8 +121,6 @@ public:
 
         this->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-        // Hide the last column
-        this->hideColumn(model->columnCount() - 1);
     }
 
     QStandardItemModel* getModel(){
@@ -137,6 +128,98 @@ public:
     }
 
     void addExpanse(const QString& date, const QString& category, const QString& subcategory, const QString& amount)
+    {
+        QList<QStandardItem *> rowItems;
+        rowItems.append(new QStandardItem(date));
+        rowItems.append(new QStandardItem(category));
+        rowItems.append(new QStandardItem(subcategory));
+        rowItems.append(new QStandardItem(amount));
+
+    }
+protected:
+    void contextMenuEvent(QContextMenuEvent* event) override {
+        QMenu menu(this);
+        QAction* deleteRowAction = menu.addAction("Delete Row");
+        connect(deleteRowAction, &QAction::triggered, [this, event]() {
+            QModelIndex index = indexAt(event->pos());
+            if(index.isValid()) {
+                model->removeRow(index.row());
+            }
+        });
+        menu.exec(event->globalPos());
+    }
+
+private:
+    QStandardItemModel *model;
+};
+
+
+class IncomesTab : public QFrame
+{
+public:
+    IncomesTab(Tracker* tracker);
+private:
+    Tracker* tracker;
+
+    QCheckBox* toggleButton;
+
+    IncomeTableView* tableView;
+
+    QScrollArea *scrollarea;
+
+    QWidget* createNewIncome(QVBoxLayout* layout);
+    void removeIncome(IncomeLine* incomeLine);
+    std::vector<IncomeLine*> incomeLines;
+};
+
+
+class IncomeLine : public QWidget {
+public:
+    IncomeLine(QVBoxLayout* layout, std::function<QWidget*()> createNewIncome, std::function<void(IncomeLine*)> removeIncome);
+    QPushButton* getRemoveButton();
+    QPushButton* getAddButton();
+    QDate getDate();
+    QString getCategory();
+    QString getSubcategory();
+    QString getText();
+    QString getValue();
+
+private:
+    QVBoxLayout* layout;
+    QPushButton* removeButton;
+    QPushButton* addButton;
+
+    QDateEdit* dateEdit;
+    QComboBox* comboBox1;
+    QComboBox* comboBox2;
+    QLineEdit* textField;
+    QLineEdit* valueField;
+
+    int position;
+};
+
+class IncomeTableView : public QTableView
+{
+public:
+    IncomeTableView(QWidget* parent = nullptr)
+        : QTableView(parent)
+        , model(new QStandardItemModel(this))
+    {
+        // Set the column headers
+        model->setHorizontalHeaderLabels(QStringList() << "Date" << "Category" << "Subcategory" << "Title" << "Amount");
+
+        // Set the model on the table view
+        this->setModel(model);
+
+        this->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    }
+
+    QStandardItemModel* getModel(){
+        return model;
+    }
+
+    void addIncome(const QString& date, const QString& category, const QString& subcategory, const QString& amount)
     {
         QList<QStandardItem *> rowItems;
         rowItems.append(new QStandardItem(date));
