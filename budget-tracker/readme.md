@@ -17,4 +17,3 @@ A tab for making your dreams come true by achieving the goals you desire. You ca
 
 ## 5. Investment calculator
 The source of your pasive income. These tab will help you to calculate, how much money you will make in the future, if you invest this amount for a centar time.
-

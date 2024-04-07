@@ -9,17 +9,17 @@ Tracker::~Tracker(){
     delete user;
 }
 
-std::pair<bool, std::string> Tracker::addExpanse(QDate date, std::string category_name,std::string subcategory_name, std::string title, double value){
+std::pair<bool, std::string> Tracker::addExpense(QDate date, std::string category_name,std::string subcategory_name, std::string title, double value){
 
     if (title.empty())
     {
         title = category_name + " - " + subcategory_name;
     }
-    Expanse *e = new Expanse(date,category_name,subcategory_name,title,value);
+    Expense *e = new Expense(date,category_name,subcategory_name,title,value);
     
-    expanses.push_back(*e);
+    expenses.push_back(*e);
     
-    return std::make_pair(true,"Expanse was successfully added");
+    return std::make_pair(true,"Expense was successfully added");
 }
 
 std::pair<bool, std::string> Tracker::addIncome(QDate date, std::string category_name,std::string subcategory_name, std::string title, double value){
@@ -32,12 +32,12 @@ std::pair<bool, std::string> Tracker::addIncome(QDate date, std::string category
     
     incomes.push_back(*i);
     
-    return std::make_pair(true,"Expanse was successfully added");
+    return std::make_pair(true,"Expense was successfully added");
 }
 
-std::vector<Expanse> Tracker::getExpanses()
+std::vector<Expense> Tracker::getExpenses()
 {
-    return expanses;
+    return expenses;
 }
 
 std::vector<Income> Tracker::getIncomes()

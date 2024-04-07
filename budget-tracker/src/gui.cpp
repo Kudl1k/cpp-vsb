@@ -23,13 +23,13 @@ GUI::GUI(QWidget* parent) : QMainWindow(parent)
 
     mainDashboardTab = new MainDashboardTab(tracker);
     incomesTab = new IncomesTab(tracker);
-    expansesTab = new ExpansesTab(tracker);
+    expensesTab = new ExpensesTab(tracker);
     goalsTab = new GoalsTab(tracker);
     
     
     tabs->addTab(mainDashboardTab, QString("Main Dashboard"));
     tabs->addTab(incomesTab, QString("Incomes"));
-    tabs->addTab(expansesTab, QString("Expanses"));
+    tabs->addTab(expensesTab, QString("Expenses"));
     tabs->addTab(goalsTab, QString("Goals"));
 
 
@@ -45,23 +45,23 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
     this->setLayout(layout);
 }
 
-ExpansesTab::ExpansesTab(Tracker *tracker)
+ExpensesTab::ExpensesTab(Tracker *tracker)
 {
     QVBoxLayout* mainLayout = new QVBoxLayout();
-    QVBoxLayout* expanseLinesLayout = new QVBoxLayout();
+    QVBoxLayout* expenseLinesLayout = new QVBoxLayout();
     scrollarea = new QScrollArea();
     scrollarea->hide();
     scrollarea->setFixedHeight(75);
 
     QVBoxLayout* bottomWidget = new QVBoxLayout();
-    tableView = new ExpanseTableView(this);
+    tableView = new ExpenseTableView(this);
 
     QHBoxLayout* header = new QHBoxLayout();
     QPushButton* editButton = new QPushButton("New");
     header->addWidget(editButton,0);
-    QPushButton* addExpanses = new QPushButton("Add expanses");
-    addExpanses->hide();
-    header->addWidget(addExpanses,0);
+    QPushButton* addExpenses = new QPushButton("Add expenses");
+    addExpenses->hide();
+    header->addWidget(addExpenses,0);
     header->addStretch(1);
     QLabel* filterLabel = new QLabel("Display:");
     header->addWidget(filterLabel);
@@ -76,61 +76,61 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
 
 
 
-    toggleButton = new QCheckBox("Toggle adding multiple expanses");
-    connect(toggleButton, &QCheckBox::stateChanged, [this, expanseLinesLayout](int state) {
+    toggleButton = new QCheckBox("Toggle adding multiple expenses");
+    connect(toggleButton, &QCheckBox::stateChanged, [this, expenseLinesLayout](int state) {
         if (state == Qt::Checked) {
-            for (auto& expanseLine : this->expanseLines) {
-                expanseLine->show();
-                expanseLine->getRemoveButton()->show();
-                expanseLine->getAddButton()->show();
+            for (auto& expenseLine : this->expenseLines) {
+                expenseLine->show();
+                expenseLine->getRemoveButton()->show();
+                expenseLine->getAddButton()->show();
                 scrollarea->setFixedHeight(200);
 
             }
         } else {
-            for (auto& expanseLine : this->expanseLines) {
-                expanseLine->hide();
-                expanseLine->getRemoveButton()->hide();
-                expanseLine->getAddButton()->hide();
+            for (auto& expenseLine : this->expenseLines) {
+                expenseLine->hide();
+                expenseLine->getRemoveButton()->hide();
+                expenseLine->getAddButton()->hide();
                 scrollarea->setFixedHeight(75);
             }
-            if (!this->expanseLines.empty()) {
-                this->expanseLines.front()->show();
+            if (!this->expenseLines.empty()) {
+                this->expenseLines.front()->show();
             }
         }
     });
 
-    connect(editButton, &QPushButton::clicked, [this,expanseLinesLayout,addExpanses]() {
-        if (this->expanseLines.size() == 0)
+    connect(editButton, &QPushButton::clicked, [this,expenseLinesLayout,addExpenses]() {
+        if (this->expenseLines.size() == 0)
         {
-            this->createNewExpanse(expanseLinesLayout);
+            this->createNewExpense(expenseLinesLayout);
         }
         
         if (toggleButton->isVisible())
         {
-            addExpanses->hide();
+            addExpenses->hide();
             toggleButton->hide();
             scrollarea->hide(); 
-            for (auto& expanseLine : this->expanseLines) {
-                expanseLine->hide();
+            for (auto& expenseLine : this->expenseLines) {
+                expenseLine->hide();
             }
         } else {
-            addExpanses->show();
+            addExpenses->show();
             toggleButton->show();
             scrollarea->show();
-            for (auto& expanseLine : this->expanseLines) {
-                expanseLine->show();
+            for (auto& expenseLine : this->expenseLines) {
+                expenseLine->show();
             }
         }
     });
 
 
-    connect(addExpanses, &QPushButton::clicked, [this,tracker]() {
-        for (auto& expanseLine : this->expanseLines) {
-            QDate date = expanseLine->getDate();
-            QString category = expanseLine->getCategory();
-            QString subcategory = expanseLine->getSubcategory();
-            QString text = expanseLine->getText();
-            QString value = expanseLine->getValue();
+    connect(addExpenses, &QPushButton::clicked, [this,tracker]() {
+        for (auto& expenseLine : this->expenseLines) {
+            QDate date = expenseLine->getDate();
+            QString category = expenseLine->getCategory();
+            QString subcategory = expenseLine->getSubcategory();
+            QString text = expenseLine->getText();
+            QString value = expenseLine->getValue();
 
             QList<QStandardItem*> items;
             items.append(new QStandardItem(date.toString()));
@@ -139,7 +139,7 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
             items.append(new QStandardItem(text));
             items.append(new QStandardItem(value));
 
-            std::pair<bool,std::string> added = tracker->addExpanse(
+            std::pair<bool,std::string> added = tracker->addExpense(
                 date,
                 category.toStdString(),
                 subcategory.toStdString(),
@@ -150,10 +150,10 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
             {
                 tableView->getModel()->appendRow(items);
                 tableView->hideColumn(tableView->getModel()->columnCount());
-                this->removeExpanse(expanseLine);
+                this->removeExpense(expenseLine);
             }
         }
-        std::cout << tracker->getExpanses().size() << std::endl;
+        std::cout << tracker->getExpenses().size() << std::endl;
     });
 
 
@@ -169,8 +169,8 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
 
     QWidget *scrollWidget = new QWidget();
     scrollarea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    expanseLinesLayout->setAlignment(Qt::AlignTop);
-    scrollWidget->setLayout(expanseLinesLayout);
+    expenseLinesLayout->setAlignment(Qt::AlignTop);
+    scrollWidget->setLayout(expenseLinesLayout);
 
 
     scrollarea->setWidgetResizable(true);
@@ -184,48 +184,48 @@ ExpansesTab::ExpansesTab(Tracker *tracker)
     this->setLayout(mainLayout);
 }
 
-QWidget * ExpansesTab::createNewExpanse(QVBoxLayout* layout){
-    ExpanseLine* newExpanseLine = new ExpanseLine(layout, [this, layout](){ return this->createNewExpanse(layout); }, [this](ExpanseLine* expanseLine){ this->removeExpanse(expanseLine); });
-    this->expanseLines.push_back(newExpanseLine);
-    layout->addWidget(newExpanseLine);
-    std::cout << "Number of lines: " << this->expanseLines.size() << std::endl;
+QWidget * ExpensesTab::createNewExpense(QVBoxLayout* layout){
+    ExpenseLine* newExpenseLine = new ExpenseLine(layout, [this, layout](){ return this->createNewExpense(layout); }, [this](ExpenseLine* expenseLine){ this->removeExpense(expenseLine); });
+    this->expenseLines.push_back(newExpenseLine);
+    layout->addWidget(newExpenseLine);
+    std::cout << "Number of lines: " << this->expenseLines.size() << std::endl;
     
-    if (this->expanseLines.size() == 1) {
+    if (this->expenseLines.size() == 1) {
         if (!this->toggleButton->isChecked())
         {
-            this->expanseLines.front()->getRemoveButton()->hide();
-            this->expanseLines.front()->getAddButton()->hide();
+            this->expenseLines.front()->getRemoveButton()->hide();
+            this->expenseLines.front()->getAddButton()->hide();
         } else {
-            newExpanseLine->getRemoveButton()->setDisabled(true);
+            newExpenseLine->getRemoveButton()->setDisabled(true);
         }
     } else {
         if (!this->toggleButton->isChecked())
         {
-            this->expanseLines.front()->getRemoveButton()->hide();
-            this->expanseLines.front()->getAddButton()->hide();
+            this->expenseLines.front()->getRemoveButton()->hide();
+            this->expenseLines.front()->getAddButton()->hide();
         } else {
-            this->expanseLines.front()->getRemoveButton()->setDisabled(false);
-            this->expanseLines.front()->getAddButton()->show();
+            this->expenseLines.front()->getRemoveButton()->setDisabled(false);
+            this->expenseLines.front()->getAddButton()->show();
         }
     }
-    return newExpanseLine;
+    return newExpenseLine;
 }
 
-void ExpansesTab::removeExpanse(ExpanseLine *expanseLine){
-    auto it = std::find(expanseLines.begin(), expanseLines.end(), expanseLine);
-    if (it != expanseLines.end()) {
-        expanseLines.erase(it);
-        expanseLine->deleteLater();
+void ExpensesTab::removeExpense(ExpenseLine *expenseLine){
+    auto it = std::find(expenseLines.begin(), expenseLines.end(), expenseLine);
+    if (it != expenseLines.end()) {
+        expenseLines.erase(it);
+        expenseLine->deleteLater();
     }
-    if (expanseLines.empty()) {
+    if (expenseLines.empty()) {
         toggleButton->hide();
         scrollarea->hide();
-    } else if (expanseLines.size() == 1) {
-        expanseLines.front()->getRemoveButton()->setDisabled(true);
+    } else if (expenseLines.size() == 1) {
+        expenseLines.front()->getRemoveButton()->setDisabled(true);
     }
 }
 
-ExpanseLine::ExpanseLine(QVBoxLayout* layout, std::function<QWidget*()> createNewExpanse, std::function<void(ExpanseLine*)> removeExpanse) : layout(layout), position(position) {
+ExpenseLine::ExpenseLine(QVBoxLayout* layout, std::function<QWidget*()> createNewExpense, std::function<void(ExpenseLine*)> removeExpense) : layout(layout), position(position) {
     QGridLayout* lineLayout = new QGridLayout();
 
     dateEdit = new QDateEdit();
@@ -286,12 +286,12 @@ ExpanseLine::ExpanseLine(QVBoxLayout* layout, std::function<QWidget*()> createNe
     
 
     textField->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    connect(addButton, &QPushButton::clicked, [createNewExpanse](){
-        createNewExpanse();
+    connect(addButton, &QPushButton::clicked, [createNewExpense](){
+        createNewExpense();
     });
-    connect(removeButton, &QPushButton::clicked, [this,layout,removeExpanse]() {
+    connect(removeButton, &QPushButton::clicked, [this,layout,removeExpense]() {
         layout->removeWidget(this);
-        removeExpanse(this);
+        removeExpense(this);
         delete this;
     });
 
@@ -306,33 +306,33 @@ ExpanseLine::ExpanseLine(QVBoxLayout* layout, std::function<QWidget*()> createNe
     this->setLayout(lineLayout);
 }
 
-QPushButton* ExpanseLine::getRemoveButton() {
+QPushButton* ExpenseLine::getRemoveButton() {
     return removeButton;
 }
 
-QPushButton * ExpanseLine::getAddButton()
+QPushButton * ExpenseLine::getAddButton()
 {
     return addButton;
 }
 
 
-QDate ExpanseLine::getDate() {
+QDate ExpenseLine::getDate() {
     return dateEdit->date();
 }
 
-QString ExpanseLine::getCategory() {
+QString ExpenseLine::getCategory() {
     return comboBox1->currentText();
 }
 
-QString ExpanseLine::getSubcategory() {
+QString ExpenseLine::getSubcategory() {
     return comboBox2->currentText();
 }
 
-QString ExpanseLine::getText() {
+QString ExpenseLine::getText() {
     return textField->text();
 }
 
-QString ExpanseLine::getValue() {
+QString ExpenseLine::getValue() {
     return valueField->text();
 }
 

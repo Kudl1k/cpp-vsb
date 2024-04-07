@@ -1,7 +1,7 @@
 #pragma once
 
 #include "user.h"
-#include "expanse.h"
+#include "expense.h"
 #include "income.h"
 
 
@@ -15,14 +15,14 @@ class Tracker
 public:
     Tracker();
     ~Tracker();
-    std::pair<bool, std::string> addExpanse(QDate date, std::string category_name,std::string subcategory_name, std::string title, double value);
+    std::pair<bool, std::string> addExpense(QDate date, std::string category_name,std::string subcategory_name, std::string title, double value);
     std::pair<bool, std::string> addIncome(QDate date, std::string category_name,std::string subcategory_name, std::string title, double value);
-    std::vector<Expanse> getExpanses();
+    std::vector<Expense> getExpenses();
     std::vector<Income> getIncomes();
     //void removeExpanse(int index);
 private:
     User *user = nullptr;
-    std::vector<Expanse> expanses;
+    std::vector<Expense> expenses;
     std::vector<Income> incomes;
 };
 

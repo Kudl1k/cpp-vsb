@@ -32,9 +32,9 @@
 class GUI;
 class MainDashboardTab;
 class IncomesTab;
-class ExpansesTab;
-class ExpanseLine;
-class ExpanseTableView;
+class ExpensesTab;
+class ExpenseLine;
+class ExpenseTableView;
 class IncomeLine;
 class IncomeTableView;
 class GoalsTab;
@@ -52,7 +52,7 @@ private:
     QTabWidget* tabs;
     MainDashboardTab* mainDashboardTab;
     IncomesTab* incomesTab;
-    ExpansesTab* expansesTab;
+    ExpensesTab* expensesTab;
     GoalsTab* goalsTab;
 };
 
@@ -65,28 +65,28 @@ private:
 };
 
 
-class ExpansesTab : public QFrame
+class ExpensesTab : public QFrame
 {
 public:
-    ExpansesTab(Tracker* tracker);
+    ExpensesTab(Tracker* tracker);
 private:
     Tracker* tracker;
 
     QCheckBox* toggleButton;
 
-    ExpanseTableView* tableView;
+    ExpenseTableView* tableView;
 
     QScrollArea *scrollarea;
 
-    QWidget* createNewExpanse(QVBoxLayout* layout);
-    void removeExpanse(ExpanseLine* expanseLine);
-    std::vector<ExpanseLine*> expanseLines;
+    QWidget* createNewExpense(QVBoxLayout* layout);
+    void removeExpense(ExpenseLine* expenseLine);
+    std::vector<ExpenseLine*> expenseLines;
 };
 
 
-class ExpanseLine : public QWidget {
+class ExpenseLine : public QWidget {
 public:
-    ExpanseLine(QVBoxLayout* layout, std::function<QWidget*()> createNewExpanse, std::function<void(ExpanseLine*)> removeExpanse);
+    ExpenseLine(QVBoxLayout* layout, std::function<QWidget*()> createNewExpense, std::function<void(ExpenseLine*)> removeExpense);
     QPushButton* getRemoveButton();
     QPushButton* getAddButton();
     QDate getDate();
@@ -110,10 +110,10 @@ private:
     int position;
 };
 
-class ExpanseTableView : public QTableView
+class ExpenseTableView : public QTableView
 {
 public:
-    ExpanseTableView(QWidget* parent = nullptr)
+    ExpenseTableView(QWidget* parent = nullptr)
         : QTableView(parent)
         , model(new QStandardItemModel(this))
     {
@@ -131,7 +131,7 @@ public:
         return model;
     }
 
-    void addExpanse(const QString& date, const QString& category, const QString& subcategory, const QString& amount)
+    void addExpense(const QString& date, const QString& category, const QString& subcategory, const QString& amount)
     {
         QList<QStandardItem *> rowItems;
         rowItems.append(new QStandardItem(date));

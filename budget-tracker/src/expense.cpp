@@ -1,4 +1,4 @@
-#include "expanse.h"
+#include "expense.h"
 
 std::vector<std::pair<std::string, std::vector<std::string>>> categories = {
         {"Housing", {"Mortgage or rent", "Property taxes", "Household repairs", "HOA fees"}},
