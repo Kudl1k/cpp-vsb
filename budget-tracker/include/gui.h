@@ -30,6 +30,7 @@
 #include <QChartView>
 #include <QSortFilterProxyModel>
 #include <QAbstractItemModel>
+#include <QFormLayout>
 
 
 

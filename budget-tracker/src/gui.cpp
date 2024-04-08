@@ -37,12 +37,74 @@ GUI::GUI(QWidget* parent) : QMainWindow(parent)
 MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
 {
     //TODO: Create ui
-    QGridLayout* layout = new QGridLayout();
-    layout->addWidget(new QLabel(QString("Main Dashboard")),0,0);
+    QVBoxLayout* layout = new QVBoxLayout();
+
+    QHBoxLayout* header = new QHBoxLayout();
+
+    std::string helloUser = "Hello " + tracker->getUser()->getName();
+    QLabel *label = new QLabel(QString::fromStdString(helloUser));
+    QFont font = label->font();
+    font.setPointSize(21); // Set font size
+    font.setBold(true); // Make font bold
+    label->setFont(font);
+
+    // std::string currentBalanceText = std::to_string(tracker->getUser()->getBalance());
+    // QLabel *currentBalance = new QLabel(QString::fromStdString(currentBalanceText.substr(0,currentBalanceText.size()-4)));
+    // currentBalance->setFont(font);
+    // currentBalance->setToolTip("Your current balance");
+
+    QLabel *descriptioQuickActions = new QLabel("Quick actions: ");
+    QPushButton* fastAddIncome = new QPushButton("Add income");
+    QPushButton* fastAddExpanse = new QPushButton("Add expense");
+    QPushButton* fastAddGoal = new QPushButton("Add goal");
+
+    header->addWidget(label);
+    header->addStretch(1);
+    header->addWidget(descriptioQuickActions);
+    header->addWidget(fastAddIncome);
+    header->addWidget(fastAddExpanse);
+    header->addWidget(fastAddGoal);
+    
+    QHBoxLayout *body = new QHBoxLayout();
+
+    QVBoxLayout *leftBody = new QVBoxLayout();
+    QVBoxLayout *middleBody = new QVBoxLayout();
+    QVBoxLayout *rightBody = new QVBoxLayout();
+
+    QFormLayout *leftUpBody = new QFormLayout();
+    QHBoxLayout *leftBottomBody = new QHBoxLayout();
+
+    QWidget *leftUpWidget = new QWidget();
+    leftUpWidget->setLayout(leftUpBody);
+    leftUpWidget->setStyleSheet("border: 1px solid black;");
+
+    QWidget *leftBottomWidget = new QWidget();
+    leftBottomWidget->setLayout(leftBottomBody);
+    leftBottomWidget->setStyleSheet("border: 1px solid black;");
+
+    leftBody->addWidget(leftUpWidget);
+    leftBody->addWidget(leftBottomWidget);
+
+    QWidget *widget1 = new QWidget();
+    widget1->setLayout(leftBody);
+    widget1->setStyleSheet("border: 1px solid black;");
+    QWidget *widget2 = new QWidget();
+    widget2->setLayout(middleBody);
+    widget2->setStyleSheet("border: 1px solid black;");
+    QWidget *widget3 = new QWidget();
+    widget3->setLayout(rightBody);
+    widget3->setStyleSheet("border: 1px solid black;");
+
+
+    body->addWidget(widget1);
+    body->addWidget(widget2);
+    body->addWidget(widget3);
 
     MainGraph* maingraph = new MainGraph(tracker);
 
-    layout->addWidget(maingraph->getChart());
+    layout->addLayout(header);
+    layout->addLayout(body);
+    // layout->addWidget(maingraph->getChart());
 
     this->setLayout(layout);
 }
