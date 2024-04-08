@@ -22,6 +22,7 @@ public:
 
     int generateNewExpenseId();
     int generateNewIncomeId();
+    User* getUser();
     //void removeExpanse(int index);
 private:
     User *user = nullptr;

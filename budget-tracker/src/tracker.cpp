@@ -9,6 +9,10 @@ Tracker::~Tracker(){
     delete user;
 }
 
+User* Tracker::getUser(){
+    return user;
+}
+
 std::pair<bool, std::string> Tracker::addExpense(QDate date, std::string category_name,std::string subcategory_name, std::string title, double value){
 
     if (title == "")
