@@ -169,7 +169,7 @@ ExpensesTab::ExpensesTab(Tracker *tracker)
             QString value = expenseLine->getValue();
 
             QList<QStandardItem*> items;
-            items.append(new QStandardItem(date.toString()));
+            items.append(new QStandardItem(date.toString("yyyy-MM-dd")));
             items.append(new QStandardItem(category));
             items.append(new QStandardItem(subcategory));
             items.append(new QStandardItem(text));
@@ -195,11 +195,6 @@ ExpensesTab::ExpensesTab(Tracker *tracker)
         }    
         std::cout << tracker->getExpenses().size() << std::endl;
     });
-
-    
-
-
-
 }
 
 QWidget * ExpensesTab::createNewExpense(QVBoxLayout* layout){
@@ -457,7 +452,7 @@ IncomesTab::IncomesTab(Tracker *tracker)
             QString value = incomeLine->getValue();
 
             QList<QStandardItem*> items;
-            items.append(new QStandardItem(date.toString()));
+            items.append(new QStandardItem(date.toString("yyyy-MM-dd")));
             items.append(new QStandardItem(category));
             items.append(new QStandardItem(subcategory));
             items.append(new QStandardItem(text));
