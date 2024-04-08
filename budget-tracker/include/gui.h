@@ -25,12 +25,14 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QContextMenuEvent>
-
-
+#include <QPieSeries>
+#include <QChart>
+#include <QChartView>
 
 
 class GUI;
 class MainDashboardTab;
+class MainGraph;
 class IncomesTab;
 class ExpensesTab;
 class ExpenseLine;
@@ -63,6 +65,17 @@ public:
 private:
     Tracker* tracker;
 };
+
+class MainGraph : public QChartView
+{
+public:
+    MainGraph(Tracker* tracker);
+    QChartView *getChart();
+private:
+    QChartView *chartView;
+};
+
+
 
 
 class ExpensesTab : public QFrame
