@@ -1,6 +1,6 @@
 #include "expense.h"
 
-std::vector<std::pair<std::string, std::vector<std::string>>> categories = {
+std::vector<std::pair<std::string, std::vector<std::string>>> expenseCategories = {
         {"Housing", {"Mortgage or rent", "Property taxes", "Household repairs", "HOA fees"}},
         {"Transportation", {"Car payment", "Car warranty", "Gas", "Tires", "Maintenance and oil changes", "Parking fees", "Repairs", "Registration and DMV Fees"}},
         {"Food", {"Groceries", "Restaurants", "Pet food"}},

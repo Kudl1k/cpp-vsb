@@ -4,7 +4,7 @@
 #include <string>
 #include <QDateEdit>
 
-extern std::vector<std::pair<std::string, std::vector<std::string>>> categories;
+extern std::vector<std::pair<std::string, std::vector<std::string>>> expenseCategories;
 
 
 
