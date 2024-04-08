@@ -11,13 +11,13 @@ Tracker::~Tracker(){
 
 std::pair<bool, std::string> Tracker::addExpense(QDate date, std::string category_name,std::string subcategory_name, std::string title, double value){
 
-    if (title.empty())
+    if (title == "")
     {
         title = category_name + " - " + subcategory_name;
     }
     Expense *e = new Expense(date,category_name,subcategory_name,title,value);
     
-    expenses.push_back(*e);
+    expenses[date].push_back(*e);
     
     return std::make_pair(true,"Expense was successfully added");
 }
@@ -30,19 +30,27 @@ std::pair<bool, std::string> Tracker::addIncome(QDate date, std::string category
     }
     Income *i = new Income(date,category_name,subcategory_name,title,value);
     
-    incomes.push_back(*i);
+    incomes[date].push_back(*i);
     
     return std::make_pair(true,"Expense was successfully added");
 }
 
-std::vector<Expense> Tracker::getExpenses()
+std::map<QDate,std::vector<Expense>> Tracker::getExpenses()
 {
     return expenses;
 }
 
-std::vector<Income> Tracker::getIncomes()
+std::map<QDate,std::vector<Income>> Tracker::getIncomes()
 {
     return incomes;
 }
 
+int Tracker::generateNewExpenseId()
+{
+    return expenses.size();
+}
 
+int Tracker::generateNewIncomeId()
+{
+    return incomes.size();
+}

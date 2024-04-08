@@ -103,7 +103,7 @@ ExpensesTab::ExpensesTab(Tracker *tracker)
     scrollarea->setWidgetResizable(true);
     scrollarea->setWidget(scrollWidget);
 
-    tableView = new ExpenseTableView(this);
+    tableView = new ExpenseTableView(this,tracker);
 
     mainLayout->addLayout(header);
     mainLayout->addWidget(toggleButton);
@@ -160,6 +160,7 @@ ExpensesTab::ExpensesTab(Tracker *tracker)
 
 
     connect(addExpenses, &QPushButton::clicked, [this,tracker]() {
+        std::vector<ExpenseLine*> expenseToBeRemoved;
         for (auto& expenseLine : this->expenseLines) {
             QDate date = expenseLine->getDate();
             QString category = expenseLine->getCategory();
@@ -185,11 +186,20 @@ ExpensesTab::ExpensesTab(Tracker *tracker)
             {
                 tableView->getModel()->appendRow(items);
                 tableView->hideColumn(tableView->getModel()->columnCount());
-                this->removeExpense(expenseLine);
+                expenseToBeRemoved.push_back(expenseLine);
             }
         }
+        for (size_t i = 0; i < expenseToBeRemoved.size(); i++)
+        {
+            this->removeExpensesFromAddList(expenseToBeRemoved[i]);
+        }    
         std::cout << tracker->getExpenses().size() << std::endl;
     });
+
+    
+
+
+
 }
 
 QWidget * ExpensesTab::createNewExpense(QVBoxLayout* layout){
@@ -229,6 +239,12 @@ void ExpensesTab::removeExpense(ExpenseLine *expenseLine){
     } else if (expenseLines.size() == 1) {
         expenseLines.front()->getRemoveButton()->setDisabled(true);
     }
+}
+
+void ExpensesTab::removeExpensesFromAddList(ExpenseLine *expenseLine){
+    auto it = std::find(expenseLines.begin(), expenseLines.end(), expenseLine);
+    expenseLines.erase(it);
+    expenseLine->deleteLater();
 }
 
 ExpenseLine::ExpenseLine(QVBoxLayout* layout, std::function<QWidget*()> createNewExpense, std::function<void(ExpenseLine*)> removeExpense) : layout(layout), position(position) {
@@ -377,7 +393,7 @@ IncomesTab::IncomesTab(Tracker *tracker)
     scrollarea->setWidgetResizable(true);
     scrollarea->setWidget(scrollWidget);
 
-    tableView = new IncomeTableView(this);
+    tableView = new IncomeTableView(this,tracker);
 
     mainLayout->addLayout(header);
     mainLayout->addWidget(toggleButton);
@@ -432,6 +448,7 @@ IncomesTab::IncomesTab(Tracker *tracker)
     });
 
     connect(addIncomes, &QPushButton::clicked, [this,tracker,addIncomes]() {
+        std::vector<IncomeLine*> incomesToBeRemoved;
         for (auto& incomeLine : this->incomeLines) {
             QDate date = incomeLine->getDate();
             QString category = incomeLine->getCategory();
@@ -457,8 +474,11 @@ IncomesTab::IncomesTab(Tracker *tracker)
             {
                 tableView->getModel()->appendRow(items);
                 tableView->hideColumn(tableView->getModel()->columnCount());
-                this->removeIncome(incomeLine);
+                incomesToBeRemoved.push_back(incomeLine);
             }
+        }
+        for (auto& incomeLine : incomesToBeRemoved) {
+            this->removeIncomeFromAddList(incomeLine);
         }
         if (this->incomeLines.size() == 0)
         {
@@ -466,11 +486,14 @@ IncomesTab::IncomesTab(Tracker *tracker)
             toggleButton->hide();
             scrollarea->hide(); 
         }
-        
         std::cout << tracker->getIncomes().size() << std::endl;
-    });
+    });   
+}
 
-    
+void IncomesTab::removeIncomeFromAddList(IncomeLine *incomeLine){
+    auto it = std::find(incomeLines.begin(), incomeLines.end(), incomeLine);
+    incomeLines.erase(it);
+    incomeLine->deleteLater();
 }
 
 QWidget * IncomesTab::createNewIncome(QVBoxLayout* layout){
@@ -670,13 +693,7 @@ GoalsTab::GoalsTab(Tracker * tracker) : tracker(tracker)
     addGoal->addLayout(addSection);
     addGoal->addLayout(bottomWidget);
     mainLayout->addLayout(addGoal);
-
-
-
-
     mainLayout->addWidget(tableView);
-
-
 
     this->setLayout(mainLayout);
 }

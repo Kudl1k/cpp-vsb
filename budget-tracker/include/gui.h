@@ -28,6 +28,9 @@
 #include <QPieSeries>
 #include <QChart>
 #include <QChartView>
+#include <QSortFilterProxyModel>
+#include <QAbstractItemModel>
+
 
 
 class GUI;
@@ -40,6 +43,9 @@ class ExpenseTableView;
 class IncomeLine;
 class IncomeTableView;
 class GoalsTab;
+class Next7DaysFilterModel;
+class Next14DaysFilterModel;
+class Next30DaysFilterModel;
 
 
 class GUI: public QMainWindow {
@@ -75,13 +81,12 @@ private:
     QChartView *chartView;
 };
 
-
-
-
+ 
 class ExpensesTab : public QFrame
 {
 public:
     ExpensesTab(Tracker* tracker);
+    void removeExpensesFromAddList(ExpenseLine *expenseLine);
 private:
     Tracker* tracker;
 
@@ -126,7 +131,7 @@ private:
 class ExpenseTableView : public QTableView
 {
 public:
-    ExpenseTableView(QWidget* parent = nullptr)
+    ExpenseTableView(QWidget* parent, Tracker *tracker)
         : QTableView(parent)
         , model(new QStandardItemModel(this))
     {
@@ -138,19 +143,44 @@ public:
 
         this->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
+        for (auto& record: tracker->getExpenses()) {
+            for (size_t i = 0; i < record.second.size(); i++)
+            {
+                Expense expense = record.second[i];
+                addExpense(expense.getDate().toString(),QString::fromStdString(expense.getCategory()),QString::fromStdString(expense.getSubcategory()),QString::fromStdString(std::to_string(expense.getValue())));
+            }
+        }
+
     }
 
     QStandardItemModel* getModel(){
         return model;
     }
 
+    
+
     void addExpense(const QString& date, const QString& category, const QString& subcategory, const QString& amount)
     {
         QList<QStandardItem *> rowItems;
-        rowItems.append(new QStandardItem(date));
-        rowItems.append(new QStandardItem(category));
-        rowItems.append(new QStandardItem(subcategory));
-        rowItems.append(new QStandardItem(amount));
+        QStandardItem *item;
+
+        item = new QStandardItem(date);
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        rowItems.append(item);
+
+        item = new QStandardItem(category);
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        rowItems.append(item);
+
+        item = new QStandardItem(subcategory);
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        rowItems.append(item);
+
+        item = new QStandardItem(amount);
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        rowItems.append(item);
+
+        model->appendRow(rowItems);
 
     }
 protected:
@@ -175,6 +205,7 @@ class IncomesTab : public QFrame
 {
 public:
     IncomesTab(Tracker* tracker);
+    void removeIncomeFromAddList(IncomeLine *incomeLine);
 private:
     Tracker* tracker;
 
@@ -218,31 +249,85 @@ private:
 class IncomeTableView : public QTableView
 {
 public:
-    IncomeTableView(QWidget* parent = nullptr)
+    IncomeTableView(QWidget* parent,Tracker *tracker)
         : QTableView(parent)
         , model(new QStandardItemModel(this))
     {
         // Set the column headers
         model->setHorizontalHeaderLabels(QStringList() << "Date" << "Category" << "Subcategory" << "Title" << "Amount");
-
         // Set the model on the table view
         this->setModel(model);
-
         this->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
+        for (auto& record: tracker->getIncomes()) {
+            for (size_t i = 0; i < record.second.size(); i++)
+            {
+                Income income = record.second[i];
+                addIncome(income.getDate().toString(),QString::fromStdString(income.getCategory()),QString::fromStdString(income.getSubcategory()),QString::fromStdString(std::to_string(income.getValue())));
+            }
+        }
     }
 
     QStandardItemModel* getModel(){
         return model;
     }
 
+    // void setFilter(int type){
+    //     switch(type) {
+    //         case 1:
+    //             {
+    //                 Next7DaysFilterModel* filterModel = new Next7DaysFilterModel(this);
+    //                 filterModel->setSourceModel(model);
+    //                 this->setModel(filterModel);
+    //                 break;
+    //             }
+    //         case 2:
+    //             {
+    //                 Next14DaysFilterModel* filterModel = new Next14DaysFilterModel(this);
+    //                 filterModel->setSourceModel(model);
+    //                 this->setModel(filterModel);
+    //                 break;
+    //             }
+    //         case 3:
+    //             {
+    //                 Next30DaysFilterModel* filterModel = new Next30DaysFilterModel(this);
+    //                 filterModel->setSourceModel(model);
+    //                 this->setModel(filterModel);
+    //                 break;
+    //             }
+    //         case 4:
+    //             {
+    //                 this->setModel(model);
+    //                 break;
+    //             }
+    //         default:
+    //             {
+    //                 break;
+    //             }
+    //     }
+    // }
+
     void addIncome(const QString& date, const QString& category, const QString& subcategory, const QString& amount)
     {
         QList<QStandardItem *> rowItems;
-        rowItems.append(new QStandardItem(date));
-        rowItems.append(new QStandardItem(category));
-        rowItems.append(new QStandardItem(subcategory));
-        rowItems.append(new QStandardItem(amount));
+        QStandardItem *item;
+
+        item = new QStandardItem(date);
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        rowItems.append(item);
+
+        item = new QStandardItem(category);
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        rowItems.append(item);
+
+        item = new QStandardItem(subcategory);
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        rowItems.append(item);
+
+        item = new QStandardItem(amount);
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        rowItems.append(item);
+
+        model->appendRow(rowItems);
 
     }
 protected:
@@ -304,7 +389,6 @@ public:
         rowItems.append(new QStandardItem(priority));
         rowItems.append(new QStandardItem(title));
         rowItems.append(new QStandardItem(goal));
-
     }
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override {
@@ -321,4 +405,47 @@ protected:
 
 private:
     QStandardItemModel *model;
+};
+
+
+class Next7DaysFilterModel : public QSortFilterProxyModel {
+public:
+    Next7DaysFilterModel(QObject *parent = nullptr) : QSortFilterProxyModel(parent) {}
+    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override {
+        QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
+        QDate date = index.data().toDate();
+
+        QDate today = QDate::currentDate();
+        QDate nextWeek = today.addDays(7);
+
+        return date >= today && date <= nextWeek;
+    }
+};
+
+class Next14DaysFilterModel : public QSortFilterProxyModel {
+public:
+    Next14DaysFilterModel(QObject *parent = nullptr) : QSortFilterProxyModel(parent) {}
+    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override {
+        QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
+        QDate date = index.data().toDate();
+
+        QDate today = QDate::currentDate();
+        QDate nextWeek = today.addDays(14);
+
+        return date >= today && date <= nextWeek;
+    }
+};
+
+class Next30DaysFilterModel : public QSortFilterProxyModel {
+public:
+    Next30DaysFilterModel(QObject *parent = nullptr) : QSortFilterProxyModel(parent) {}
+    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override {
+        QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
+        QDate date = index.data().toDate();
+
+        QDate today = QDate::currentDate();
+        QDate nextWeek = today.addMonths(1);
+
+        return date >= today && date <= nextWeek;
+    }
 };

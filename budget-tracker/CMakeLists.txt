@@ -11,8 +11,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Gui Charts)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Gui Charts)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Gui Charts Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Gui Charts Core)
 
 
 
@@ -52,7 +52,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(budget_tracker PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Charts)
+target_link_libraries(budget_tracker PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Charts Qt${QT_VERSION_MAJOR}::Core)
 
 set_target_properties(budget_tracker PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
