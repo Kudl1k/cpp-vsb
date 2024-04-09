@@ -25,7 +25,7 @@ The source of your passive income. This tab will help you calculate how much mon
 ### To-do
 
 - [ ] Main dashboard. Create UI. (In Progrees)
-- [ ] Expense and Income tabs, issue with deleting rows. (In Progrees)
+- [ ] Expense and Income tabs, issue with deleting rows. Sort by date and filtering. (In Progrees)
 - [ ] Goals tab. Implement functions in UI.
 - [ ] Investment Calculator. Create its functionality and connect it with incomes. <br>
 
