@@ -31,6 +31,7 @@
 #include <QSortFilterProxyModel>
 #include <QAbstractItemModel>
 #include <QFormLayout>
+#include <QMessageBox>
 
 
 
@@ -109,8 +110,8 @@ public:
     QPushButton* getRemoveButton();
     QPushButton* getAddButton();
     QDate getDate();
-    QString getCategory();
-    QString getSubcategory();
+    QComboBox* getCategory();
+    QComboBox* getSubcategory();
     QString getText();
     QString getValue();
     
@@ -148,10 +149,10 @@ public:
             for (size_t i = 0; i < record.second.size(); i++)
             {
                 Expense expense = record.second[i];
-                addExpense(expense.getDate().toString(),QString::fromStdString(expense.getCategory()),QString::fromStdString(expense.getSubcategory()),QString::fromStdString(std::to_string(expense.getValue())));
+                addExpense(expense.getDate().toString("yyyy-MM-dd"),QString::fromStdString(expenseCategories[expense.getCategory()].first),QString::fromStdString(expenseCategories[expense.getCategory()].second[expense.getSubcategory()]),QString::fromStdString(std::to_string(expense.getValue())));
             }
         }
-
+        model->sort(0, Qt::AscendingOrder);
     }
 
     QStandardItemModel* getModel(){
@@ -228,8 +229,8 @@ public:
     QPushButton* getRemoveButton();
     QPushButton* getAddButton();
     QDate getDate();
-    QString getCategory();
-    QString getSubcategory();
+    QComboBox* getCategory();
+    QComboBox* getSubcategory();
     QString getText();
     QString getValue();
 
@@ -263,7 +264,7 @@ public:
             for (size_t i = 0; i < record.second.size(); i++)
             {
                 Income income = record.second[i];
-                addIncome(income.getDate().toString(),QString::fromStdString(income.getCategory()),QString::fromStdString(income.getSubcategory()),QString::fromStdString(std::to_string(income.getValue())));
+                addIncome(income.getDate().toString(),QString::fromStdString(incomeCategories[income.getCategory()].first),QString::fromStdString(incomeCategories[income.getCategory()].second[income.getSubcategory()]),QString::fromStdString(std::to_string(income.getValue())));
             }
         }
     }

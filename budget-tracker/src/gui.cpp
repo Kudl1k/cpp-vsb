@@ -221,26 +221,43 @@ ExpensesTab::ExpensesTab(Tracker *tracker)
     });
 
 
-    connect(addExpenses, &QPushButton::clicked, [this,tracker]() {
+    connect(addExpenses, &QPushButton::clicked, [this,tracker,addExpenses]() {
         std::vector<ExpenseLine*> expenseToBeRemoved;
+        int error_number = 0;
         for (auto& expenseLine : this->expenseLines) {
             QDate date = expenseLine->getDate();
-            QString category = expenseLine->getCategory();
-            QString subcategory = expenseLine->getSubcategory();
+            int category = expenseLine->getCategory()->currentIndex();
+            int subcategory = expenseLine->getSubcategory()->currentIndex();
             QString text = expenseLine->getText();
             QString value = expenseLine->getValue();
 
+            if (subcategory == -1) {
+                error_number++;
+                continue;
+            }
+            if (text == "")
+            {
+                text = QString::fromStdString(expenseCategories[category].first + " - " + expenseCategories[category].second[subcategory]);
+            }
+            if (value == "")
+            {
+                error_number++;
+                continue;
+            }
+            
+            
+
             QList<QStandardItem*> items;
             items.append(new QStandardItem(date.toString("yyyy-MM-dd")));
-            items.append(new QStandardItem(category));
-            items.append(new QStandardItem(subcategory));
+            items.append(new QStandardItem(QString::fromStdString(expenseCategories[category].first)));
+            items.append(new QStandardItem(QString::fromStdString(expenseCategories[category].second[subcategory])));
             items.append(new QStandardItem(text));
             items.append(new QStandardItem(value));
 
             std::pair<bool,std::string> added = tracker->addExpense(
                 date,
-                category.toStdString(),
-                subcategory.toStdString(),
+                category,
+                subcategory,
                 text.toStdString(),
                 value.toDouble()
             );
@@ -254,7 +271,16 @@ ExpensesTab::ExpensesTab(Tracker *tracker)
         for (size_t i = 0; i < expenseToBeRemoved.size(); i++)
         {
             this->removeExpensesFromAddList(expenseToBeRemoved[i]);
-        }    
+        }
+        if(error_number > 0){
+            QMessageBox::warning(this,"Warning", QString::fromStdString("Please fill in the fields in " + std::to_string(error_number) + " cases."));
+        }
+        if (this->expenseLines.size() == 0)
+        {
+            addExpenses->hide();
+            toggleButton->hide();
+            scrollarea->hide(); 
+        } 
         std::cout << tracker->getExpenses().size() << std::endl;
     });
 }
@@ -398,12 +424,12 @@ QDate ExpenseLine::getDate() {
     return dateEdit->date();
 }
 
-QString ExpenseLine::getCategory() {
-    return comboBox1->currentText();
+QComboBox* ExpenseLine::getCategory() {
+    return comboBox1;
 }
 
-QString ExpenseLine::getSubcategory() {
-    return comboBox2->currentText();
+QComboBox* ExpenseLine::getSubcategory() {
+    return comboBox2;
 }
 
 QString ExpenseLine::getText() {
@@ -506,24 +532,37 @@ IncomesTab::IncomesTab(Tracker *tracker)
 
     connect(addIncomes, &QPushButton::clicked, [this,tracker,addIncomes]() {
         std::vector<IncomeLine*> incomesToBeRemoved;
+        int error_number = 0;
         for (auto& incomeLine : this->incomeLines) {
             QDate date = incomeLine->getDate();
-            QString category = incomeLine->getCategory();
-            QString subcategory = incomeLine->getSubcategory();
+            int category = incomeLine->getCategory()->currentIndex();
+            int subcategory = incomeLine->getSubcategory()->currentIndex();
             QString text = incomeLine->getText();
             QString value = incomeLine->getValue();
-
+            if (subcategory == -1) {
+                error_number++;
+                continue;
+            }
+            if (text == "")
+            {
+                text = QString::fromStdString(incomeCategories[category].first + " - " + incomeCategories[category].second[subcategory]);
+            }
+            if (value == "")
+            {
+                error_number++;
+                continue;
+            }
             QList<QStandardItem*> items;
             items.append(new QStandardItem(date.toString("yyyy-MM-dd")));
-            items.append(new QStandardItem(category));
-            items.append(new QStandardItem(subcategory));
+            items.append(new QStandardItem(QString::fromStdString(incomeCategories[category].first)));
+            items.append(new QStandardItem(QString::fromStdString(incomeCategories[category].second[subcategory])));
             items.append(new QStandardItem(text));
             items.append(new QStandardItem(value));
 
             std::pair<bool,std::string> added = tracker->addIncome(
                 date,
-                category.toStdString(),
-                subcategory.toStdString(),
+                category,
+                subcategory,
                 text.toStdString(),
                 value.toDouble()
             );
@@ -536,6 +575,9 @@ IncomesTab::IncomesTab(Tracker *tracker)
         }
         for (auto& incomeLine : incomesToBeRemoved) {
             this->removeIncomeFromAddList(incomeLine);
+        }
+        if(error_number > 0){
+            QMessageBox::warning(this,"Warning", QString::fromStdString("Please fill in the fields in " + std::to_string(error_number) + " cases."));
         }
         if (this->incomeLines.size() == 0)
         {
@@ -684,12 +726,12 @@ QDate IncomeLine::getDate() {
     return dateEdit->date();
 }
 
-QString IncomeLine::getCategory() {
-    return comboBox1->currentText();
+QComboBox* IncomeLine::getCategory() {
+    return comboBox1;
 }
 
-QString IncomeLine::getSubcategory() {
-    return comboBox2->currentText();
+QComboBox* IncomeLine::getSubcategory() {
+    return comboBox2;
 }
 
 QString IncomeLine::getText() {

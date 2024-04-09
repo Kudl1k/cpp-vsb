@@ -13,7 +13,7 @@ User* Tracker::getUser(){
     return user;
 }
 
-std::pair<bool, std::string> Tracker::addExpense(QDate date, std::string category_name,std::string subcategory_name, std::string title, double value){
+std::pair<bool, std::string> Tracker::addExpense(QDate date, int category_name, int subcategory_name, std::string title, double value){
 
     if (title == "")
     {
@@ -26,7 +26,7 @@ std::pair<bool, std::string> Tracker::addExpense(QDate date, std::string categor
     return std::make_pair(true,"Expense was successfully added");
 }
 
-std::pair<bool, std::string> Tracker::addIncome(QDate date, std::string category_name,std::string subcategory_name, std::string title, double value){
+std::pair<bool, std::string> Tracker::addIncome(QDate date, int category_name,int subcategory_name, std::string title, double value){
 
     if (title.empty())
     {
