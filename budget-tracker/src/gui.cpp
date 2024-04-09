@@ -44,8 +44,8 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
     std::string helloUser = "Hello " + tracker->getUser()->getName();
     QLabel *label = new QLabel(QString::fromStdString(helloUser));
     QFont font = label->font();
-    font.setPointSize(21); // Set font size
-    font.setBold(true); // Make font bold
+    font.setPointSize(21);
+    font.setBold(true);
     label->setFont(font);
 
     // std::string currentBalanceText = std::to_string(tracker->getUser()->getBalance());
@@ -71,29 +71,25 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
     QVBoxLayout *middleBody = new QVBoxLayout();
     QVBoxLayout *rightBody = new QVBoxLayout();
 
-    QFormLayout *leftUpBody = new QFormLayout();
     QHBoxLayout *leftBottomBody = new QHBoxLayout();
 
-    QWidget *leftUpWidget = new QWidget();
-    leftUpWidget->setLayout(leftUpBody);
-    leftUpWidget->setStyleSheet("border: 1px solid black;");
+
+    MainInfo* mainInfo = new MainInfo(tracker);
+    
+
 
     QWidget *leftBottomWidget = new QWidget();
     leftBottomWidget->setLayout(leftBottomBody);
-    leftBottomWidget->setStyleSheet("border: 1px solid black;");
 
-    leftBody->addWidget(leftUpWidget);
+    leftBody->addWidget(mainInfo);
     leftBody->addWidget(leftBottomWidget);
 
     QWidget *widget1 = new QWidget();
     widget1->setLayout(leftBody);
-    widget1->setStyleSheet("border: 1px solid black;");
     QWidget *widget2 = new QWidget();
     widget2->setLayout(middleBody);
-    widget2->setStyleSheet("border: 1px solid black;");
     QWidget *widget3 = new QWidget();
     widget3->setLayout(rightBody);
-    widget3->setStyleSheet("border: 1px solid black;");
 
 
     body->addWidget(widget1);
@@ -109,6 +105,57 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
     this->setLayout(layout);
 }
 
+MainInfo::MainInfo(Tracker *tracker)
+{
+    QVBoxLayout *mainlayout = new QVBoxLayout();
+
+    QHBoxLayout *left_body = new QHBoxLayout();
+
+    QFormLayout *leftUpBody = new QFormLayout();
+    std::string balance = std::to_string(tracker->getUser()->getBalance());
+    QLabel *label = new QLabel("test");
+    QFont descriptionFont = label->font();
+    descriptionFont.setPointSize(16);
+    QFont valueFont = label->font();
+    valueFont.setPointSize(16);
+    valueFont.setBold(true);
+
+
+    QLabel *currentBalanceDescription = new QLabel("Current balance");
+    currentBalanceDescription->setStyleSheet("border: none;");
+    currentBalanceDescription->setFont(descriptionFont);
+    QLabel *currentBalanceValue = new QLabel(QString::fromStdString(balance.substr(0,balance.size()-4)));
+    currentBalanceValue->setStyleSheet("border: none;");
+    currentBalanceValue->setFont(valueFont);
+
+    QLabel *nextIncomesDescription = new QLabel("Next Incomes");
+    nextIncomesDescription->setStyleSheet("border: none;");
+    nextIncomesDescription->setFont(descriptionFont);
+    QLabel *nextIncomesValue = new QLabel(QString::fromStdString("0.00"));
+    nextIncomesValue->setStyleSheet("border: none;");
+    nextIncomesValue->setFont(valueFont);
+
+    QLabel *nextExpensesDescription = new QLabel("Next Expenses");
+    nextExpensesDescription->setStyleSheet("border: none;");
+    nextExpensesDescription->setFont(descriptionFont);
+    QLabel *nextExpensesValue = new QLabel(QString::fromStdString("0.00"));
+    nextExpensesValue->setStyleSheet("border: none;");
+    nextExpensesValue->setFont(valueFont);
+
+
+
+
+
+
+    leftUpBody->addRow(currentBalanceDescription, currentBalanceValue);
+    leftUpBody->addRow(nextIncomesDescription, nextIncomesValue);
+    leftUpBody->addRow(nextExpensesDescription, nextExpensesValue);
+    leftUpBody->setSpacing(10);
+
+    this->setStyleSheet("border: 1px solid black;");
+    this->setLayout(leftUpBody);
+}
+
 MainGraph::MainGraph(Tracker* tracker)
 {
     QPieSeries *series = new QPieSeries();
@@ -122,6 +169,7 @@ MainGraph::MainGraph(Tracker* tracker)
 
     chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
+    
 }
 
 QChartView *MainGraph::getChart()
@@ -796,3 +844,5 @@ GoalsTab::GoalsTab(Tracker * tracker) : tracker(tracker)
 
     this->setLayout(mainLayout);
 }
+
+

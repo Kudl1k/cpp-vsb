@@ -37,6 +37,7 @@
 
 class GUI;
 class MainDashboardTab;
+class MainInfo;
 class MainGraph;
 class IncomesTab;
 class ExpensesTab;
@@ -73,6 +74,15 @@ public:
 private:
     Tracker* tracker;
 };
+
+class MainInfo : public QWidget
+{
+public:
+    MainInfo(Tracker * tracker);
+private:
+    Tracker* tracker;
+};
+
 
 class MainGraph : public QChartView
 {
