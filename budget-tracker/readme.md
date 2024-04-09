@@ -24,10 +24,9 @@ The source of your passive income. This tab will help you calculate how much mon
 
 ### To-do
 
-- [ ] Main dashboard. Create UI.
-- [ ] Expense and Income tabs, issue with deleting rows, and adding multiple records.
+- [ ] Main dashboard. Create UI. (In Progrees)
+- [ ] Expense and Income tabs, issue with deleting rows. (In Progrees)
 - [ ] Goals tab. Implement functions in UI.
-- [ ] Investment Calculator. Create its functionality and connect it with incomes.
-- [ ] Clean up the code 🤓 <br>
+- [ ] Investment Calculator. Create its functionality and connect it with incomes. <br>
 
 Link to [github repo](https://github.com/Kudl1k/cpp-vsb/tree/main/budget-tracker)
