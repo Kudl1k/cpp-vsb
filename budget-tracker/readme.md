@@ -22,6 +22,18 @@ A tab for making your dreams come true by achieving the goals you desire. You ca
 
 The source of your passive income. This tab will help you calculate how much money you will make in the future if you invest this amount for a certain time. It will also be connected with the incomes, so it will tell you if it is worth it for you or not.
 
+## Instalation
+
+```
+sudo apt install qt6-base-dev
+sudo apt install libqt6charts6-dev
+mkdir build
+cd build
+cmake ..
+make
+./budget-tracker
+```
+
 ### To-do
 
 - [ ] Main dashboard. Create UI. (In Progrees)
