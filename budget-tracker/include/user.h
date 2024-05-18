@@ -11,12 +11,19 @@ public:
 
     std::string getName();
     float getBalance();
+    float getNextIncomes();
+    float getNextExpanses();
 
     void addBalance(float amount);
+    
+    void addNextIncome(float amount);
+    void addNextExpanses(float amount);
 
 private:
     std::string name;
     float balance;
+    float nextIncomes;
+    float nextExpanses;
 
     float necessary_outcomes_perct;
     float entertainment_outcomes_perct;

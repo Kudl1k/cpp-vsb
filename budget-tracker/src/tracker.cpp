@@ -2,7 +2,7 @@
 
 
 Tracker::Tracker(){
-    user = new User("Franta",50000);
+    user = new User("Štěpán",200);
 }
 
 Tracker::~Tracker(){
@@ -34,9 +34,16 @@ std::pair<bool, std::string> Tracker::addIncome(QDate date, int category_name,in
     }
     Income *i = new Income(date,category_name,subcategory_name,title,value);
     
-    incomes[date].push_back(*i);
+    if (i->getDate() <= QDate::currentDate())
+    {
+        incomes[date].push_back(*i);
+        user->addBalance(i->getValue());
+    } else {
+        futureIncomes[date].push_back(*i);
+        user->addNextIncome(i->getValue());
+    }
     
-    return std::make_pair(true,"Expense was successfully added");
+    return std::make_pair(true,"Income was successfully added");
 }
 
 std::map<QDate,std::vector<Expense>> Tracker::getExpenses()
@@ -44,9 +51,19 @@ std::map<QDate,std::vector<Expense>> Tracker::getExpenses()
     return expenses;
 }
 
+std::map<QDate, std::vector<Expense>> Tracker::getFutureExpenses()
+{
+    return futureExpanses;
+}
+
 std::map<QDate,std::vector<Income>> Tracker::getIncomes()
 {
     return incomes;
+}
+
+std::map<QDate, std::vector<Income>> Tracker::getFutureIncomes()
+{
+    return futureIncomes;
 }
 
 int Tracker::generateNewExpenseId()

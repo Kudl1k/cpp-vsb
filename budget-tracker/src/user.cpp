@@ -15,6 +15,26 @@ float User::getBalance(){
     return balance;
 }
 
+float User::getNextIncomes()
+{
+    return nextIncomes;
+}
+
+float User::getNextExpanses()
+{
+    return nextExpanses;
+}
+
 void User::addBalance(float amount){
     balance += amount;
+}
+
+void User::addNextIncome(float amount)
+{
+    nextIncomes += amount;
+}
+
+void User::addNextExpanses(float amount)
+{
+    nextExpanses += amount;
 }

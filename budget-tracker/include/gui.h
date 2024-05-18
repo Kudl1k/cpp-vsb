@@ -71,16 +71,25 @@ class MainDashboardTab : public QFrame
 {
 public:
     MainDashboardTab(Tracker* tracker);
+    void refreshUI();
 private:
     Tracker* tracker;
+    MainInfo* mainInfo;
 };
 
 class MainInfo : public QWidget
 {
 public:
     MainInfo(Tracker * tracker);
+    void refreshMainInfoUI();
 private:
     Tracker* tracker;
+    QLabel *currentBalanceValue;
+    QLabel *nextIncomesValue;
+
+
+    void refreshCurrentBalance();
+    void refreshNextIncomeValue();
 };
 
 
@@ -216,10 +225,11 @@ private:
 class IncomesTab : public QFrame
 {
 public:
-    IncomesTab(Tracker* tracker);
+    IncomesTab(Tracker* tracker, MainDashboardTab* mainDashboardTab);
     void removeIncomeFromAddList(IncomeLine *incomeLine);
 private:
     Tracker* tracker;
+    MainDashboardTab* mainDashboardTab;
 
     QCheckBox* toggleButton;
 

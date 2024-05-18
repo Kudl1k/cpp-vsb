@@ -18,7 +18,10 @@ public:
     std::pair<bool, std::string> addExpense(QDate date, int category_name, int subcategory_name, std::string title, double value);
     std::pair<bool, std::string> addIncome(QDate date, int category_name,int subcategory_name, std::string title, double value);
     std::map<QDate,std::vector<Expense>> getExpenses();
+    std::map<QDate,std::vector<Expense>> getFutureExpenses();
     std::map<QDate,std::vector<Income>> getIncomes();
+    std::map<QDate,std::vector<Income>> getFutureIncomes();
+
 
     int generateNewExpenseId();
     int generateNewIncomeId();
@@ -27,7 +30,9 @@ public:
 private:
     User *user = nullptr;
     std::map<QDate,std::vector<Expense>> expenses;
+    std::map<QDate,std::vector<Expense>> futureExpanses;
     std::map<QDate,std::vector<Income>> incomes;
+    std::map<QDate,std::vector<Income>> futureIncomes;
 };
 
 

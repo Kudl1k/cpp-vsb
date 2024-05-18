@@ -20,7 +20,7 @@ GUI::GUI(QWidget* parent) : QMainWindow(parent)
 
 
     mainDashboardTab = new MainDashboardTab(tracker);
-    incomesTab = new IncomesTab(tracker);
+    incomesTab = new IncomesTab(tracker,mainDashboardTab);
     expensesTab = new ExpensesTab(tracker);
     goalsTab = new GoalsTab(tracker);
     
@@ -48,8 +48,9 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
     font.setBold(true);
     label->setFont(font);
 
-    // std::string currentBalanceText = std::to_string(tracker->getUser()->getBalance());
-    // QLabel *currentBalance = new QLabel(QString::fromStdString(currentBalanceText.substr(0,currentBalanceText.size()-4)));
+    std::string currentBalanceText = std::to_string(tracker->getUser()->getBalance());
+    QLabel *currentBalance = new QLabel(QString::fromStdString(currentBalanceText.substr(0,currentBalanceText.size()-4) + "$"));
+    currentBalance->setFont(font);
     // currentBalance->setFont(font);
     // currentBalance->setToolTip("Your current balance");
 
@@ -59,6 +60,8 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
     QPushButton* fastAddGoal = new QPushButton("Add goal");
 
     header->addWidget(label);
+    header->addStretch(1);
+    header->addWidget(currentBalance);
     header->addStretch(1);
     header->addWidget(descriptioQuickActions);
     header->addWidget(fastAddIncome);
@@ -74,7 +77,10 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
     QHBoxLayout *leftBottomBody = new QHBoxLayout();
 
 
-    MainInfo* mainInfo = new MainInfo(tracker);
+    mainInfo = new MainInfo(tracker);
+
+    MainGraph* maingraph = new MainGraph(tracker);
+    MainGraph* maingraph2 = new MainGraph(tracker);
     
 
 
@@ -83,6 +89,10 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
 
     leftBody->addWidget(mainInfo);
     leftBody->addWidget(leftBottomWidget);
+
+    middleBody->addWidget(maingraph->getChart());
+    rightBody->addWidget(maingraph2->getChart());
+
 
     QWidget *widget1 = new QWidget();
     widget1->setLayout(leftBody);
@@ -96,16 +106,19 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
     body->addWidget(widget2);
     body->addWidget(widget3);
 
-    MainGraph* maingraph = new MainGraph(tracker);
 
     layout->addLayout(header);
     layout->addLayout(body);
-    // layout->addWidget(maingraph->getChart());
 
     this->setLayout(layout);
 }
 
-MainInfo::MainInfo(Tracker *tracker)
+void MainDashboardTab::refreshUI()
+{
+    mainInfo->refreshMainInfoUI();
+}
+
+MainInfo::MainInfo(Tracker *tracker): tracker(tracker)
 {
     QVBoxLayout *mainlayout = new QVBoxLayout();
 
@@ -124,14 +137,15 @@ MainInfo::MainInfo(Tracker *tracker)
     QLabel *currentBalanceDescription = new QLabel("Current balance");
     currentBalanceDescription->setStyleSheet("border: none;");
     currentBalanceDescription->setFont(descriptionFont);
-    QLabel *currentBalanceValue = new QLabel(QString::fromStdString(balance.substr(0,balance.size()-4)));
+    currentBalanceValue = new QLabel(QString::fromStdString(balance.substr(0,balance.size()-4)));
     currentBalanceValue->setStyleSheet("border: none;");
     currentBalanceValue->setFont(valueFont);
 
     QLabel *nextIncomesDescription = new QLabel("Next Incomes");
     nextIncomesDescription->setStyleSheet("border: none;");
     nextIncomesDescription->setFont(descriptionFont);
-    QLabel *nextIncomesValue = new QLabel(QString::fromStdString("0.00"));
+    std::string nextIncomesText = std::to_string(tracker->getUser()->getNextIncomes());
+    nextIncomesValue = new QLabel(QString::fromStdString(nextIncomesText.substr(0,balance.size()-6)));
     nextIncomesValue->setStyleSheet("border: none;");
     nextIncomesValue->setFont(valueFont);
 
@@ -154,6 +168,24 @@ MainInfo::MainInfo(Tracker *tracker)
 
     this->setStyleSheet("border: 1px solid black;");
     this->setLayout(leftUpBody);
+}
+
+void MainInfo::refreshMainInfoUI()
+{
+    refreshCurrentBalance();
+    refreshNextIncomeValue();
+}
+
+void MainInfo::refreshCurrentBalance()
+{
+    std::string balance = std::to_string(tracker->getUser()->getBalance());
+    currentBalanceValue->setText(QString::fromStdString(balance.substr(0,balance.size()-4)));
+}
+
+void MainInfo::refreshNextIncomeValue()
+{
+    std::string nextIncomesText = std::to_string(tracker->getUser()->getNextIncomes());
+    nextIncomesValue->setText(QString::fromStdString(nextIncomesText.substr(0,nextIncomesText.size()-4)));
 }
 
 MainGraph::MainGraph(Tracker* tracker)
@@ -488,7 +520,7 @@ QString ExpenseLine::getValue() {
     return valueField->text();
 }
 
-IncomesTab::IncomesTab(Tracker *tracker)
+IncomesTab::IncomesTab(Tracker *tracker, MainDashboardTab* mainDashboardTab): tracker(tracker), mainDashboardTab(mainDashboardTab)
 {
     QVBoxLayout* mainLayout = new QVBoxLayout();
 
@@ -578,7 +610,7 @@ IncomesTab::IncomesTab(Tracker *tracker)
         }
     });
 
-    connect(addIncomes, &QPushButton::clicked, [this,tracker,addIncomes]() {
+    connect(addIncomes, &QPushButton::clicked, [this,tracker, mainDashboardTab,addIncomes]() {
         std::vector<IncomeLine*> incomesToBeRemoved;
         int error_number = 0;
         for (auto& incomeLine : this->incomeLines) {
@@ -629,9 +661,11 @@ IncomesTab::IncomesTab(Tracker *tracker)
         }
         if (this->incomeLines.size() == 0)
         {
+            
             addIncomes->hide();
             toggleButton->hide();
             scrollarea->hide(); 
+            mainDashboardTab->refreshUI();
         }
         std::cout << tracker->getIncomes().size() << std::endl;
     });   
