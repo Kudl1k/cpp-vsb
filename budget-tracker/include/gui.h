@@ -39,6 +39,7 @@ class GUI;
 class MainDashboardTab;
 class MainInfo;
 class MainGraph;
+class IncomesGraph;
 class IncomesTab;
 class ExpensesTab;
 class ExpenseLine;
@@ -75,6 +76,7 @@ public:
 private:
     Tracker* tracker;
     MainInfo* mainInfo;
+    IncomesGraph* incomesGraph;
 };
 
 class MainInfo : public QWidget
@@ -100,6 +102,20 @@ public:
     QChartView *getChart();
 private:
     QChartView *chartView;
+};
+
+class IncomesGraph : public QChartView
+{
+public:
+    IncomesGraph(Tracker* tracker);
+    QChartView *getChart();
+    void updateGraph();
+
+private:
+    QChart *chart;
+    QChartView *chartView;
+    Tracker *tracker;
+    
 };
 
  

@@ -48,21 +48,18 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
     font.setBold(true);
     label->setFont(font);
 
-    std::string currentBalanceText = std::to_string(tracker->getUser()->getBalance());
-    QLabel *currentBalance = new QLabel(QString::fromStdString(currentBalanceText.substr(0,currentBalanceText.size()-4) + "$"));
-    currentBalance->setFont(font);
-    // currentBalance->setFont(font);
-    // currentBalance->setToolTip("Your current balance");
-
     QLabel *descriptioQuickActions = new QLabel("Quick actions: ");
     QPushButton* fastAddIncome = new QPushButton("Add income");
     QPushButton* fastAddExpanse = new QPushButton("Add expense");
     QPushButton* fastAddGoal = new QPushButton("Add goal");
 
+    mainInfo = new MainInfo(tracker);
+
+
     header->addWidget(label);
-    header->addStretch(1);
-    header->addWidget(currentBalance);
-    header->addStretch(1);
+    header->addStretch(2);
+    header->addWidget(mainInfo);
+    header->addStretch(2);
     header->addWidget(descriptioQuickActions);
     header->addWidget(fastAddIncome);
     header->addWidget(fastAddExpanse);
@@ -74,24 +71,17 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
     QVBoxLayout *middleBody = new QVBoxLayout();
     QVBoxLayout *rightBody = new QVBoxLayout();
 
-    QHBoxLayout *leftBottomBody = new QHBoxLayout();
 
-
-    mainInfo = new MainInfo(tracker);
-
-    MainGraph* maingraph = new MainGraph(tracker);
+    incomesGraph = new IncomesGraph(tracker);
     MainGraph* maingraph2 = new MainGraph(tracker);
+    MainGraph* maingraph3 = new MainGraph(tracker);
     
 
 
-    QWidget *leftBottomWidget = new QWidget();
-    leftBottomWidget->setLayout(leftBottomBody);
 
-    leftBody->addWidget(mainInfo);
-    leftBody->addWidget(leftBottomWidget);
-
-    middleBody->addWidget(maingraph->getChart());
-    rightBody->addWidget(maingraph2->getChart());
+    leftBody->addWidget(incomesGraph->getChart());
+    middleBody->addWidget(maingraph2->getChart());
+    rightBody->addWidget(maingraph3->getChart());
 
 
     QWidget *widget1 = new QWidget();
@@ -116,6 +106,7 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
 void MainDashboardTab::refreshUI()
 {
     mainInfo->refreshMainInfoUI();
+    incomesGraph->updateGraph();
 }
 
 MainInfo::MainInfo(Tracker *tracker): tracker(tracker)
@@ -124,49 +115,44 @@ MainInfo::MainInfo(Tracker *tracker): tracker(tracker)
 
     QHBoxLayout *left_body = new QHBoxLayout();
 
-    QFormLayout *leftUpBody = new QFormLayout();
-    std::string balance = std::to_string(tracker->getUser()->getBalance());
-    QLabel *label = new QLabel("test");
-    QFont descriptionFont = label->font();
-    descriptionFont.setPointSize(16);
-    QFont valueFont = label->font();
-    valueFont.setPointSize(16);
-    valueFont.setBold(true);
+    QHBoxLayout *leftUpBody = new QHBoxLayout();
 
 
-    QLabel *currentBalanceDescription = new QLabel("Current balance");
-    currentBalanceDescription->setStyleSheet("border: none;");
-    currentBalanceDescription->setFont(descriptionFont);
-    currentBalanceValue = new QLabel(QString::fromStdString(balance.substr(0,balance.size()-4)));
-    currentBalanceValue->setStyleSheet("border: none;");
-    currentBalanceValue->setFont(valueFont);
+    std::string currentBalanceText = std::to_string(tracker->getUser()->getBalance());
+    QLabel *currentBalanceIcon = new QLabel();
+    QPixmap balanceIcon("../assets/balance.png");
+    currentBalanceIcon->setPixmap(balanceIcon);
+    currentBalanceValue = new QLabel(QString::fromStdString(currentBalanceText.substr(0,currentBalanceText.size()-4) + "$"));
+    currentBalanceValue->setToolTip("Your current balance");
 
-    QLabel *nextIncomesDescription = new QLabel("Next Incomes");
-    nextIncomesDescription->setStyleSheet("border: none;");
-    nextIncomesDescription->setFont(descriptionFont);
+    QLabel *nextIncomesIcon = new QLabel();
+    QPixmap incomesIcon("../assets/incomes.png");
+    nextIncomesIcon->setPixmap(incomesIcon);
     std::string nextIncomesText = std::to_string(tracker->getUser()->getNextIncomes());
-    nextIncomesValue = new QLabel(QString::fromStdString(nextIncomesText.substr(0,balance.size()-6)));
-    nextIncomesValue->setStyleSheet("border: none;");
-    nextIncomesValue->setFont(valueFont);
+    nextIncomesValue = new QLabel(QString::fromStdString(nextIncomesText.substr(0,nextIncomesText.size()-4)));
+    nextIncomesValue->setToolTip("Your future incomes");
 
-    QLabel *nextExpensesDescription = new QLabel("Next Expenses");
-    nextExpensesDescription->setStyleSheet("border: none;");
-    nextExpensesDescription->setFont(descriptionFont);
-    QLabel *nextExpensesValue = new QLabel(QString::fromStdString("0.00"));
-    nextExpensesValue->setStyleSheet("border: none;");
-    nextExpensesValue->setFont(valueFont);
-
+    QLabel *nextExpansesIcon = new QLabel();
+    QPixmap expansesIcon("../assets/expanses.png");
+    nextExpansesIcon->setPixmap(expansesIcon);
+    std::string nextExpansesText = std::to_string(tracker->getUser()->getNextIncomes());
+    QLabel *nextExpansesValue = new QLabel(QString::fromStdString(nextExpansesText.substr(0,nextExpansesText.size()-4)));
+    nextExpansesValue->setToolTip("Your future incomes");
 
 
 
 
 
-    leftUpBody->addRow(currentBalanceDescription, currentBalanceValue);
-    leftUpBody->addRow(nextIncomesDescription, nextIncomesValue);
-    leftUpBody->addRow(nextExpensesDescription, nextExpensesValue);
-    leftUpBody->setSpacing(10);
 
-    this->setStyleSheet("border: 1px solid black;");
+    leftUpBody->addWidget(currentBalanceIcon);
+    leftUpBody->addWidget(currentBalanceValue);
+    leftUpBody->addSpacing(50);
+    leftUpBody->addWidget(nextIncomesIcon);
+    leftUpBody->addWidget(nextIncomesValue);
+    leftUpBody->addSpacing(50);
+    leftUpBody->addWidget(nextExpansesIcon);
+    leftUpBody->addWidget(nextExpansesValue);
+
     this->setLayout(leftUpBody);
 }
 
@@ -194,17 +180,149 @@ MainGraph::MainGraph(Tracker* tracker)
     series->append("Category 1", 30);
     series->append("Category 2", 50);
     series->append("Category 3", 20);
+    series->append("Category 4", 20);
+    series->append("Category 5", 20);
+    series->append("Category 6", 20);
+    series->append("Category 7", 20);
+
+    qreal total = 0;
+    for (QPieSlice *slice : series->slices())
+        total += slice->value();
+
+    for (QPieSlice *slice : series->slices()) {
+        qreal percentage = 100*slice->value()/total;
+        slice->setLabel(QString("%1: %2%").arg(slice->label()).arg(percentage, 0, 'f', 1));
+        slice->setLabelVisible(true);
+        QFont font = slice->labelFont();
+        font.setPointSize(10);
+        slice->setLabelFont(font);
+        slice->setLabelPosition(QPieSlice::LabelOutside);
+    }
+
 
     QChart *chart = new QChart();
     chart->addSeries(series);
     chart->setTitle("Pie Chart");
+    chart->legend()->setVisible(false);
 
     chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
-    
+
+    series->setPieSize(0.4);
 }
 
 QChartView *MainGraph::getChart()
+{
+    return chartView;
+}
+
+IncomesGraph::IncomesGraph(Tracker *tracker): tracker(tracker)
+{
+    QPieSeries *series = new QPieSeries();
+
+    qreal categories[incomeCategories.size()] = {};
+
+    for (auto& record: tracker->getIncomes()) {
+        for (size_t i = 0; i < record.second.size(); i++)
+        {
+            Income income = record.second[i];
+            categories[income.getCategory()] += income.getValue();
+        }
+    }
+    
+    for (size_t i = 0; i < incomeCategories.size(); i++)
+    {
+        series->append(QString::fromStdString(incomeCategories[i].first),categories[i]);
+    }
+    
+
+
+    qreal total = 0;
+    for (QPieSlice *slice : series->slices())
+        total += slice->value();
+
+    for (QPieSlice *slice : series->slices()) {
+        qreal percentage = 100*slice->value()/total;
+        slice->setLabel(QString("%1: %2%").arg(slice->label()).arg(percentage, 0, 'f', 1));
+        std::cout << percentage << std::endl;
+        if (percentage == 0.0)
+        {
+            slice->setLabelVisible(false);
+        } else {
+            slice->setLabelVisible(true);
+        }
+        QFont font = slice->labelFont();
+        font.setPointSize(10);
+        slice->setLabelFont(font);
+        slice->setLabelPosition(QPieSlice::LabelOutside);
+    }
+
+
+    chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Incomes");
+    chart->legend()->setVisible(false);
+
+    chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    series->setPieSize(0.4);
+}
+
+void IncomesGraph::updateGraph() {
+    std::cout << "Updating graph..." << std::endl;
+
+    // Clear the existing series
+    chart->removeAllSeries();
+
+    // Create a new series
+    QPieSeries *newSeries = new QPieSeries();
+
+    qreal categories[incomeCategories.size()] = {};
+
+    for (auto& record: tracker->getIncomes()) {
+        for (size_t i = 0; i < record.second.size(); i++)
+        {
+            Income income = record.second[i];
+            std::cout << income.getCategory() << " " << income.getValue() << std::endl;
+
+            categories[income.getCategory()] += income.getValue();
+        }
+    }
+    
+    for (size_t i = 0; i < incomeCategories.size(); i++)
+    {
+        newSeries->append(QString::fromStdString(incomeCategories[i].first),categories[i]);
+        std::cout << incomeCategories[i].first << " " << categories[i] << std::endl;
+
+    }
+
+    qreal total = 0;
+    for (QPieSlice *slice : newSeries->slices())
+        total += slice->value();
+
+    for (QPieSlice *slice : newSeries->slices()) {
+        qreal percentage = 100*slice->value()/total;
+        slice->setLabel(QString("%1: %2%").arg(slice->label()).arg(percentage, 0, 'f', 1));
+        if (percentage == 0.0)
+        {
+            slice->setLabelVisible(false);
+        } else {
+            slice->setLabelVisible(true);
+        }
+        QFont font = slice->labelFont();
+        font.setPointSize(10);
+        slice->setLabelFont(font);
+        slice->setLabelPosition(QPieSlice::LabelOutside);
+    }
+
+    // Add the new series to the chart
+    chart->addSeries(newSeries);
+    newSeries->setPieSize(0.4);
+    // Refresh the chart view
+    chartView->repaint();
+}
+QChartView *IncomesGraph::getChart()
 {
     return chartView;
 }

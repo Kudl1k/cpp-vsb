@@ -4,7 +4,7 @@
 
 int main(int argc, char **argv) {
   QApplication a(argc,argv);
-  a.setWindowIcon(QIcon("../budget-tracker-ico.png"));
+  a.setWindowIcon(QIcon("../assets/budget-tracker-ico.png"));
 
   QFont font("Jetbrains Mono");
   font.setStyleHint(QFont::Monospace);
