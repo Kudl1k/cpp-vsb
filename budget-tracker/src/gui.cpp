@@ -3,7 +3,7 @@
 
 GUI::GUI(QWidget* parent) : QMainWindow(parent)
 {
-
+    this->tracker = nullptr;
     this->setWindowTitle("Budget Tracker - KUD0132");
     this->setMinimumSize(1280,720);
     this->move(100,100);
@@ -12,20 +12,33 @@ GUI::GUI(QWidget* parent) : QMainWindow(parent)
     tabs->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
     welcomePage = new WelcomePage(this);
-    setupProfilePage = new SetupProfilePage(this);
+    setupProfilePage = new SetupProfilePage(this->parentWidget(),this);
     setCentralWidget(welcomePage);
 
-    connect(welcomePage->continueButton, &QPushButton::clicked, this, &GUI::switchToMainDashboard);
+    connect(welcomePage->continueButton, &QPushButton::clicked, this, [this](){
+        this->switchToMainDashboard("User", 50, 30, 20, 5000);
+    });
     connect(welcomePage->newProfileButton, &QPushButton::clicked, this, &GUI::switchToSetupProfile);
 }
 
-void GUI::switchToMainDashboard() {
-    qDebug() << "Tracker: " << tracker;
-    if (tracker == nullptr)
+
+
+void GUI::switchToMainDashboard(std::string name, int expensePercentage, int incomePercentage, int savingsPercentage, int monthGoal) {
+    this->tracker = nullptr;
+    if (name == "")
     {
         QMessageBox::warning(this,"Warning","Please setup your profile first.");
+        this->tracker = new Tracker(nullptr);
         return;
+    } else {
+        std::cout << "Creating tracker" << std::endl;
+        User *user = new User(name, expensePercentage, incomePercentage, savingsPercentage, monthGoal);
+        std::cout << "User created" << std::endl;
+    
+        this->tracker = new Tracker(user);
+        std::cout << "Created tracker" << std::endl;
     }
+    std::cout << "Switching to main dashboard" << std::endl;
     mainDashboardTab = new MainDashboardTab(tracker);
     incomesTab = new IncomesTab(tracker,mainDashboardTab);
     expensesTab = new ExpensesTab(tracker, mainDashboardTab);
@@ -37,9 +50,30 @@ void GUI::switchToMainDashboard() {
     setCentralWidget(tabs);
     //TODO: create menu
     QMenuBar *menu = this->menuBar();
+
+    QMenu *settings = menu->addMenu("Settings");
+    QAction *saveProfileAction = settings->addAction("Save profile");
+    connect(saveProfileAction, &QAction::triggered, this, [this](){
+        this->tracker->saveToFile();
+    });
+
     QMenu *navigation = menu->addMenu("Navigation");
     navigation->addAction("Main Dashboard");
 }
+
+void GUI::createTracker(std::string name, int expensePercentage, int incomePercentage, int savingsPercentage, int monthGoal)
+{
+    std::cout << "Assigning tracker to GUI..." << std::endl;
+    std::cout << "Name: " << name << std::endl;
+    std::cout << "Expense percentage: " << expensePercentage << std::endl;
+    std::cout << "Income percentage: " << incomePercentage << std::endl;
+    std::cout << "Savings percentage: " << savingsPercentage << std::endl;
+    std::cout << "Month goal: " << monthGoal << std::endl;
+
+    switchToMainDashboard("User", 50, 30, 20, 5000);
+    std::cout << "Switched to main dashboard" << std::endl;
+}
+
 void GUI::switchToSetupProfile()
 {
     setCentralWidget(setupProfilePage);
@@ -67,6 +101,7 @@ WelcomePage::WelcomePage(QWidget *parent)
 
 SetupProfilePage::SetupProfilePage(QWidget *parent, GUI *gui)
 {
+    this->gui = gui;
     QLabel* title = new QLabel("Setup your profile");
     QFont font = title->font();
     font.setPointSize(32);
@@ -118,7 +153,7 @@ SetupProfilePage::SetupProfilePage(QWidget *parent, GUI *gui)
     layout->setAlignment(Qt::AlignCenter);
     this->setLayout(layout);
 
-    connect(submitButton, &QPushButton::clicked, [this, nameInput, expensePercentageInput, incomePercentageInput, savingsPercentageInput, monthGoalInput,gui]() {
+    connect(submitButton, &QPushButton::clicked, [this, nameInput, expensePercentageInput, incomePercentageInput, savingsPercentageInput, monthGoalInput]() {
         
         std::string name = nameInput->text().toStdString();
         int expensePercentage = expensePercentageInput->value();
@@ -130,11 +165,9 @@ SetupProfilePage::SetupProfilePage(QWidget *parent, GUI *gui)
             QMessageBox::warning(this,"Warning","Please fill in the name field.");
         } else {
             std::cout << "Creating Tracker" << std::endl;
-            User* user = new User(name, expensePercentage, incomePercentage, savingsPercentage, monthGoal);
             std::cout << "User created" << std::endl;
-            Tracker* tracker = new Tracker(user);
             std::cout << "Tracker created" << std::endl;
-            gui->createTracker(tracker);
+            this->gui->switchToMainDashboard(name, expensePercentage, incomePercentage, savingsPercentage, monthGoal);
         }
     });
 

@@ -63,13 +63,8 @@ Q_OBJECT
 public:
     GUI(QWidget* parent = nullptr);
 
-    void createTracker(Tracker* tracker){
-        this->tracker = tracker;
-        std::cout << "Called" << std::endl;
-
-        switchToMainDashboard();
-        std::cout << "Switched to main dashboard" << std::endl;
-    };
+    void createTracker(std::string name, int expensePercentage, int incomePercentage, int savingsPercentage, int monthGoal);
+    void switchToMainDashboard(std::string name, int expensePercentage, int incomePercentage, int savingsPercentage, int monthGoal);
 
 private:
     Tracker *tracker;
@@ -83,7 +78,6 @@ private:
     ExpensesTab* expensesTab;
     GoalsTab* goalsTab;
 
-    void switchToMainDashboard();
     void switchToSetupProfile();
 };
 
@@ -98,7 +92,7 @@ class SetupProfilePage : public QFrame {
 public:
     SetupProfilePage(QWidget *parent = nullptr, GUI *gui = nullptr);
     QPushButton* createProfileButton;
-
+    GUI* gui;
 };
 
 

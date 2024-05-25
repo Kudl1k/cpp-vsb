@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
 
 
 
@@ -30,7 +31,7 @@ public:
     void saveToFile();
     //void removeExpanse(int index);
 private:
-    User *user = nullptr;
+    User *user;
     std::map<QDate,std::vector<Expense>> expenses;
     std::map<QDate,std::vector<Expense>> futureExpanses;
     std::map<QDate,std::vector<Income>> incomes;

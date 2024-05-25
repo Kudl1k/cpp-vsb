@@ -20,7 +20,14 @@ User* Tracker::getUser(){
 
 void Tracker::saveToFile()
 {
-    
+    std::ofstream outFile("../secret/user.bin", std::ios::binary);
+    if (!outFile) {
+        std::cerr << "Could not open file for writing!" << std::endl;
+        return;
+    }
+
+    outFile.write(reinterpret_cast<char*>(user), sizeof(User));
+    outFile.close();
 }
 
 std::pair<bool, std::string> Tracker::addExpense(QDate date, int category_name, int subcategory_name, std::string title, double value){
