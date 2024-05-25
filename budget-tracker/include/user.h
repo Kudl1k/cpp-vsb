@@ -6,7 +6,7 @@
 class User
 {
 public:
-    User(std::string name, float balance);
+    User(std::string name, int expensePercentage, int incomePercentage, int savingsPercentage, int month_goal);
     ~User();
 
     std::string getName();
@@ -26,10 +26,10 @@ private:
     float nextIncomes;
     float nextExpanses;
 
-    float necessary_outcomes_perct;
-    float entertainment_outcomes_perct;
-    float savings_perct;
-    float month_goal;
+    int expensePercentage;
+    int incomePercentage;
+    int savingsPercentage;
+    int month_goal;
     
 
 };

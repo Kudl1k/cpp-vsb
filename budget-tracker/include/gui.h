@@ -32,10 +32,14 @@
 #include <QAbstractItemModel>
 #include <QFormLayout>
 #include <QMessageBox>
+#include <QSlider>
+#include <QSpinBox>
 
 
 
 class GUI;
+class WelcomePage;
+class SetupProfilePage;
 class MainDashboardTab;
 class MainInfo;
 class MainGraph;
@@ -58,16 +62,45 @@ Q_OBJECT
 
 public:
     GUI(QWidget* parent = nullptr);
+
+    void createTracker(Tracker* tracker){
+        this->tracker = tracker;
+        std::cout << "Called" << std::endl;
+
+        switchToMainDashboard();
+        std::cout << "Switched to main dashboard" << std::endl;
+    };
+
 private:
     Tracker *tracker;
 
+    WelcomePage* welcomePage;
+    SetupProfilePage* setupProfilePage;
 
     QTabWidget* tabs;
     MainDashboardTab* mainDashboardTab;
     IncomesTab* incomesTab;
     ExpensesTab* expensesTab;
     GoalsTab* goalsTab;
+
+    void switchToMainDashboard();
+    void switchToSetupProfile();
 };
+
+class WelcomePage : public QFrame {
+public:
+    WelcomePage(QWidget *parent = nullptr);
+    QPushButton* continueButton;
+    QPushButton* newProfileButton;
+};
+
+class SetupProfilePage : public QFrame {
+public:
+    SetupProfilePage(QWidget *parent = nullptr, GUI *gui = nullptr);
+    QPushButton* createProfileButton;
+
+};
+
 
 class MainDashboardTab : public QFrame
 {

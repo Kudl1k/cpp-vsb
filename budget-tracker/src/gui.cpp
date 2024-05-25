@@ -3,7 +3,6 @@
 
 GUI::GUI(QWidget* parent) : QMainWindow(parent)
 {
-    tracker = new Tracker();
 
     this->setWindowTitle("Budget Tracker - KUD0132");
     this->setMinimumSize(1280,720);
@@ -12,26 +11,142 @@ GUI::GUI(QWidget* parent) : QMainWindow(parent)
     tabs = new QTabWidget();
     tabs->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
+    welcomePage = new WelcomePage(this);
+    setupProfilePage = new SetupProfilePage(this);
+    setCentralWidget(welcomePage);
 
-    //TODO: create menu
-    QMenuBar *menu = this->menuBar();
-    QMenu *navigation = menu->addMenu("Navigation");
-    navigation->addAction("Main Dashboard");
+    connect(welcomePage->continueButton, &QPushButton::clicked, this, &GUI::switchToMainDashboard);
+    connect(welcomePage->newProfileButton, &QPushButton::clicked, this, &GUI::switchToSetupProfile);
+}
 
-
+void GUI::switchToMainDashboard() {
+    qDebug() << "Tracker: " << tracker;
+    if (tracker == nullptr)
+    {
+        QMessageBox::warning(this,"Warning","Please setup your profile first.");
+        return;
+    }
     mainDashboardTab = new MainDashboardTab(tracker);
     incomesTab = new IncomesTab(tracker,mainDashboardTab);
     expensesTab = new ExpensesTab(tracker, mainDashboardTab);
     goalsTab = new GoalsTab(tracker);
-    
     tabs->addTab(mainDashboardTab, QString("Main Dashboard"));
     tabs->addTab(incomesTab, QString("Incomes"));
     tabs->addTab(expensesTab, QString("Expenses"));
     tabs->addTab(goalsTab, QString("Goals"));
-
-
     setCentralWidget(tabs);
+    //TODO: create menu
+    QMenuBar *menu = this->menuBar();
+    QMenu *navigation = menu->addMenu("Navigation");
+    navigation->addAction("Main Dashboard");
+}
+void GUI::switchToSetupProfile()
+{
+    setCentralWidget(setupProfilePage);
+}
 
+
+WelcomePage::WelcomePage(QWidget *parent)
+{
+    QLabel* title = new QLabel("Budget Tracker");
+    QFont font = title->font();
+    font.setPointSize(32);
+    font.setBold(true);
+    title->setFont(font);
+    title->setAlignment(Qt::AlignCenter);
+    newProfileButton = new QPushButton("New profile", this);
+    continueButton = new QPushButton("Load profile", this);
+    QVBoxLayout* layout = new QVBoxLayout();
+    layout->addWidget(title);
+    layout->addSpacing(50);
+    layout->addWidget(newProfileButton);
+    layout->addWidget(continueButton);
+    layout->setAlignment(Qt::AlignCenter);
+    this->setLayout(layout);
+}
+
+SetupProfilePage::SetupProfilePage(QWidget *parent, GUI *gui)
+{
+    QLabel* title = new QLabel("Setup your profile");
+    QFont font = title->font();
+    font.setPointSize(32);
+    font.setBold(true);
+    title->setFont(font);
+    title->setAlignment(Qt::AlignCenter);
+    QLabel* nameLabel = new QLabel("Name:");
+    QLineEdit* nameInput = new QLineEdit();
+    QLabel* expensePercentage = new QLabel("Expense percentage:");
+    QSpinBox* expensePercentageInput = new QSpinBox();
+    expensePercentageInput->setRange(0, 100);
+    expensePercentageInput->setValue(50);
+
+    QLabel* incomePercentage = new QLabel("Income percentage:");
+    QSpinBox* incomePercentageInput = new QSpinBox();
+    incomePercentageInput->setRange(0, 100);
+    incomePercentageInput->setValue(30);
+
+    QLabel* savingsPercentage = new QLabel("Savings percentage:");
+    QSpinBox* savingsPercentageInput = new QSpinBox();
+    savingsPercentageInput->setRange(0, 100);
+    savingsPercentageInput->setValue(20);
+    savingsPercentageInput->setDisabled(true);
+
+    QLabel* monthGoal = new QLabel("Month goal:");
+    QSpinBox* monthGoalInput = new QSpinBox();
+    monthGoalInput->setRange(0, 100000);
+    monthGoalInput->setValue(5000);
+
+
+    QPushButton* submitButton = new QPushButton("Submit");
+
+    QVBoxLayout* layout = new QVBoxLayout();
+    layout->addWidget(title);
+    layout->addSpacing(50);
+    QFormLayout* formLayout = new QFormLayout();
+    formLayout->addRow(nameLabel, nameInput);
+    formLayout->addRow(expensePercentage, expensePercentageInput);
+    formLayout->addRow(incomePercentage, incomePercentageInput);
+    formLayout->addRow(savingsPercentage, savingsPercentageInput);
+    formLayout->addRow(monthGoal, monthGoalInput);
+    
+
+    QWidget* formWidget = new QWidget();
+    formWidget->setLayout(formLayout);
+
+    layout->addWidget(formWidget, 0, Qt::AlignCenter);
+    layout->addWidget(submitButton,0, Qt::AlignCenter);
+    layout->setAlignment(Qt::AlignCenter);
+    this->setLayout(layout);
+
+    connect(submitButton, &QPushButton::clicked, [this, nameInput, expensePercentageInput, incomePercentageInput, savingsPercentageInput, monthGoalInput,gui]() {
+        
+        std::string name = nameInput->text().toStdString();
+        int expensePercentage = expensePercentageInput->value();
+        int incomePercentage = incomePercentageInput->value();
+        int savingsPercentage = savingsPercentageInput->value();
+        int monthGoal = monthGoalInput->value();
+        if (name == "")
+        {
+            QMessageBox::warning(this,"Warning","Please fill in the name field.");
+        } else {
+            std::cout << "Creating Tracker" << std::endl;
+            User* user = new User(name, expensePercentage, incomePercentage, savingsPercentage, monthGoal);
+            std::cout << "User created" << std::endl;
+            Tracker* tracker = new Tracker(user);
+            std::cout << "Tracker created" << std::endl;
+            gui->createTracker(tracker);
+        }
+    });
+
+    connect(expensePercentageInput, QOverload<int>::of(&QSpinBox::valueChanged), [savingsPercentageInput, incomePercentageInput, expensePercentageInput](int) {
+        int total = 100 - (incomePercentageInput->value() + expensePercentageInput->value());
+        savingsPercentageInput->setValue(total);
+    });
+
+    connect(incomePercentageInput, QOverload<int>::of(&QSpinBox::valueChanged), [savingsPercentageInput, incomePercentageInput, expensePercentageInput](int) {
+        int total = 100 - (incomePercentageInput->value() + expensePercentageInput->value());
+        savingsPercentageInput->setValue(total);
+    });
 }
 
 MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
@@ -1132,4 +1247,5 @@ GoalsTab::GoalsTab(Tracker * tracker) : tracker(tracker)
 
     this->setLayout(mainLayout);
 }
+
 

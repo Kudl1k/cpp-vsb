@@ -1,11 +1,8 @@
 #include "user.h"
 
+User::User(std::string name, int expensePercentage, int incomePercentage, int savingsPercentage, int month_goal) : name{name}, expensePercentage{expensePercentage}, incomePercentage{incomePercentage}, savingsPercentage{savingsPercentage}, month_goal{month_goal}, balance{0} {}
 
-
-User::User(std::string name, float balance) : name{name},balance{balance} {}
-
-User::~User(){}
-
+User::~User() {}
 
 std::string User::getName(){
     return name;

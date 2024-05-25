@@ -13,7 +13,7 @@
 class Tracker
 {
 public:
-    Tracker();
+    Tracker(User *user);
     ~Tracker();
     std::pair<bool, std::string> addExpense(QDate date, int category_name, int subcategory_name, std::string title, double value);
     std::pair<bool, std::string> addIncome(QDate date, int category_name,int subcategory_name, std::string title, double value);

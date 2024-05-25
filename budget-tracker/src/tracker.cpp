@@ -1,8 +1,13 @@
 #include "tracker.h"
 
 
-Tracker::Tracker(){
-    user = new User("Štěpán",200);
+Tracker::Tracker(User *user){
+    if (user == nullptr)
+    {
+        this->user = new User("User", 50, 30, 20, 5000);
+    } else {
+        this->user = user;
+    }
 }
 
 Tracker::~Tracker(){
