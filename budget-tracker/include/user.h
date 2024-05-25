@@ -15,6 +15,7 @@ public:
     float getNextExpanses();
 
     void addBalance(float amount);
+    void removeBalance(float amount);
     
     void addNextIncome(float amount);
     void addNextExpanses(float amount);

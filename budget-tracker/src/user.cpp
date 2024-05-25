@@ -29,6 +29,11 @@ void User::addBalance(float amount){
     balance += amount;
 }
 
+void User::removeBalance(float amount)
+{
+    balance -= amount;
+}
+
 void User::addNextIncome(float amount)
 {
     nextIncomes += amount;

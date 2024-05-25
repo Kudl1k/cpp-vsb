@@ -40,6 +40,7 @@ class MainDashboardTab;
 class MainInfo;
 class MainGraph;
 class IncomesGraph;
+class ExpensesGraph;
 class IncomesTab;
 class ExpensesTab;
 class ExpenseLine;
@@ -77,6 +78,7 @@ private:
     Tracker* tracker;
     MainInfo* mainInfo;
     IncomesGraph* incomesGraph;
+    ExpensesGraph* expensesGraph;
 };
 
 class MainInfo : public QWidget
@@ -118,11 +120,25 @@ private:
     
 };
 
+class ExpensesGraph : public QChartView
+{
+public:
+    ExpensesGraph(Tracker* tracker);
+    QChartView *getChart();
+    void updateGraph();
+
+private:
+    QChart *chart;
+    QChartView *chartView;
+    Tracker *tracker;
+    
+};
+
  
 class ExpensesTab : public QFrame
 {
 public:
-    ExpensesTab(Tracker* tracker);
+    ExpensesTab(Tracker* tracker, MainDashboardTab* mainDashboardTab);
     void removeExpensesFromAddList(ExpenseLine *expenseLine);
 private:
     Tracker* tracker;

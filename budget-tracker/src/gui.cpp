@@ -21,7 +21,7 @@ GUI::GUI(QWidget* parent) : QMainWindow(parent)
 
     mainDashboardTab = new MainDashboardTab(tracker);
     incomesTab = new IncomesTab(tracker,mainDashboardTab);
-    expensesTab = new ExpensesTab(tracker);
+    expensesTab = new ExpensesTab(tracker, mainDashboardTab);
     goalsTab = new GoalsTab(tracker);
     
     tabs->addTab(mainDashboardTab, QString("Main Dashboard"));
@@ -73,14 +73,14 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
 
 
     incomesGraph = new IncomesGraph(tracker);
-    MainGraph* maingraph2 = new MainGraph(tracker);
+    expensesGraph = new ExpensesGraph(tracker);
     MainGraph* maingraph3 = new MainGraph(tracker);
     
 
 
 
     leftBody->addWidget(incomesGraph->getChart());
-    middleBody->addWidget(maingraph2->getChart());
+    middleBody->addWidget(expensesGraph->getChart());
     rightBody->addWidget(maingraph3->getChart());
 
 
@@ -107,6 +107,7 @@ void MainDashboardTab::refreshUI()
 {
     mainInfo->refreshMainInfoUI();
     incomesGraph->updateGraph();
+    expensesGraph->updateGraph();
 }
 
 MainInfo::MainInfo(Tracker *tracker): tracker(tracker)
@@ -235,16 +236,18 @@ IncomesGraph::IncomesGraph(Tracker *tracker): tracker(tracker)
         series->append(QString::fromStdString(incomeCategories[i].first),categories[i]);
     }
     
-
-
     qreal total = 0;
     for (QPieSlice *slice : series->slices())
         total += slice->value();
 
     for (QPieSlice *slice : series->slices()) {
         qreal percentage = 100*slice->value()/total;
+        if (std::isnan(percentage)) {
+            // Handle NaN value
+            continue;
+        }
         slice->setLabel(QString("%1: %2%").arg(slice->label()).arg(percentage, 0, 'f', 1));
-        std::cout << percentage << std::endl;
+        
         if (percentage == 0.0)
         {
             slice->setLabelVisible(false);
@@ -254,16 +257,15 @@ IncomesGraph::IncomesGraph(Tracker *tracker): tracker(tracker)
         QFont font = slice->labelFont();
         font.setPointSize(10);
         slice->setLabelFont(font);
-        slice->setLabelPosition(QPieSlice::LabelOutside);
     }
 
 
     chart = new QChart();
     chart->addSeries(series);
     chart->setTitle("Incomes");
-    chart->legend()->setVisible(false);
 
     chartView = new QChartView(chart);
+    chartView->setBaseSize(0,0);
     chartView->setRenderHint(QPainter::Antialiasing);
 
     series->setPieSize(0.4);
@@ -303,7 +305,12 @@ void IncomesGraph::updateGraph() {
 
     for (QPieSlice *slice : newSeries->slices()) {
         qreal percentage = 100*slice->value()/total;
+        if (std::isnan(percentage)) {
+            // Handle NaN value
+            continue;
+        }
         slice->setLabel(QString("%1: %2%").arg(slice->label()).arg(percentage, 0, 'f', 1));
+        
         if (percentage == 0.0)
         {
             slice->setLabelVisible(false);
@@ -313,7 +320,6 @@ void IncomesGraph::updateGraph() {
         QFont font = slice->labelFont();
         font.setPointSize(10);
         slice->setLabelFont(font);
-        slice->setLabelPosition(QPieSlice::LabelOutside);
     }
 
     // Add the new series to the chart
@@ -327,7 +333,120 @@ QChartView *IncomesGraph::getChart()
     return chartView;
 }
 
-ExpensesTab::ExpensesTab(Tracker *tracker)
+ExpensesGraph::ExpensesGraph(Tracker *tracker): tracker(tracker)
+{
+    QPieSeries *series = new QPieSeries();
+
+    qreal categories[expenseCategories.size()] = {};
+
+    for (auto& record: tracker->getExpenses()) {
+        for (size_t i = 0; i < record.second.size(); i++)
+        {
+            Expense expense = record.second[i];
+            categories[expense.getCategory()] += expense.getValue();
+        }
+    }
+    
+    for (size_t i = 0; i < expenseCategories.size(); i++)
+    {
+        series->append(QString::fromStdString(expenseCategories[i].first),categories[i]);
+    }
+    
+    qreal total = 0;
+    for (QPieSlice *slice : series->slices())
+        total += slice->value();
+
+    for (QPieSlice *slice : series->slices()) {
+        qreal percentage = 100*slice->value()/total;
+        if (std::isnan(percentage)) {
+            // Handle NaN value
+            continue;
+        }
+        slice->setLabel(QString("%1: %2%").arg(slice->label()).arg(percentage, 0, 'f', 1));
+        
+        if (percentage == 0.0)
+        {
+            slice->setLabelVisible(false);
+        } else {
+            slice->setLabelVisible(true);
+        }
+        QFont font = slice->labelFont();
+        font.setPointSize(10);
+        slice->setLabelFont(font);
+    }
+
+
+    chart = new QChart();
+    chart->addSeries(series);
+    chart->setTitle("Expenses");
+
+    chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+
+    series->setPieSize(0.4);
+}
+
+QChartView *ExpensesGraph::getChart()
+{
+    return chartView;
+}
+
+void ExpensesGraph::updateGraph()
+{
+    std::cout << "Updating graph..." << std::endl;
+
+    // Clear the existing series
+    chart->removeAllSeries();
+
+    // Create a new series
+    QPieSeries *newSeries = new QPieSeries();
+
+    qreal categories[expenseCategories.size()] = {};
+
+    for (auto& record: tracker->getExpenses()) {
+        for (size_t i = 0; i < record.second.size(); i++)
+        {
+            Expense expense = record.second[i];
+            categories[expense.getCategory()] += expense.getValue();
+        }
+    }
+    
+    for (size_t i = 0; i < expenseCategories.size(); i++)
+    {
+        newSeries->append(QString::fromStdString(expenseCategories[i].first),categories[i]);
+    }
+    
+    qreal total = 0;
+    for (QPieSlice *slice : newSeries->slices())
+        total += slice->value();
+
+    for (QPieSlice *slice : newSeries->slices()) {
+        qreal percentage = 100*slice->value()/total;
+        if (std::isnan(percentage)) {
+            // Handle NaN value
+            continue;
+        }
+        slice->setLabel(QString("%1: %2%").arg(slice->label()).arg(percentage, 0, 'f', 1));
+        
+        if (percentage == 0.0)
+        {
+            slice->setLabelVisible(false);
+        } else {
+            slice->setLabelVisible(true);
+        }
+        QFont font = slice->labelFont();
+        font.setPointSize(10);
+        slice->setLabelFont(font);
+    }
+
+    // Add the new series to the chart
+    chart->addSeries(newSeries);
+    newSeries->setPieSize(0.4);
+    // Refresh the chart view
+    chartView->repaint();
+}
+
+ExpensesTab::ExpensesTab(Tracker *tracker, MainDashboardTab *mainDashboardTab)
 {
     QVBoxLayout* mainLayout = new QVBoxLayout();
 
@@ -419,9 +538,10 @@ ExpensesTab::ExpensesTab(Tracker *tracker)
     });
 
 
-    connect(addExpenses, &QPushButton::clicked, [this,tracker,addExpenses]() {
+    connect(addExpenses, &QPushButton::clicked, [this,tracker,addExpenses, mainDashboardTab]() {
         std::vector<ExpenseLine*> expenseToBeRemoved;
         int error_number = 0;
+        int long_error = 0;
         for (auto& expenseLine : this->expenseLines) {
             QDate date = expenseLine->getDate();
             int category = expenseLine->getCategory()->currentIndex();
@@ -442,9 +562,10 @@ ExpensesTab::ExpensesTab(Tracker *tracker)
                 error_number++;
                 continue;
             }
-            
-            
-
+            if (text.length() > 30){
+                long_error++;
+                continue;
+            }
             QList<QStandardItem*> items;
             items.append(new QStandardItem(date.toString("yyyy-MM-dd")));
             items.append(new QStandardItem(QString::fromStdString(expenseCategories[category].first)));
@@ -473,11 +594,17 @@ ExpensesTab::ExpensesTab(Tracker *tracker)
         if(error_number > 0){
             QMessageBox::warning(this,"Warning", QString::fromStdString("Please fill in the fields in " + std::to_string(error_number) + " cases."));
         }
+        if (long_error > 0)
+        {
+            QMessageBox::warning(this,"Warning", QString::fromStdString("Title can`t be long than 30 in " + std::to_string(long_error) + " cases."));
+        }
+        
         if (this->expenseLines.size() == 0)
         {
             addExpenses->hide();
             toggleButton->hide();
             scrollarea->hide(); 
+            mainDashboardTab->refreshUI();
         } 
         std::cout << tracker->getExpenses().size() << std::endl;
     });
@@ -731,6 +858,7 @@ IncomesTab::IncomesTab(Tracker *tracker, MainDashboardTab* mainDashboardTab): tr
     connect(addIncomes, &QPushButton::clicked, [this,tracker, mainDashboardTab,addIncomes]() {
         std::vector<IncomeLine*> incomesToBeRemoved;
         int error_number = 0;
+        int long_error = 0;
         for (auto& incomeLine : this->incomeLines) {
             QDate date = incomeLine->getDate();
             int category = incomeLine->getCategory()->currentIndex();
@@ -748,6 +876,10 @@ IncomesTab::IncomesTab(Tracker *tracker, MainDashboardTab* mainDashboardTab): tr
             if (value == "")
             {
                 error_number++;
+                continue;
+            }
+            if (text.length() > 30){
+                long_error++;
                 continue;
             }
             QList<QStandardItem*> items;
@@ -777,9 +909,13 @@ IncomesTab::IncomesTab(Tracker *tracker, MainDashboardTab* mainDashboardTab): tr
         if(error_number > 0){
             QMessageBox::warning(this,"Warning", QString::fromStdString("Please fill in the fields in " + std::to_string(error_number) + " cases."));
         }
+        if (long_error > 0)
+        {
+            QMessageBox::warning(this,"Warning", QString::fromStdString("Title can`t be long than 30 in " + std::to_string(long_error) + " cases."));
+        }
+        
         if (this->incomeLines.size() == 0)
         {
-            
             addIncomes->hide();
             toggleButton->hide();
             scrollarea->hide(); 
@@ -996,5 +1132,4 @@ GoalsTab::GoalsTab(Tracker * tracker) : tracker(tracker)
 
     this->setLayout(mainLayout);
 }
-
 

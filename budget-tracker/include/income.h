@@ -19,9 +19,9 @@ public:
     std::string getTitle() const { return title; }
     double getValue() const { return value; }
 private:
-    std::string date;
-    int category;
-    int subcategory;
-    std::string title;
-    double value;
+    std::string date;   //  10
+    int category;       //
+    int subcategory;    //
+    std::string title;  //  30
+    double value;       //
 };

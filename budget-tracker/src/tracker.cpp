@@ -13,6 +13,11 @@ User* Tracker::getUser(){
     return user;
 }
 
+void Tracker::saveToFile()
+{
+    
+}
+
 std::pair<bool, std::string> Tracker::addExpense(QDate date, int category_name, int subcategory_name, std::string title, double value){
 
     if (title == "")
@@ -21,8 +26,14 @@ std::pair<bool, std::string> Tracker::addExpense(QDate date, int category_name, 
     }
     Expense *e = new Expense(date,category_name,subcategory_name,title,value);
     
-    expenses[date].push_back(*e);
-    
+    if (e->getDate() <= QDate::currentDate())
+    {
+        expenses[date].push_back(*e);
+        user->removeBalance(e->getValue());
+    } else {
+        futureExpanses[date].push_back(*e);
+        user->addNextExpanses(e->getValue());
+    }
     return std::make_pair(true,"Expense was successfully added");
 }
 
