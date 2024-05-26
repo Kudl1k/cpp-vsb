@@ -52,10 +52,6 @@ class ExpenseLine;
 class ExpenseTableView;
 class IncomeLine;
 class IncomeTableView;
-class GoalsTab;
-class Next7DaysFilterModel;
-class Next14DaysFilterModel;
-class Next30DaysFilterModel;
 
 
 class GUI: public QMainWindow {
@@ -76,7 +72,6 @@ private:
     MainDashboardTab* mainDashboardTab;
     IncomesTab* incomesTab;
     ExpensesTab* expensesTab;
-    GoalsTab* goalsTab;
 
     void switchToSetupProfile();
     void switchToMainDashboard();
@@ -439,105 +434,3 @@ private:
     QStandardItemModel *model;
 };
 
-class GoalsTab : public QFrame
-{
-public:
-    GoalsTab(Tracker* tracker);
-private:
-    Tracker* tracker;
-
-
-    QTableView* tableView;
-
-    std::vector<Goal*> goals;
-};
-
-
-class GoalsTableView : public QTableView
-{
-public:
-    GoalsTableView(QWidget* parent = nullptr)
-        : QTableView(parent)
-        , model(new QStandardItemModel(this))
-    {
-        // Set the column headers
-        model->setHorizontalHeaderLabels(QStringList() << "Target date" << "Priority" << "Title" << "Goal");
-
-        // Set the model on the table view
-        this->setModel(model);
-
-        this->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-    }
-
-    QStandardItemModel* getModel(){
-        return model;
-    }
-
-    void addIncome(const QString& date, const Priority& priority, const QString& title, const QString& goal)
-    {
-        QList<QStandardItem *> rowItems;
-        rowItems.append(new QStandardItem(date));
-        rowItems.append(new QStandardItem(priority));
-        rowItems.append(new QStandardItem(title));
-        rowItems.append(new QStandardItem(goal));
-    }
-protected:
-    void contextMenuEvent(QContextMenuEvent* event) override {
-        QMenu menu(this);
-        QAction* deleteRowAction = menu.addAction("Delete Row");
-        connect(deleteRowAction, &QAction::triggered, [this, event]() {
-            QModelIndex index = indexAt(event->pos());
-            if(index.isValid()) {
-                model->removeRow(index.row());
-            }
-        });
-        menu.exec(event->globalPos());
-    }
-
-private:
-    QStandardItemModel *model;
-};
-
-
-class Next7DaysFilterModel : public QSortFilterProxyModel {
-public:
-    Next7DaysFilterModel(QObject *parent = nullptr) : QSortFilterProxyModel(parent) {}
-    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override {
-        QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
-        QDate date = index.data().toDate();
-
-        QDate today = QDate::currentDate();
-        QDate nextWeek = today.addDays(7);
-
-        return date >= today && date <= nextWeek;
-    }
-};
-
-class Next14DaysFilterModel : public QSortFilterProxyModel {
-public:
-    Next14DaysFilterModel(QObject *parent = nullptr) : QSortFilterProxyModel(parent) {}
-    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override {
-        QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
-        QDate date = index.data().toDate();
-
-        QDate today = QDate::currentDate();
-        QDate nextWeek = today.addDays(14);
-
-        return date >= today && date <= nextWeek;
-    }
-};
-
-class Next30DaysFilterModel : public QSortFilterProxyModel {
-public:
-    Next30DaysFilterModel(QObject *parent = nullptr) : QSortFilterProxyModel(parent) {}
-    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override {
-        QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
-        QDate date = index.data().toDate();
-
-        QDate today = QDate::currentDate();
-        QDate nextWeek = today.addMonths(1);
-
-        return date >= today && date <= nextWeek;
-    }
-};

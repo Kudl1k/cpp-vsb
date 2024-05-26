@@ -40,11 +40,9 @@ void GUI::switchToMainDashboard() {
     mainDashboardTab = new MainDashboardTab(tracker);
     incomesTab = new IncomesTab(tracker,mainDashboardTab);
     expensesTab = new ExpensesTab(tracker, mainDashboardTab);
-    goalsTab = new GoalsTab(tracker);
     tabs->addTab(mainDashboardTab, QString("Main Dashboard"));
     tabs->addTab(incomesTab, QString("Incomes"));
     tabs->addTab(expensesTab, QString("Expenses"));
-    tabs->addTab(goalsTab, QString("Goals"));
     setCentralWidget(tabs);
 
 
@@ -218,7 +216,6 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
     QLabel *descriptioQuickActions = new QLabel("Quick actions: ");
     QPushButton* fastAddIncome = new QPushButton("Add income");
     QPushButton* fastAddExpanse = new QPushButton("Add expense");
-    QPushButton* fastAddGoal = new QPushButton("Add goal");
 
     mainInfo = new MainInfo(tracker);
 
@@ -230,7 +227,6 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
     header->addWidget(descriptioQuickActions);
     header->addWidget(fastAddIncome);
     header->addWidget(fastAddExpanse);
-    header->addWidget(fastAddGoal);
     
     QHBoxLayout *body = new QHBoxLayout();
 
@@ -442,7 +438,7 @@ IncomesGraph::IncomesGraph(Tracker *tracker): tracker(tracker)
                 }
             }
             Income income = record.second[i];
-            std::cout << income.getCategory() << " " << income.getValue() << std::endl;
+            categories[income.getCategory()] += income.getValue();
         }
     }
     
@@ -532,7 +528,7 @@ void IncomesGraph::updateGraph() {
                 }
             }
             Income income = record.second[i];
-            std::cout << income.getCategory() << " " << income.getValue() << std::endl;
+            categories[income.getCategory()] += income.getValue();
         }
     }
     
@@ -586,6 +582,34 @@ ExpensesGraph::ExpensesGraph(Tracker *tracker): tracker(tracker)
     for (auto& record: tracker->getExpenses()) {
         for (size_t i = 0; i < record.second.size(); i++)
         {
+            QDate currentDate = QDate::currentDate();
+            if (tracker->getViewMode() == 0)
+            {
+                if (record.first.month() != currentDate.month() || record.first.year() != currentDate.year())
+                {
+                    std::cout << "true" << std::endl;
+                    continue;
+                }    
+            } else if (tracker->getViewMode() == 1){
+                if (record.first < currentDate || record.first > currentDate.addDays(7))
+                {
+                    std::cout << "true" << std::endl;
+                    continue;
+                }
+            } else if (tracker->getViewMode() == 2){
+                if (record.first < currentDate || record.first > currentDate.addDays(14))
+                {
+                    std::cout << "true" << std::endl;
+                    continue;
+                }
+            } else if (tracker->getViewMode() == 3){
+                QDate nextMonth = currentDate.addMonths(1);
+                if (record.first.month() != nextMonth.month() || record.first.year() != nextMonth.year())
+                {
+                    std::cout << "true" << std::endl;
+                    continue;
+                }
+            }
             Expense expense = record.second[i];
             categories[expense.getCategory()] += expense.getValue();
         }
@@ -650,6 +674,34 @@ void ExpensesGraph::updateGraph()
     for (auto& record: tracker->getExpenses()) {
         for (size_t i = 0; i < record.second.size(); i++)
         {
+            QDate currentDate = QDate::currentDate();
+            if (tracker->getViewMode() == 0)
+            {
+                if (record.first.month() != currentDate.month() || record.first.year() != currentDate.year())
+                {
+                    std::cout << "true" << std::endl;
+                    continue;
+                }    
+            } else if (tracker->getViewMode() == 1){
+                if (record.first < currentDate || record.first > currentDate.addDays(7))
+                {
+                    std::cout << "true" << std::endl;
+                    continue;
+                }
+            } else if (tracker->getViewMode() == 2){
+                if (record.first < currentDate || record.first > currentDate.addDays(14))
+                {
+                    std::cout << "true" << std::endl;
+                    continue;
+                }
+            } else if (tracker->getViewMode() == 3){
+                QDate nextMonth = currentDate.addMonths(1);
+                if (record.first.month() != nextMonth.month() || record.first.year() != nextMonth.year())
+                {
+                    std::cout << "true" << std::endl;
+                    continue;
+                }
+            }
             Expense expense = record.second[i];
             categories[expense.getCategory()] += expense.getValue();
         }
@@ -1310,52 +1362,4 @@ QString IncomeLine::getText() {
 QString IncomeLine::getValue() {
     return valueField->text();
 }
-
-GoalsTab::GoalsTab(Tracker * tracker) : tracker(tracker)
-{
-    QVBoxLayout* mainLayout = new QVBoxLayout();
-
-    QHBoxLayout* header = new QHBoxLayout();
-
-    QPushButton* editButton = new QPushButton("New");
-    QPushButton* addGoalButton = new QPushButton("Add Goal");
-    addGoalButton->hide();
-
-
-
-    header->addWidget(editButton,0);
-    header->addWidget(addGoalButton,0);
-    header->addStretch(1);
-
-    QVBoxLayout* addGoal = new QVBoxLayout();
-
-    QVBoxLayout* bottomWidget = new QVBoxLayout();
-    tableView = new GoalsTableView(this);
-
-    mainLayout->addLayout(header);
-    
-    QHBoxLayout* addSection = new QHBoxLayout();
-
-
-    QDateEdit* datePicker = new QDateEdit();
-    QComboBox* priorityComboBox = new QComboBox();
-    priorityComboBox->addItem("Low");
-    priorityComboBox->addItem("Medium");
-    priorityComboBox->addItem("High");
-    QLineEdit* titleTextField = new QLineEdit();
-    QLineEdit* valueTextField = new QLineEdit();
-
-    addSection->addWidget(datePicker);
-    addSection->addWidget(priorityComboBox);
-    addSection->addWidget(titleTextField);
-    addSection->addWidget(valueTextField);
-
-    addGoal->addLayout(addSection);
-    addGoal->addLayout(bottomWidget);
-    mainLayout->addLayout(addGoal);
-    mainLayout->addWidget(tableView);
-
-    this->setLayout(mainLayout);
-}
-
 
