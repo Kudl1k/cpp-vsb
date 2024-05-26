@@ -13,6 +13,40 @@ User* Tracker::getUser(){
     return user;
 }
 
+float Tracker::getIncomesSum()
+{
+    float sum = 0;
+    for (const auto& pair : incomes) {
+        for (const auto& income : pair.second) {
+            sum += income.getValue();
+        }
+    }
+    return sum;
+}
+
+float Tracker::getExpensesSum()
+{
+    float sum = 0;
+    for (const auto& pair : expenses) {
+        for (const auto& expense : pair.second) {
+            sum += expense.getValue();
+        }
+    }
+    return sum;
+}
+
+
+
+float Tracker::getExpensesPercentage()
+{
+    float expensesSum = getExpensesSum();
+    if (expensesSum > 0.0f)
+    {
+        return expensesSum / (this->getIncomesSum() / 100);
+    }
+    return 0.0f;
+}
+
 void Tracker::saveToFile()
 {
     saveUserToFile();
@@ -41,9 +75,6 @@ void Tracker::saveUserToFile()
     int expensePercentage = user->getExpensePercentage();
     outFile.write(reinterpret_cast<char*>(&expensePercentage), sizeof(expensePercentage));
 
-    // Write the incomePercentage
-    int incomePercentage = user->getIncomePercentage();
-    outFile.write(reinterpret_cast<char*>(&incomePercentage), sizeof(incomePercentage));
 
     // Write the savingsPercentage
     int savingsPercentage = user->getSavingsPercentage();
@@ -155,9 +186,6 @@ void Tracker::loadUserFromFile()
     int expensePercentage;
     inFile.read(reinterpret_cast<char*>(&expensePercentage), sizeof(expensePercentage));
 
-    int incomePercentage;
-    inFile.read(reinterpret_cast<char*>(&incomePercentage), sizeof(incomePercentage));
-
     int savingsPercentage;
     inFile.read(reinterpret_cast<char*>(&savingsPercentage), sizeof(savingsPercentage));
 
@@ -166,9 +194,8 @@ void Tracker::loadUserFromFile()
     std::cout << "Name: " << name << std::endl;
     std::cout << "Balance: " << balance << std::endl;
     std::cout << "Expense Percentage: " << expensePercentage << std::endl;
-    std::cout << "Income Percentage: " << incomePercentage << std::endl;
     std::cout << "Savings Percentage: " << savingsPercentage << std::endl;
-    this->user = new User(name, expensePercentage, incomePercentage, savingsPercentage);
+    this->user = new User(name, expensePercentage, savingsPercentage);
 }
 
 void Tracker::loadExpensesFromFile()

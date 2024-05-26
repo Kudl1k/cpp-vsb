@@ -39,6 +39,6 @@ make
 - [ ] Main dashboard. Create UI. (In Progrees)
 - [ ] Expense and Income tabs, issue with deleting rows. Sort by date and filtering. (In Progrees)
 - [ ] Goals tab. Implement functions in UI.
-- [ ] Investment Calculator. Create its functionality and connect it with incomes. <br>
+
 
 Link to [github repo](https://github.com/Kudl1k/cpp-vsb/tree/main/budget-tracker)

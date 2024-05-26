@@ -44,14 +44,12 @@ void GUI::switchToMainDashboard() {
     //TODO: create menu
     QMenuBar *menu = this->menuBar();
 
-    QMenu *settings = menu->addMenu("Settings");
+    QMenu *settings = menu->addMenu("Profile");
     QAction *saveProfileAction = settings->addAction("Save profile");
     connect(saveProfileAction, &QAction::triggered, this, [this](){
         this->tracker->saveToFile();
     });
 
-    QMenu *navigation = menu->addMenu("Navigation");
-    navigation->addAction("Main Dashboard");
 }
 
 void GUI::createTracker(User* user)
@@ -101,18 +99,14 @@ SetupProfilePage::SetupProfilePage(QWidget *parent, GUI *gui)
     QLabel* expensePercentage = new QLabel("Expense percentage:");
     QSpinBox* expensePercentageInput = new QSpinBox();
     expensePercentageInput->setRange(0, 100);
-    expensePercentageInput->setValue(50);
+    expensePercentageInput->setValue(80);
 
-    QLabel* incomePercentage = new QLabel("Income percentage:");
-    QSpinBox* incomePercentageInput = new QSpinBox();
-    incomePercentageInput->setRange(0, 100);
-    incomePercentageInput->setValue(30);
+
 
     QLabel* savingsPercentage = new QLabel("Savings percentage:");
     QSpinBox* savingsPercentageInput = new QSpinBox();
     savingsPercentageInput->setRange(0, 100);
     savingsPercentageInput->setValue(20);
-    savingsPercentageInput->setDisabled(true);
 
 
 
@@ -124,7 +118,6 @@ SetupProfilePage::SetupProfilePage(QWidget *parent, GUI *gui)
     QFormLayout* formLayout = new QFormLayout();
     formLayout->addRow(nameLabel, nameInput);
     formLayout->addRow(expensePercentage, expensePercentageInput);
-    formLayout->addRow(incomePercentage, incomePercentageInput);
     formLayout->addRow(savingsPercentage, savingsPercentageInput);
     
 
@@ -136,28 +129,33 @@ SetupProfilePage::SetupProfilePage(QWidget *parent, GUI *gui)
     layout->setAlignment(Qt::AlignCenter);
     this->setLayout(layout);
 
-    connect(submitButton, &QPushButton::clicked, [this, nameInput, expensePercentageInput, incomePercentageInput, savingsPercentageInput]() {
+    connect(submitButton, &QPushButton::clicked, [this, nameInput, expensePercentageInput, savingsPercentageInput]() {
         
         std::string name = nameInput->text().toStdString();
         int expensePercentage = expensePercentageInput->value();
-        int incomePercentage = incomePercentageInput->value();
         int savingsPercentage = savingsPercentageInput->value();
         if (name == "")
         {
             QMessageBox::warning(this,"Warning","Please fill in the name field.");
         } else {
-            this->gui->createTracker(new User(name, expensePercentage, incomePercentage, savingsPercentage));
+            this->gui->createTracker(new User(name, expensePercentage, savingsPercentage));
         }
     });
 
-    connect(expensePercentageInput, QOverload<int>::of(&QSpinBox::valueChanged), [savingsPercentageInput, incomePercentageInput, expensePercentageInput](int) {
-        int total = 100 - (incomePercentageInput->value() + expensePercentageInput->value());
-        savingsPercentageInput->setValue(total);
+    connect(expensePercentageInput, QOverload<int>::of(&QSpinBox::valueChanged), [savingsPercentageInput](int newValue) {
+    int otherValue = 100 - newValue;
+        // Block signals to avoid infinite loop
+        savingsPercentageInput->blockSignals(true);
+        savingsPercentageInput->setValue(otherValue);
+        savingsPercentageInput->blockSignals(false);
     });
 
-    connect(incomePercentageInput, QOverload<int>::of(&QSpinBox::valueChanged), [savingsPercentageInput, incomePercentageInput, expensePercentageInput](int) {
-        int total = 100 - (incomePercentageInput->value() + expensePercentageInput->value());
-        savingsPercentageInput->setValue(total);
+    connect(savingsPercentageInput, QOverload<int>::of(&QSpinBox::valueChanged), [expensePercentageInput](int newValue) {
+        int otherValue = 100 - newValue;
+        // Block signals to avoid infinite loop
+        expensePercentageInput->blockSignals(true);
+        expensePercentageInput->setValue(otherValue);
+        expensePercentageInput->blockSignals(false);
     });
 }
 
@@ -208,7 +206,7 @@ MainDashboardTab::MainDashboardTab(Tracker *tracker) : tracker(tracker)
 
     leftBody->addWidget(incomesGraph->getChart());
     middleBody->addWidget(expensesGraph->getChart());
-    rightBody->addWidget(maingraph3->getChart());
+    //rightBody->addWidget(maingraph3->getChart());
 
 
     QWidget *widget1 = new QWidget();
@@ -251,7 +249,7 @@ MainInfo::MainInfo(Tracker *tracker): tracker(tracker)
     QPixmap balanceIcon("../assets/balance.png");
     currentBalanceIcon->setPixmap(balanceIcon);
     currentBalanceValue = new QLabel(QString::fromStdString(currentBalanceText.substr(0,currentBalanceText.size()-4) + "$"));
-    currentBalanceValue->setToolTip("Your current balance");
+    currentBalanceValue->setToolTip(QString::fromStdString("Your current balance\nIncomes: " + std::to_string(tracker->getIncomesSum()) + "\nExpenses: " + std::to_string(tracker->getExpensesSum()) + "$"));
 
     QLabel *nextIncomesIcon = new QLabel();
     QPixmap incomesIcon("../assets/incomes.png");
@@ -266,11 +264,6 @@ MainInfo::MainInfo(Tracker *tracker): tracker(tracker)
     std::string nextExpansesText = std::to_string(tracker->getUser()->getNextIncomes());
     QLabel *nextExpansesValue = new QLabel(QString::fromStdString(nextExpansesText.substr(0,nextExpansesText.size()-4)));
     nextExpansesValue->setToolTip("Your future incomes");
-
-
-
-
-
 
     leftUpBody->addWidget(currentBalanceIcon);
     leftUpBody->addWidget(currentBalanceValue);

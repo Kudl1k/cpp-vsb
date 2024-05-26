@@ -30,6 +30,11 @@ public:
     int generateNewIncomeId();
     User* getUser();
 
+    float getIncomesSum();
+    float getExpensesSum();
+
+    float getExpensesPercentage();
+
     void saveToFile();
     void loadFromFile();
     //void removeExpanse(int index);
@@ -44,6 +49,8 @@ private:
     void loadExpensesFromFile();
     void loadIncomesFromFile();
 
+    
+
     User *user;
     std::map<QDate,std::vector<Expense>> expenses;
     std::map<QDate,std::vector<Expense>> futureExpanses;
@@ -51,6 +58,9 @@ private:
     std::map<QDate,std::vector<Income>> incomes;
     std::map<QDate,std::vector<Income>> futureIncomes;
     std::map<QDate,std::vector<Income>> allIncomes;
+
+
+
 };
 
 
