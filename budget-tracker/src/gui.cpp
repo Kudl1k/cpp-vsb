@@ -409,34 +409,40 @@ IncomesGraph::IncomesGraph(Tracker *tracker): tracker(tracker)
     QPieSeries *series = new QPieSeries();
 
     qreal categories[incomeCategories.size()] = {};
-
-    for (auto& record: tracker->getAllIncomes()) {
+    std::cout << "Tracker mode: " << tracker->getViewMode() << std::endl;
+    for (auto& record: tracker->getIncomes()) {
         for (size_t i = 0; i < record.second.size(); i++)
         {
+            QDate currentDate = QDate::currentDate();
             if (tracker->getViewMode() == 0)
             {
-                if (record.first.month() != QDate::currentDate().month())
+                if (record.first.month() != currentDate.month() || record.first.year() != currentDate.year())
                 {
+                    std::cout << "true" << std::endl;
                     continue;
                 }    
             } else if (tracker->getViewMode() == 1){
-                if (record.first.daysTo(QDate::currentDate()) > 7)
+                if (record.first < currentDate || record.first > currentDate.addDays(7))
                 {
+                    std::cout << "true" << std::endl;
                     continue;
                 }
             } else if (tracker->getViewMode() == 2){
-                if (record.first.daysTo(QDate::currentDate()) > 14)
+                if (record.first < currentDate || record.first > currentDate.addDays(14))
                 {
+                    std::cout << "true" << std::endl;
                     continue;
                 }
             } else if (tracker->getViewMode() == 3){
-                if (record.first.month() != QDate::currentDate().addMonths(1).month())
+                QDate nextMonth = currentDate.addMonths(1);
+                if (record.first.month() != nextMonth.month() || record.first.year() != nextMonth.year())
                 {
+                    std::cout << "true" << std::endl;
                     continue;
                 }
             }
             Income income = record.second[i];
-            categories[income.getCategory()] += income.getValue();
+            std::cout << income.getCategory() << " " << income.getValue() << std::endl;
         }
     }
     
@@ -487,6 +493,9 @@ void IncomesGraph::updateGraph() {
     chart->removeAllSeries();
 
     // Create a new series
+    chart->removeAllSeries();
+
+    // Create a new series
     QPieSeries *newSeries = new QPieSeries();
 
     qreal categories[incomeCategories.size()] = {};
@@ -494,10 +503,36 @@ void IncomesGraph::updateGraph() {
     for (auto& record: tracker->getIncomes()) {
         for (size_t i = 0; i < record.second.size(); i++)
         {
+            QDate currentDate = QDate::currentDate();
+            if (tracker->getViewMode() == 0)
+            {
+                if (record.first.month() != currentDate.month() || record.first.year() != currentDate.year())
+                {
+                    std::cout << "true" << std::endl;
+                    continue;
+                }    
+            } else if (tracker->getViewMode() == 1){
+                if (record.first < currentDate || record.first > currentDate.addDays(7))
+                {
+                    std::cout << "true" << std::endl;
+                    continue;
+                }
+            } else if (tracker->getViewMode() == 2){
+                if (record.first < currentDate || record.first > currentDate.addDays(14))
+                {
+                    std::cout << "true" << std::endl;
+                    continue;
+                }
+            } else if (tracker->getViewMode() == 3){
+                QDate nextMonth = currentDate.addMonths(1);
+                if (record.first.month() != nextMonth.month() || record.first.year() != nextMonth.year())
+                {
+                    std::cout << "true" << std::endl;
+                    continue;
+                }
+            }
             Income income = record.second[i];
             std::cout << income.getCategory() << " " << income.getValue() << std::endl;
-
-            categories[income.getCategory()] += income.getValue();
         }
     }
     
