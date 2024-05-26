@@ -1,6 +1,6 @@
 #include "user.h"
 
-User::User(std::string name, int expensePercentage, int incomePercentage, int savingsPercentage, int month_goal) {
+User::User(std::string name, int expensePercentage, int incomePercentage, int savingsPercentage) {
     this->name = name;
     this->balance = 0;
     this->nextIncomes = 0;
@@ -8,7 +8,6 @@ User::User(std::string name, int expensePercentage, int incomePercentage, int sa
     this->expensePercentage = expensePercentage;
     this->incomePercentage = incomePercentage;
     this->savingsPercentage = savingsPercentage;
-    this->month_goal = month_goal;
 }
 
 User::~User() {}
@@ -19,6 +18,21 @@ std::string User::getName(){
 
 float User::getBalance(){
     return balance;
+}
+
+int User::getExpensePercentage()
+{
+    return expensePercentage;
+}
+
+int User::getIncomePercentage()
+{
+    return incomePercentage;
+}
+
+int User::getSavingsPercentage()
+{
+    return savingsPercentage;
 }
 
 float User::getNextIncomes()

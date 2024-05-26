@@ -3,7 +3,7 @@
 
 GUI::GUI(QWidget* parent) : QMainWindow(parent)
 {
-    this->tracker = nullptr;
+    this->tracker = new Tracker(nullptr);
     this->setWindowTitle("Budget Tracker - KUD0132");
     this->setMinimumSize(1280,720);
     this->move(100,100);
@@ -16,27 +16,20 @@ GUI::GUI(QWidget* parent) : QMainWindow(parent)
     setCentralWidget(welcomePage);
 
     connect(welcomePage->continueButton, &QPushButton::clicked, this, [this](){
-        this->switchToMainDashboard("User", 50, 30, 20, 5000);
+        this->tracker->loadFromFile();
+        this->switchToMainDashboard();
     });
     connect(welcomePage->newProfileButton, &QPushButton::clicked, this, &GUI::switchToSetupProfile);
 }
 
 
 
-void GUI::switchToMainDashboard(std::string name, int expensePercentage, int incomePercentage, int savingsPercentage, int monthGoal) {
-    this->tracker = nullptr;
-    if (name == "")
+void GUI::switchToMainDashboard() {
+    if (this->tracker->getUser() == nullptr)
     {
         QMessageBox::warning(this,"Warning","Please setup your profile first.");
         this->tracker = new Tracker(nullptr);
         return;
-    } else {
-        std::cout << "Creating tracker" << std::endl;
-        User *user = new User(name, expensePercentage, incomePercentage, savingsPercentage, monthGoal);
-        std::cout << "User created" << std::endl;
-    
-        this->tracker = new Tracker(user);
-        std::cout << "Created tracker" << std::endl;
     }
     std::cout << "Switching to main dashboard" << std::endl;
     mainDashboardTab = new MainDashboardTab(tracker);
@@ -61,16 +54,11 @@ void GUI::switchToMainDashboard(std::string name, int expensePercentage, int inc
     navigation->addAction("Main Dashboard");
 }
 
-void GUI::createTracker(std::string name, int expensePercentage, int incomePercentage, int savingsPercentage, int monthGoal)
+void GUI::createTracker(User* user)
 {
     std::cout << "Assigning tracker to GUI..." << std::endl;
-    std::cout << "Name: " << name << std::endl;
-    std::cout << "Expense percentage: " << expensePercentage << std::endl;
-    std::cout << "Income percentage: " << incomePercentage << std::endl;
-    std::cout << "Savings percentage: " << savingsPercentage << std::endl;
-    std::cout << "Month goal: " << monthGoal << std::endl;
-
-    switchToMainDashboard("User", 50, 30, 20, 5000);
+    this->tracker = new Tracker(user);
+    switchToMainDashboard();
     std::cout << "Switched to main dashboard" << std::endl;
 }
 
@@ -126,10 +114,6 @@ SetupProfilePage::SetupProfilePage(QWidget *parent, GUI *gui)
     savingsPercentageInput->setValue(20);
     savingsPercentageInput->setDisabled(true);
 
-    QLabel* monthGoal = new QLabel("Month goal:");
-    QSpinBox* monthGoalInput = new QSpinBox();
-    monthGoalInput->setRange(0, 100000);
-    monthGoalInput->setValue(5000);
 
 
     QPushButton* submitButton = new QPushButton("Submit");
@@ -142,7 +126,6 @@ SetupProfilePage::SetupProfilePage(QWidget *parent, GUI *gui)
     formLayout->addRow(expensePercentage, expensePercentageInput);
     formLayout->addRow(incomePercentage, incomePercentageInput);
     formLayout->addRow(savingsPercentage, savingsPercentageInput);
-    formLayout->addRow(monthGoal, monthGoalInput);
     
 
     QWidget* formWidget = new QWidget();
@@ -153,21 +136,17 @@ SetupProfilePage::SetupProfilePage(QWidget *parent, GUI *gui)
     layout->setAlignment(Qt::AlignCenter);
     this->setLayout(layout);
 
-    connect(submitButton, &QPushButton::clicked, [this, nameInput, expensePercentageInput, incomePercentageInput, savingsPercentageInput, monthGoalInput]() {
+    connect(submitButton, &QPushButton::clicked, [this, nameInput, expensePercentageInput, incomePercentageInput, savingsPercentageInput]() {
         
         std::string name = nameInput->text().toStdString();
         int expensePercentage = expensePercentageInput->value();
         int incomePercentage = incomePercentageInput->value();
         int savingsPercentage = savingsPercentageInput->value();
-        int monthGoal = monthGoalInput->value();
         if (name == "")
         {
             QMessageBox::warning(this,"Warning","Please fill in the name field.");
         } else {
-            std::cout << "Creating Tracker" << std::endl;
-            std::cout << "User created" << std::endl;
-            std::cout << "Tracker created" << std::endl;
-            this->gui->switchToMainDashboard(name, expensePercentage, incomePercentage, savingsPercentage, monthGoal);
+            this->gui->createTracker(new User(name, expensePercentage, incomePercentage, savingsPercentage));
         }
     });
 
@@ -807,6 +786,7 @@ ExpenseLine::ExpenseLine(QVBoxLayout* layout, std::function<QWidget*()> createNe
     QGridLayout* lineLayout = new QGridLayout();
 
     dateEdit = new QDateEdit();
+    dateEdit->setDisplayFormat("yyyy-MM-dd");
     comboBox1 = new QComboBox();
     comboBox1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
@@ -1124,6 +1104,7 @@ IncomeLine::IncomeLine(QVBoxLayout* layout, std::function<QWidget*()> createNewI
     QGridLayout* lineLayout = new QGridLayout();
 
     dateEdit = new QDateEdit();
+    dateEdit->setDisplayFormat("yyyy-MM-dd");
     dateEdit->setDate(QDate::currentDate());
 
     comboBox1 = new QComboBox();

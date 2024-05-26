@@ -63,8 +63,8 @@ Q_OBJECT
 public:
     GUI(QWidget* parent = nullptr);
 
-    void createTracker(std::string name, int expensePercentage, int incomePercentage, int savingsPercentage, int monthGoal);
-    void switchToMainDashboard(std::string name, int expensePercentage, int incomePercentage, int savingsPercentage, int monthGoal);
+    void createTracker(User* user);
+    void switchToMainDashboard();
 
 private:
     Tracker *tracker;
@@ -223,11 +223,11 @@ public:
 
         this->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-        for (auto& record: tracker->getExpenses()) {
+        for (auto& record: tracker->getAllExpenses()) {
             for (size_t i = 0; i < record.second.size(); i++)
             {
                 Expense expense = record.second[i];
-                addExpense(expense.getDate().toString("yyyy-MM-dd"),QString::fromStdString(expenseCategories[expense.getCategory()].first),QString::fromStdString(expenseCategories[expense.getCategory()].second[expense.getSubcategory()]),QString::fromStdString(std::to_string(expense.getValue())));
+                addExpense(expense.getDate().toString("yyyy-MM-dd"),QString::fromStdString(expenseCategories[expense.getCategory()].first),QString::fromStdString(expenseCategories[expense.getCategory()].second[expense.getSubcategory()]),QString::fromStdString(expense.getTitle()),QString::fromStdString(std::to_string(expense.getValue())));
             }
         }
         model->sort(0, Qt::AscendingOrder);
@@ -239,7 +239,7 @@ public:
 
     
 
-    void addExpense(const QString& date, const QString& category, const QString& subcategory, const QString& amount)
+    void addExpense(const QString& date, const QString& category, const QString& subcategory, const QString& title, const QString& amount)
     {
         QList<QStandardItem *> rowItems;
         QStandardItem *item;
@@ -256,12 +256,15 @@ public:
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);
         rowItems.append(item);
 
+        item = new QStandardItem(title);
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        rowItems.append(item);
+
         item = new QStandardItem(amount);
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);
         rowItems.append(item);
 
         model->appendRow(rowItems);
-
     }
 protected:
     void contextMenuEvent(QContextMenuEvent* event) override {
@@ -339,11 +342,11 @@ public:
         // Set the model on the table view
         this->setModel(model);
         this->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-        for (auto& record: tracker->getIncomes()) {
+        for (auto& record: tracker->getAllIncomes()) {
             for (size_t i = 0; i < record.second.size(); i++)
             {
                 Income income = record.second[i];
-                addIncome(income.getDate().toString(),QString::fromStdString(incomeCategories[income.getCategory()].first),QString::fromStdString(incomeCategories[income.getCategory()].second[income.getSubcategory()]),QString::fromStdString(std::to_string(income.getValue())));
+                addIncome(income.getDate().toString("yyyy-MM-dd"),QString::fromStdString(incomeCategories[income.getCategory()].first),QString::fromStdString(incomeCategories[income.getCategory()].second[income.getSubcategory()]),QString::fromStdString(income.getTitle()),QString::fromStdString(std::to_string(income.getValue())));
             }
         }
     }
@@ -387,7 +390,7 @@ public:
     //     }
     // }
 
-    void addIncome(const QString& date, const QString& category, const QString& subcategory, const QString& amount)
+    void addIncome(const QString& date, const QString& category, const QString& subcategory,const QString& title , const QString& amount)
     {
         QList<QStandardItem *> rowItems;
         QStandardItem *item;
@@ -401,6 +404,10 @@ public:
         rowItems.append(item);
 
         item = new QStandardItem(subcategory);
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        rowItems.append(item);
+
+        item = new QStandardItem(title);
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);
         rowItems.append(item);
 
