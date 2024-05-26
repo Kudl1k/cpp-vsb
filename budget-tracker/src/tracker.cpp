@@ -37,9 +37,9 @@ float Tracker::getExpensesSum()
 
 
 
-float Tracker::getExpensesPercentage()
+int Tracker::getExpensesPercentage()
 {
-    float expensesSum = getExpensesSum();
+    int expensesSum = getExpensesSum();
     if (expensesSum > 0.0f)
     {
         return expensesSum / (this->getIncomesSum() / 100);
@@ -165,6 +165,16 @@ void Tracker::loadFromFile()
     loadUserFromFile();
     loadExpensesFromFile();
     loadIncomesFromFile();
+}
+
+void Tracker::setViewMode(int mode)
+{
+    this->viewmode = mode;
+}
+
+int Tracker::getViewMode()
+{
+    return this->viewmode;
 }
 
 void Tracker::loadUserFromFile()

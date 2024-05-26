@@ -3,7 +3,7 @@
 #include <tracker.h>
 #include <goal.h>
 
-
+#include <QApplication>
 #include <QMainWindow>
 #include <QWidget>
 #include <QTabWidget>
@@ -34,6 +34,7 @@
 #include <QMessageBox>
 #include <QSlider>
 #include <QSpinBox>
+#include <QActionGroup>
 
 
 
@@ -64,7 +65,6 @@ public:
     GUI(QWidget* parent = nullptr);
 
     void createTracker(User* user);
-    void switchToMainDashboard();
 
 private:
     Tracker *tracker;
@@ -79,6 +79,9 @@ private:
     GoalsTab* goalsTab;
 
     void switchToSetupProfile();
+    void switchToMainDashboard();
+
+    void closeEvent(QCloseEvent *event);
 };
 
 class WelcomePage : public QFrame {
@@ -121,6 +124,7 @@ private:
 
     void refreshCurrentBalance();
     void refreshNextIncomeValue();
+    void refreshNextExpansesValue();
 };
 
 

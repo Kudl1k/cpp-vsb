@@ -33,11 +33,15 @@ public:
     float getIncomesSum();
     float getExpensesSum();
 
-    float getExpensesPercentage();
+    int getExpensesPercentage();
 
     void saveToFile();
     void loadFromFile();
     //void removeExpanse(int index);
+
+    void setViewMode(int mode);
+    int getViewMode();
+
 private:
 
     void saveUserToFile();
@@ -52,6 +56,7 @@ private:
     
 
     User *user;
+    int viewmode = 0;
     std::map<QDate,std::vector<Expense>> expenses;
     std::map<QDate,std::vector<Expense>> futureExpanses;
     std::map<QDate,std::vector<Expense>> allExpenses;

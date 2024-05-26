@@ -22,7 +22,12 @@ GUI::GUI(QWidget* parent) : QMainWindow(parent)
     connect(welcomePage->newProfileButton, &QPushButton::clicked, this, &GUI::switchToSetupProfile);
 }
 
-
+void GUI::closeEvent(QCloseEvent *event)
+{
+    this->tracker->saveToFile();
+    event->accept();
+    QApplication::quit();
+}
 
 void GUI::switchToMainDashboard() {
     if (this->tracker->getUser() == nullptr)
@@ -41,15 +46,52 @@ void GUI::switchToMainDashboard() {
     tabs->addTab(expensesTab, QString("Expenses"));
     tabs->addTab(goalsTab, QString("Goals"));
     setCentralWidget(tabs);
-    //TODO: create menu
+
+
     QMenuBar *menu = this->menuBar();
 
     QMenu *settings = menu->addMenu("Profile");
     QAction *saveProfileAction = settings->addAction("Save profile");
+    saveProfileAction->setShortcut(QKeySequence::Save);
     connect(saveProfileAction, &QAction::triggered, this, [this](){
         this->tracker->saveToFile();
+        QMessageBox::information(this,"Information","Profile saved.");
     });
 
+    QMenu *viewmode = menu->addMenu("View mode");
+    QActionGroup *actionGroup = new QActionGroup(this);
+
+    QAction *allAction = viewmode->addAction("Current month");
+    allAction->setCheckable(true);
+    allAction->setActionGroup(actionGroup);
+    connect(allAction, &QAction::triggered, this, [this](){
+        this->tracker->setViewMode(0);
+        this->mainDashboardTab->refreshUI();
+    });
+
+    QAction *next7days = viewmode->addAction("This week");
+    next7days->setCheckable(true);
+    next7days->setActionGroup(actionGroup);
+    connect(next7days, &QAction::triggered, this, [this](){
+        this->tracker->setViewMode(1);
+        this->mainDashboardTab->refreshUI();
+    });
+
+    QAction *next14days = viewmode->addAction("Next week");
+    next14days->setCheckable(true);
+    next14days->setActionGroup(actionGroup);
+    connect(next14days, &QAction::triggered, this, [this](){
+        this->tracker->setViewMode(2);
+        this->mainDashboardTab->refreshUI();
+    });
+
+    QAction *nextMonth = viewmode->addAction("Next month");
+    nextMonth->setCheckable(true);
+    nextMonth->setActionGroup(actionGroup);
+    connect(nextMonth, &QAction::triggered, this, [this](){
+        this->tracker->setViewMode(3);
+        this->mainDashboardTab->refreshUI();
+    });
 }
 
 void GUI::createTracker(User* user)
@@ -249,7 +291,16 @@ MainInfo::MainInfo(Tracker *tracker): tracker(tracker)
     QPixmap balanceIcon("../assets/balance.png");
     currentBalanceIcon->setPixmap(balanceIcon);
     currentBalanceValue = new QLabel(QString::fromStdString(currentBalanceText.substr(0,currentBalanceText.size()-4) + "$"));
-    currentBalanceValue->setToolTip(QString::fromStdString("Your current balance\nIncomes: " + std::to_string(tracker->getIncomesSum()) + "\nExpenses: " + std::to_string(tracker->getExpensesSum()) + "$"));
+    int percentages = tracker->getExpensesPercentage();
+    currentBalanceValue->setToolTip(QString::fromStdString("Your current balance\nIncomes: " + std::to_string(tracker->getIncomesSum()) + "$\nExpenses: " + std::to_string(tracker->getExpensesSum()) + "$ (" + std::to_string(percentages) + "%)"));
+    if (percentages > this->tracker->getUser()->getExpensePercentage())
+    {
+        currentBalanceValue->setStyleSheet("color: red");
+    } else {
+        currentBalanceValue->setStyleSheet("color: ");
+    }
+
+
 
     QLabel *nextIncomesIcon = new QLabel();
     QPixmap incomesIcon("../assets/incomes.png");
@@ -261,7 +312,7 @@ MainInfo::MainInfo(Tracker *tracker): tracker(tracker)
     QLabel *nextExpansesIcon = new QLabel();
     QPixmap expansesIcon("../assets/expanses.png");
     nextExpansesIcon->setPixmap(expansesIcon);
-    std::string nextExpansesText = std::to_string(tracker->getUser()->getNextIncomes());
+    std::string nextExpansesText = std::to_string(tracker->getUser()->getNextExpanses());
     QLabel *nextExpansesValue = new QLabel(QString::fromStdString(nextExpansesText.substr(0,nextExpansesText.size()-4)));
     nextExpansesValue->setToolTip("Your future incomes");
 
@@ -281,18 +332,34 @@ void MainInfo::refreshMainInfoUI()
 {
     refreshCurrentBalance();
     refreshNextIncomeValue();
+    refreshNextExpansesValue();
 }
 
 void MainInfo::refreshCurrentBalance()
 {
     std::string balance = std::to_string(tracker->getUser()->getBalance());
     currentBalanceValue->setText(QString::fromStdString(balance.substr(0,balance.size()-4)));
+    int percentages = tracker->getExpensesPercentage();
+    currentBalanceValue->setToolTip(QString::fromStdString("Your current balance\nIncomes: " + std::to_string(tracker->getIncomesSum()) + "\nExpenses: " + std::to_string(tracker->getExpensesSum()) + "$ (" + std::to_string(percentages) + "%)"));
+    if (percentages > this->tracker->getUser()->getExpensePercentage())
+    {
+        currentBalanceValue->setStyleSheet("color: red");
+    } else {
+        currentBalanceValue->setStyleSheet("color: ");
+    }
+    
 }
 
 void MainInfo::refreshNextIncomeValue()
 {
     std::string nextIncomesText = std::to_string(tracker->getUser()->getNextIncomes());
     nextIncomesValue->setText(QString::fromStdString(nextIncomesText.substr(0,nextIncomesText.size()-4)));
+}
+
+void MainInfo::refreshNextExpansesValue()
+{
+    std::string nextExpansesText = std::to_string(tracker->getUser()->getNextExpanses());
+    QLabel *nextExpansesValue = new QLabel(QString::fromStdString(nextExpansesText.substr(0,nextExpansesText.size()-4)));
 }
 
 MainGraph::MainGraph(Tracker* tracker)
@@ -343,9 +410,31 @@ IncomesGraph::IncomesGraph(Tracker *tracker): tracker(tracker)
 
     qreal categories[incomeCategories.size()] = {};
 
-    for (auto& record: tracker->getIncomes()) {
+    for (auto& record: tracker->getAllIncomes()) {
         for (size_t i = 0; i < record.second.size(); i++)
         {
+            if (tracker->getViewMode() == 0)
+            {
+                if (record.first.month() != QDate::currentDate().month())
+                {
+                    continue;
+                }    
+            } else if (tracker->getViewMode() == 1){
+                if (record.first.daysTo(QDate::currentDate()) > 7)
+                {
+                    continue;
+                }
+            } else if (tracker->getViewMode() == 2){
+                if (record.first.daysTo(QDate::currentDate()) > 14)
+                {
+                    continue;
+                }
+            } else if (tracker->getViewMode() == 3){
+                if (record.first.month() != QDate::currentDate().addMonths(1).month())
+                {
+                    continue;
+                }
+            }
             Income income = record.second[i];
             categories[income.getCategory()] += income.getValue();
         }
@@ -578,14 +667,7 @@ ExpensesTab::ExpensesTab(Tracker *tracker, MainDashboardTab *mainDashboardTab)
     addExpenses->hide();
     header->addWidget(addExpenses,0);
     header->addStretch(1);
-    QLabel* filterLabel = new QLabel("Display:");
-    header->addWidget(filterLabel);
-    QComboBox* filterComboBox = new QComboBox();
-    filterComboBox->addItem("All");
-    filterComboBox->addItem("Next 7 days");
-    filterComboBox->addItem("Next 14 days");
-    filterComboBox->addItem("Next month");
-    header->addWidget(filterComboBox);
+    
 
     //* Add/Edit section
     toggleButton = new QCheckBox("Toggle adding multiple expenses");
@@ -894,18 +976,12 @@ IncomesTab::IncomesTab(Tracker *tracker, MainDashboardTab* mainDashboardTab): tr
     QPushButton* editButton = new QPushButton("New");
     QPushButton* addIncomes = new QPushButton("Add incomes");
     addIncomes->hide();
-    QLabel* filterLabel = new QLabel("Display:");
-    QComboBox* filterComboBox = new QComboBox();
-    filterComboBox->addItem("All");
-    filterComboBox->addItem("Next 7 days");
-    filterComboBox->addItem("Next 14 days");
-    filterComboBox->addItem("Next month");
+
 
     header->addWidget(editButton,0);
     header->addWidget(addIncomes,0);
     header->addStretch(1);
-    header->addWidget(filterLabel);
-    header->addWidget(filterComboBox);
+
 
 
     toggleButton = new QCheckBox("Toggle adding multiple incomes");
@@ -1210,19 +1286,11 @@ GoalsTab::GoalsTab(Tracker * tracker) : tracker(tracker)
     QPushButton* addGoalButton = new QPushButton("Add Goal");
     addGoalButton->hide();
 
-    QLabel* filterLabel = new QLabel("Display:");
 
-    QComboBox* filterComboBox = new QComboBox();
-    filterComboBox->addItem("All");
-    filterComboBox->addItem("Next 7 days");
-    filterComboBox->addItem("Next 14 days");
-    filterComboBox->addItem("Next month");
 
     header->addWidget(editButton,0);
     header->addWidget(addGoalButton,0);
     header->addStretch(1);
-    header->addWidget(filterLabel);
-    header->addWidget(filterComboBox);
 
     QVBoxLayout* addGoal = new QVBoxLayout();
 

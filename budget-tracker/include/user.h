@@ -12,7 +12,6 @@ public:
     std::string getName();
     float getBalance();
     int getExpensePercentage();
-    int getIncomePercentage();
     int getSavingsPercentage();
 
     float getNextIncomes();
